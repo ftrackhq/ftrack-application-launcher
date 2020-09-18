@@ -89,5 +89,11 @@ setup(
     cmdclass={
         'test': PyTest
     },
+    data_files=[
+        (
+            'ftrack_application_launcher/hook',
+            glob.glob(os.path.join(RESOURCE_PATH, 'hook', '*.py'))
+        )
+    ],
     zip_safe=True,
 )

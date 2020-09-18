@@ -548,7 +548,7 @@ class ApplicationLauncher(object):
             mapping[str(key)] = value
 
 
-class ApplicationLaunchAction(BaseAction)
+class ApplicationLaunchAction(BaseAction):
     context_type = []
 
     @property
@@ -557,7 +557,7 @@ class ApplicationLaunchAction(BaseAction)
         return self._session
 
     def __init__(self, session, application_store, launcher):
-        super(LaunchApplicationAction, self).__init__(session)
+        super(ApplicationLaunchAction, self).__init__(session)
 
         self.logger = logging.getLogger(
             __name__ + '.' + self.__class__.__name__
@@ -585,6 +585,7 @@ class ApplicationLaunchAction(BaseAction)
         return False
 
     def _discover(self, event):
+        entities, event = self._translate_event(self.session, event)
         if not self.validate_selection(entities):
             return
 
