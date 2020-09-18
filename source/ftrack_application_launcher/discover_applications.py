@@ -1,34 +1,36 @@
 import sys
+import os
 import json
 import platform
 from ftrack_application_launcher import ApplicationStore, ApplicationLaunchAction, ApplicationLauncher
 
 
-
-class DiscoverApplications(object)
+class DiscoverApplications(object):
 
     @property
     def current_os(self):
-        return platform.system.lower()
+        return platform.system().lower()
 
-    def __init__(session, applications_config_path):
+    def __init__(self, session, applications_config_path):
+        print('initialising discover application')
         self._session = session
         configurations = self._sarch_configurations(applications_config_path)
         stores = self._build_stores(configurations)
 
-    def _sarch_configurations(self):
-        if not os.path.exists(self._config_path):
-            raise ValueError(
-                'config path {} does not exists'.format(self._config_path)
-            )
-        files = os.listdir(self._config_path)
-        filtered_files = [config for config in files if config.endswith('json')]
-        return map(json.loads, filtered_files)
+    def _sarch_configurations(self, config_path):
+        if not os.path.exists(config_path):
+            raise ValueError('{} does not exist'.format(config_path)
+        )
 
-    def _discover_applications(self, application_config):
+        files = os.listdir(config_path)
+        filtered_files = [open(os.path.join(config_path, config), 'r').read() for config in files if config.endswith('json')]
+        loaded_filtered_files = map(json.loads, filtered_files)
+        print(loaded_filtered_files)
+        return loaded_filtered_files
 
     def _build_stores(self, configurations):
         for config in configurations:
+            print('using config: {}'.format(config))
             applications = []
             store = ApplicationStore(self._session)
             # extract data from app config
@@ -37,13 +39,19 @@ class DiscoverApplications(object)
             prefix = search_path['prefix']
             expression = search_path['expression']
 
-            store._searchFilesystem(
+            application = store._searchFilesystem(
                 expression=prefix + expression,
                 label=config['label'],
-                applicationIdentifier = config['applicationIdentifier']
+                applicationIdentifier = config['applicationIdentifier'],
                 icon=config['icon'],
                 variant=config['variant']
             )
+
+            print(application)
+
+
+    def register(self):
+        print('register is now disabled')
 
 
 

@@ -7,7 +7,7 @@
     "variant": "{version}",
     "search_path":{
         "linux": {
-            "prefix":["usr","autodesk","maya.+"],
+            "prefix":["/", "usr","autodesk","maya.+"],
             "expression":["bin","maya$"],
             "version_expression": "maya(?P<version>\\d{4})"
         },
