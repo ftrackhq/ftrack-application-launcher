@@ -13,6 +13,8 @@ class DiscoverApplications(object):
 
     def __init__(self, session, applications_config_path):
         print('initialising discover application')
+        self._actions = []
+
         self._session = session
         configurations = self._sarch_configurations(applications_config_path)
         stores = self._build_stores(configurations)
@@ -39,7 +41,7 @@ class DiscoverApplications(object):
             prefix = search_path['prefix']
             expression = search_path['expression']
 
-            application = store._searchFilesystem(
+            applications = store._searchFilesystem(
                 expression=prefix + expression,
                 label=config['label'],
                 applicationIdentifier = config['applicationIdentifier'],
@@ -47,11 +49,21 @@ class DiscoverApplications(object):
                 variant=config['variant']
             )
 
-            print(application)
+            store.applications = applications
 
+            launcher = ApplicationLauncher(store)
+
+            Action = ApplicationLaunchAction
+            Action.label = config['label']
+            Action.variant = config['variant']
+            Action.identifier = config['identifier']
+            action = Action(self._session, store, launcher)
+            action.context_type = config['discoverable_in']
+            self._actions.append(action)
 
     def register(self):
-        print('register is now disabled')
+        for action in self._actions:
+            action.register()
 
 
 

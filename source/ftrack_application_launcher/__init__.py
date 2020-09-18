@@ -8,6 +8,7 @@ import os
 import subprocess
 import collections
 import base64
+import getpass
 import json
 import logging
 from operator import itemgetter
@@ -591,6 +592,8 @@ class ApplicationLaunchAction(BaseAction):
 
         items = []
         applications = self.application_store.applications
+        print('AAAA {}'.format(applications))
+
         applications = sorted(
             applications, key=lambda application: application['label']
         )
@@ -647,7 +650,7 @@ class ApplicationLaunchAction(BaseAction):
             'topic=ftrack.action.discover and source.user.username={0}'.format(
                 getpass.getuser()
             ),
-            self.discover
+            self._discover
         )
 
         self.session.event_hub.subscribe(
@@ -655,5 +658,5 @@ class ApplicationLaunchAction(BaseAction):
             'and data.actionIdentifier={1}'.format(
                 getpass.getuser(), self.identifier
             ),
-            self.launch
+            self._launch
         )
