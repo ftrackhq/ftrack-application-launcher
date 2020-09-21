@@ -2,24 +2,26 @@
     "context": ["Task"],
     "identifier": "ftrack-connect-launch-nuke",
     "applicationIdentifier":"nuke_{version}",
-    "label": "Nuke",
-    "icon": "nuke",
+    "label": "NukeX",
+    "icon": "nukex",
     "variant": "{version}",
     "search_path":{
         "linux": {
             "prefix":["/", "usr","local","Nuke.*"],
             "expression":["Nuke\\d.+"],
-            "version_expression": "Nuke(?P<version>.*)\\/.+$"
+            "version_expression": "Nuke(?P<version>.*)\\/.+$",
+            "launch_arguments": ["--nukex"]
+
         },
         "windows": {
             "prefix":["C:\\", "Program Files.*"],
             "expression":["Nuke.*", "Nuke\\d.+.exe"],
-            "version_expression": "(?P<version>[\\d.]+[vabc]+[\\dvabc.]*)"
-
+            "version_expression": "(?P<version>[\\d.]+[vabc]+[\\dvabc.]*)",
+            "launch_arguments": ["--nukex"]
         },
         "darwin": {
             "prefix":["/", "Applications"],
-            "expression": ["Nuke.*", "Nuke\\d[\\w.]+.app"]
+            "expression": ["Nuke.*", "NukeX\\d[\\w.]+.app"]
         }
     }
  }
