@@ -556,19 +556,19 @@ class ApplicationLauncher(object):
 
 class ApplicationLaunchAction(BaseAction):
     context = []
-    priority = sys.maxsize  # lower possible priority
 
     @property
     def session(self):
         '''Return convenient exposure of the self._session reference.'''
         return self._session
 
-    def __init__(self, session, application_store, launcher):
+    def __init__(self, session, application_store, launcher, priority=sys.maxsize):
         super(ApplicationLaunchAction, self).__init__(session)
 
         self.logger = logging.getLogger(
             __name__ + '.' + self.__class__.__name__
         )
+        self.priority = priority
 
         self.application_store = application_store
         self.launcher = launcher
