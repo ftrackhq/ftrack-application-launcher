@@ -1,6 +1,6 @@
 {
-    "discoverable_in": ["TypedContext"],
-    "identifier": "com.ftrack.maya-launcher",
+    "context": ["task"],
+    "identifier": "ftrack-connect-launch-maya",
     "applicationIdentifier":"maya_{version}",
     "label": "Maya",
     "icon": "maya",

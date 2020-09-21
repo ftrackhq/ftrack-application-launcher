@@ -550,7 +550,7 @@ class ApplicationLauncher(object):
 
 
 class ApplicationLaunchAction(BaseAction):
-    context_type = []
+    context = []
 
     @property
     def session(self):
@@ -580,14 +580,15 @@ class ApplicationLaunchAction(BaseAction):
             return False
 
         entity_type, entity_id = entities[0]
-        if entity_type in self.context_type:
+        if entity_type in self.context:
             return True
 
         return False
 
     def _discover(self, event):
-        entities, event = self._translate_event(self.session, event)
-        if not self.validate_selection(entities):
+        if not self.validate_selection(
+            event['data'].get('selection', [])
+        ):
             return
 
         items = []
@@ -626,13 +627,6 @@ class ApplicationLaunchAction(BaseAction):
             event['data'].get('selection', [])
         ):
             return
-
-        application_identifier = (
-            event['data']['applicationIdentifier']
-        )
-
-        context = event['data'].copy()
-        context['source'] = event['source']
 
         application_identifier = event['data']['applicationIdentifier']
         context = event['data'].copy()

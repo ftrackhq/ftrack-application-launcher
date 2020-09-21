@@ -2,12 +2,10 @@
 # :copyright: Copyright (c) 2015 ftrack
 
 import os
-import re
 import shutil
 
 from pkg_resources import parse_version
-from setuptools.command.test import test as TestCommand
-from setuptools import setup, find_packages, Command
+from setuptools import Command
 import pip
 
 if parse_version(pip.__version__) < parse_version('19.3.0'):

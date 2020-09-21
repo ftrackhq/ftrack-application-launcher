@@ -12,12 +12,12 @@ class DiscoverApplications(object):
         return platform.system().lower()
 
     def __init__(self, session, applications_config_path):
-        print('initialising discover application')
+        super(DiscoverApplications, self).__init__()
         self._actions = []
 
         self._session = session
         configurations = self._sarch_configurations(applications_config_path)
-        stores = self._build_stores(configurations)
+        self._build_launchers(configurations)
 
     def _sarch_configurations(self, config_path):
         if not os.path.exists(config_path):
@@ -25,12 +25,15 @@ class DiscoverApplications(object):
         )
 
         files = os.listdir(config_path)
-        filtered_files = [open(os.path.join(config_path, config), 'r').read() for config in files if config.endswith('json')]
+        filtered_files = [
+            open(os.path.join(config_path, config), 'r').read()
+            for config in files
+            if config.endswith('json')
+        ]
         loaded_filtered_files = map(json.loads, filtered_files)
-        print(loaded_filtered_files)
         return loaded_filtered_files
 
-    def _build_stores(self, configurations):
+    def _build_launchers(self, configurations):
         for config in configurations:
             store = ApplicationStore(self._session)
             # extract data from app config
@@ -55,7 +58,7 @@ class DiscoverApplications(object):
             Action.variant = config['variant']
             Action.identifier = config['identifier']
             action = Action(self._session, store, launcher)
-            action.context_type = config['discoverable_in']
+            action.context_type = config['context']
             self._actions.append(action)
 
     def register(self):
