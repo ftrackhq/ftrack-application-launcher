@@ -44,9 +44,10 @@ class DiscoverApplications(object):
             applications = store._searchFilesystem(
                 expression=prefix + expression,
                 label=config['label'],
-                applicationIdentifier = config['applicationIdentifier'],
+                applicationIdentifier=config['applicationIdentifier'],
                 icon=config['icon'],
-                variant=config['variant']
+                variant=config['variant'],
+                launchArguments=config.get('launch_arguments')
             )
 
             store.applications = applications
