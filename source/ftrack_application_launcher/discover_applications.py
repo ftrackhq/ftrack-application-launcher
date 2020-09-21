@@ -16,10 +16,10 @@ class DiscoverApplications(object):
         self._actions = []
 
         self._session = session
-        configurations = self._sarch_configurations(applications_config_path)
+        configurations = self._parse_configurations(applications_config_path)
         self._build_launchers(configurations)
 
-    def _sarch_configurations(self, config_path):
+    def _parse_configurations(self, config_path):
         if not os.path.exists(config_path):
             raise ValueError('{} does not exist'.format(config_path)
         )

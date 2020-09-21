@@ -556,6 +556,7 @@ class ApplicationLauncher(object):
 
 class ApplicationLaunchAction(BaseAction):
     context = []
+    priority = sys.maxsize  # lower possible priority
 
     @property
     def session(self):
@@ -655,7 +656,8 @@ class ApplicationLaunchAction(BaseAction):
             'topic=ftrack.action.discover and source.user.username={0}'.format(
                 getpass.getuser()
             ),
-            self._discover
+            self._discover,
+            priority=self.priority
         )
 
         self.session.event_hub.subscribe(
@@ -663,5 +665,6 @@ class ApplicationLaunchAction(BaseAction):
             'and data.actionIdentifier={1}'.format(
                 getpass.getuser(), self.identifier
             ),
-            self._launch
+            self._launch,
+            priority=self.priority
         )
