@@ -409,6 +409,7 @@ class ApplicationLauncher(object):
 
         '''
         command = None
+        context = context or {}
 
         if sys.platform in ('win32', 'linux2'):
             command = [application['path']]
