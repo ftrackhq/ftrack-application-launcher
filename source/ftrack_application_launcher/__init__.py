@@ -573,21 +573,26 @@ class ApplicationLaunchAction(BaseAction):
         Utility method to check *entities* validity.
 
         '''
-        if not self.context_type:
+        if not self.context:
             raise ValueError('No valid context type set for discovery')
 
         if not entities:
             return False
 
         entity_type, entity_id = entities[0]
-        if entity_type in self.context:
+        resolved_entity_type = self.session.get(entity_type, entity_id).entity_type
+
+        if resolved_entity_type in self.context:
             return True
 
         return False
 
     def _discover(self, event):
+
+        entities, event = self._translate_event(self.session, event)
+
         if not self.validate_selection(
-            event['data'].get('selection', [])
+            entities
         ):
             return
 
@@ -623,8 +628,10 @@ class ApplicationLaunchAction(BaseAction):
         '''
         event.stop()
 
+        entities, event = self._translate_event(self.session, event)
+
         if not self.validate_selection(
-            event['data'].get('selection', [])
+            entities
         ):
             return
 

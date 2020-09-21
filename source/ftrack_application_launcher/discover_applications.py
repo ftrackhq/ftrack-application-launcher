@@ -58,7 +58,7 @@ class DiscoverApplications(object):
             Action.variant = config['variant']
             Action.identifier = config['identifier']
             action = Action(self._session, store, launcher)
-            action.context_type = config['context']
+            action.context = config['context']
             self._actions.append(action)
 
     def register(self):

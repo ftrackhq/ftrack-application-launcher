@@ -1,5 +1,5 @@
 {
-    "context": ["task"],
+    "context": ["Task"],
     "identifier": "ftrack-connect-launch-maya",
     "applicationIdentifier":"maya_{version}",
     "label": "Maya",
