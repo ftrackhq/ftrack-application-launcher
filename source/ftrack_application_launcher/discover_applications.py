@@ -32,11 +32,8 @@ class DiscoverApplications(object):
 
     def _build_stores(self, configurations):
         for config in configurations:
-            print('using config: {}'.format(config))
-            applications = []
             store = ApplicationStore(self._session)
             # extract data from app config
-            applicationIdentifier = config['applicationIdentifier']
             search_path = config['search_path'][self.current_os]
             prefix = search_path['prefix']
             expression = search_path['expression']

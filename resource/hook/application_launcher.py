@@ -9,10 +9,6 @@ sys.path.append(sources)
 import ftrack_api
 from ftrack_application_launcher.discover_applications import DiscoverApplications
 
-configs = os.environ.setdefault(
-    'FTRACK_APPLICATION_LAUNCHER_CONFIG_PATH',
-    os.path.abspath(os.path.join('resource', 'config'))
-)
 
 def register(api_object, **kw):
     '''Register hooks.'''
@@ -23,7 +19,10 @@ def register(api_object, **kw):
     if not isinstance(api_object, ftrack_api.Session):
         return
 
-
+    configs = os.environ.setdefault(
+        'FTRACK_APPLICATION_LAUNCHER_CONFIG_PATH',
+        os.path.abspath(os.path.join(cwd, '..', 'config'))
+    )
 
     print('using config path: {}'.format(configs))
     # Create store containing applications.

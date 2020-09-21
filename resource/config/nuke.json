@@ -1,0 +1,26 @@
+{
+    "discoverable_in": ["TypedContext"],
+    "identifier": "com.ftrack.nuke-launcher",
+    "applicationIdentifier":"nuke_{version}",
+    "label": "Nuke",
+    "icon": "nuke",
+    "variant": "{version}",
+    "search_path":{
+        "linux": {
+            "prefix":["/", "usr","local","Nuke.*"],
+            "expression":["Nuke\\d.+"],
+            "version_expression": "maya(?P<version>\\d{4})"
+        },
+        "windows": {
+            "prefix":["C:\\", "Program Files.*"],
+            "expression":["Nuke.*", "Nuke\\d.+.exe"],
+            "version_expression": "(?P<version>[\\d.]+[vabc]+[\\dvabc.]*)"
+
+        },
+        "darwin": {
+            "prefix":["/", "Applications"],
+            "expression": ["Nuke.*", "Nuke\\d[\\w.]+.app"]
+        }
+    }
+ }
+ 

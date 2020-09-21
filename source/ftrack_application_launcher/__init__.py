@@ -592,7 +592,6 @@ class ApplicationLaunchAction(BaseAction):
 
         items = []
         applications = self.application_store.applications
-        print('AAAA {}'.format(applications))
 
         applications = sorted(
             applications, key=lambda application: application['label']
