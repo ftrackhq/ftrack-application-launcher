@@ -423,9 +423,13 @@ class ApplicationLauncher(object):
             )
 
         # Add any extra launch arguments if specified.
-        launchArguments = context.get('launchArguments')
-        if launchArguments:
-            command.extend(launchArguments)
+        AppLaunchArguments = application.get('launchArguments')
+        if AppLaunchArguments:
+            command.extend(AppLaunchArguments)
+
+        CtxApplaunchArguments = context.get('launchArguments')
+        if CtxApplaunchArguments:
+            command.extend(CtxApplaunchArguments)
 
         return command
 
