@@ -16,6 +16,10 @@ from distutils.version import LooseVersion
 
 import ftrack_api
 from ftrack_action_handler.action import BaseAction
+from ftrack_application_launcher.configure_logging import configure_logging
+
+
+configure_logging(__name__)
 
 
 #: Default expression to match version component of executable path.
@@ -556,12 +560,15 @@ class ApplicationLauncher(object):
 
 class ApplicationLaunchAction(BaseAction):
 
+    def __repr__(self):
+        return "<{}:{}:{}>".format(self.label, self.variant, self.identifier)
+
     @property
     def session(self):
         '''Return convenient exposure of the self._session reference.'''
         return self._session
 
-    def __init__(self, session, application_store, launcher, context, priority=0):
+    def __init__(self, session, application_store, launcher, context, priority=sys.maxint):
         super(ApplicationLaunchAction, self).__init__(session)
 
         self.logger = logging.getLogger(

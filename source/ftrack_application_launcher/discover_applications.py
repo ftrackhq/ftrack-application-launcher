@@ -2,6 +2,7 @@ import sys
 import os
 import json
 import platform
+import logging
 from ftrack_application_launcher import ApplicationStore, ApplicationLaunchAction, ApplicationLauncher
 
 
@@ -13,6 +14,9 @@ class DiscoverApplications(object):
 
     def __init__(self, session, applications_config_path):
         super(DiscoverApplications, self).__init__()
+        self.logger = logging.getLogger(
+            __name__ + '.' + self.__class__.__name__
+        )
         self._actions = []
 
         self._session = session
@@ -49,7 +53,7 @@ class DiscoverApplications(object):
                 variant=config['variant'],
                 launchArguments=config.get('launch_arguments')
             )
-
+            self.logger.info('Discovered applications {}'.format(applications))
             store.applications = applications
 
             launcher = ApplicationLauncher(store)
@@ -59,6 +63,8 @@ class DiscoverApplications(object):
             Action.variant = config['variant']
             Action.identifier = config['identifier']
             action = Action(self._session, store, launcher, config['context'])
+            self.logger.info('Creating App launcher {}'.format(action))
+
             self._actions.append(action)
 
     def register(self):
