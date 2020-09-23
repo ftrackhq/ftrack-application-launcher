@@ -559,23 +559,23 @@ class ApplicationLauncher(object):
 
 
 class ApplicationLaunchAction(BaseAction):
+    context = []
 
     def __repr__(self):
-        return "<{}:{}:{}>".format(self.label, self.variant, self.identifier)
+        return "<label:{}|id:{}|ctx:{}>".format(self.label, self.identifier, ' '.join(self.context))
 
     @property
     def session(self):
         '''Return convenient exposure of the self._session reference.'''
         return self._session
 
-    def __init__(self, session, application_store, launcher, context, priority=sys.maxint):
+    def __init__(self, session, application_store, launcher,priority=sys.maxint):
         super(ApplicationLaunchAction, self).__init__(session)
 
         self.logger = logging.getLogger(
             __name__ + '.' + self.__class__.__name__
         )
         self.priority = priority
-        self.context = context or []
         self.application_store = application_store
         self.launcher = launcher
 

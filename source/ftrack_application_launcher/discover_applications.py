@@ -62,7 +62,8 @@ class DiscoverApplications(object):
             Action.label = config['label']
             Action.variant = config['variant']
             Action.identifier = config['identifier']
-            action = Action(self._session, store, launcher, config['context'])
+            Action.context = config['context']
+            action = Action(self._session, store, launcher)
             self.logger.info('Creating App launcher {}'.format(action))
 
             self._actions.append(action)
