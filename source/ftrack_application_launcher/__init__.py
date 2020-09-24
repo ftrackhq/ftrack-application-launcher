@@ -518,12 +518,27 @@ class ApplicationLauncher(object):
         )
 
         egg_dependencies = [egg_path for egg_path in sys.path if egg_path.endswith('.egg')]
+        self.logger.debug("egg_dependencies : {}".format(egg_dependencies))
+        #This is returning an empty list for now
 
         for dependency in egg_dependencies:
             self.logger.debug('Adding {} to PYTHOPATH'.format(dependency))
             environment = prependPath(
                 dependency, 'PYTHONPATH', environment
             )
+
+        laucher_dependencies = os.path.normpath(
+            os.path.join(
+                os.path.abspath(
+                    os.path.dirname(__file__)
+                ),
+                '..'
+            )
+        )
+        self.logger.debug('Adding {} to PYTHOPATH'.format(laucher_dependencies))
+        environment = prependPath(
+            laucher_dependencies, 'PYTHONPATH', environment
+        )
 
         # Add ftrack connect event to environment.
         if context is not None:
