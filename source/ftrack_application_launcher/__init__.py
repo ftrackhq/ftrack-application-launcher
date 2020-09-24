@@ -179,6 +179,7 @@ class ApplicationStore(object):
         *description* can be used to provide a helpful description for the
         user.
         '''
+
         applications = []
 
         if versionExpression is None:
@@ -359,7 +360,7 @@ class ApplicationLauncher(object):
                 context=context
             )
 
-            self.session.event_hub.publish(
+            results = self.session.event_hub.publish(
                 ftrack_api.event.base.Event(
                     topic='ftrack.connect.application.launch',
                     data=launchData
@@ -367,12 +368,17 @@ class ApplicationLauncher(object):
                 synchronous=True
             )
 
+            env_dict = {}
+            for result in results:
+                env_dict.update(result.get('env', {}))
+
             # Reset variables passed through the hook since they might
             # have been replaced by a handler.
             command = launchData['command']
             options = launchData['options']
             application = launchData['application']
             context = launchData['context']
+            options['env'].update(env_dict)
 
             self.logger.debug(
                 'Launching {0} with options {1}'.format(command, options)
@@ -569,15 +575,21 @@ class ApplicationLaunchAction(BaseAction):
         '''Return convenient exposure of the self._session reference.'''
         return self._session
 
-    def __init__(self, session, application_store, launcher,priority=sys.maxint):
-        super(ApplicationLaunchAction, self).__init__(session)
+    def __init__(self, session, application_store, launcher, priority=sys.maxint):
 
         self.logger = logging.getLogger(
             __name__ + '.' + self.__class__.__name__
         )
+        self._session = session
         self.priority = priority
         self.application_store = application_store
         self.launcher = launcher
+
+    def set_application(self, label, variant, identifier, context):
+        self.label = label
+        self.variant = variant
+        self.identifier = identifier
+        self.context = context
 
     def validate_selection(self, entities):
         '''Return True if the selection is valid.
@@ -657,7 +669,7 @@ class ApplicationLaunchAction(BaseAction):
 
     def register(self):
         '''Register discover actions on logged in user.'''
-        
+
         self.session.event_hub.subscribe(
             'topic=ftrack.action.discover and source.user.username={0}'.format(
                 getpass.getuser()
