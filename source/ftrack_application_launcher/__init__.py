@@ -590,7 +590,16 @@ class ApplicationLaunchAction(BaseAction):
         '''Return convenient exposure of the self._session reference.'''
         return self._session
 
-    def __init__(self, session, application_store, launcher, priority=sys.maxint):
+    def __init__(
+            self, session, application_store, launcher, label, variant,
+            identifier, context, priority=sys.maxint
+    ):
+        self.label = label
+        self.variant = variant
+        self.identifier = identifier
+        self.context = context
+
+        super(ApplicationLaunchAction, self).__init__(session)
 
         self.logger = logging.getLogger(
             __name__ + '.' + self.__class__.__name__
@@ -599,12 +608,6 @@ class ApplicationLaunchAction(BaseAction):
         self.priority = priority
         self.application_store = application_store
         self.launcher = launcher
-
-    def set_application(self, label, variant, identifier, context):
-        self.label = label
-        self.variant = variant
-        self.identifier = identifier
-        self.context = context
 
     def validate_selection(self, entities):
         '''Return True if the selection is valid.
