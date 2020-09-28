@@ -32,7 +32,7 @@ def _send_event(event_name, metadata=None):
         _log_usage_session = get_session()
 
     try:
-        _log_usage_session._call([{
+        _log_usage_session.call([{
             'action': '_track_usage',
             'data': {
                 'type': 'event',
