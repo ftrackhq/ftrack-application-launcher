@@ -370,6 +370,11 @@ class ApplicationLauncher(object):
 
             env_dict = {}
             for result in results:
+                self.logger.debug(
+                    'Discovered environments for cwd: {} \n env: {}'.format(
+                        result.get('cwd'), result.get('env')
+                    )
+                )
                 env_dict.update(result.get('env', {}))
 
             # Reset variables passed through the hook since they might
