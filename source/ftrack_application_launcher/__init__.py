@@ -522,15 +522,16 @@ class ApplicationLauncher(object):
             'FTRACK_EVENT_SERVER', environment
         )
 
-        egg_dependencies = [egg_path for egg_path in sys.path if egg_path.endswith('.egg')]
-        self.logger.debug("egg_dependencies : {}".format(egg_dependencies))
-        #This is returning an empty list for now
-
-        for dependency in egg_dependencies:
-            self.logger.debug('Adding {} to PYTHOPATH'.format(dependency))
-            environment = prependPath(
-                dependency, 'PYTHONPATH', environment
-            )
+        # TODO: Check if this was needed in order to get connect dependencies....
+        # egg_dependencies = [egg_path for egg_path in sys.path if egg_path.endswith('.egg')]
+        # self.logger.debug("egg_dependencies : {}".format(egg_dependencies))
+        # #This is returning an empty list for now
+        # 
+        # for dependency in egg_dependencies:
+        #     self.logger.debug('Adding {} to PYTHOPATH'.format(dependency))
+        #     environment = prependPath(
+        #         dependency, 'PYTHONPATH', environment
+        #     )
 
         laucher_dependencies = os.path.normpath(
             os.path.join(
@@ -585,10 +586,13 @@ class ApplicationLauncher(object):
 
 
 class ApplicationLaunchAction(BaseAction):
-    context = []
 
     def __repr__(self):
-        return "<label:{}|id:{}|ctx:{}>".format(self.label, self.identifier, ' '.join(self.context))
+        return "<label:{}|id:{}|ctx:{}>".format(
+            self.label,
+            self.identifier,
+            ' '.join(self.context)
+        )
 
     @property
     def session(self):
