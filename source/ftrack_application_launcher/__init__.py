@@ -579,7 +579,7 @@ class ApplicationLauncher(object):
                 '..'
             )
         )
-        self.logger.debug('Adding {} to PYTHOPATH'.format(laucher_dependencies))
+
         environment = prependPath(
             laucher_dependencies, 'PYTHONPATH', environment
         )

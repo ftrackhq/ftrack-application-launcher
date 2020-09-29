@@ -2,6 +2,7 @@ import sys
 import os
 import json
 import platform
+import pprint
 import logging
 from ftrack_application_launcher import ApplicationStore, ApplicationLaunchAction, ApplicationLauncher
 
@@ -58,10 +59,15 @@ class DiscoverApplications(object):
 
             # add extra information to the launcher
             for application in applications:
-                application['launchWithLatest'] = launch_with_latest
-                application['extension'] = extension
+                if launch_with_latest and extension:
+                    application['launchWithLatest'] = launch_with_latest
+                    application['extension'] = extension
 
-            self.logger.info('Discovered applications {}'.format(applications))
+            self.logger.info(
+                'Discovered applications {}'.format(
+                    pprint.pformat(applications)
+                )
+            )
             store.applications = applications
 
             launcher = ApplicationLauncher(store)

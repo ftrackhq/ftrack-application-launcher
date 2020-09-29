@@ -1,10 +1,10 @@
 {
-    "context": ["Task"],
+    "context": ["Task", "AssetVersion"],
     "identifier": "ftrack-connect-launch-adobe",
     "applicationIdentifier":"photoshop_cc_{version}",
     "label": "Photoshop",
     "icon": "photoshop",
-    "variant": "CC {version}",
+    "variant": "CC {version} with latest version",
     "extensions": ["psd"],
     "search_path":{
         "windows": {
