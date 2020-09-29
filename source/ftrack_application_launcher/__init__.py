@@ -11,6 +11,8 @@ import base64
 import getpass
 import json
 import logging
+import tempfile
+import shutil
 from operator import itemgetter
 from distutils.version import LooseVersion
 
@@ -295,6 +297,21 @@ class ApplicationLauncher(object):
         self.applicationStore = applicationStore
         self._session = applicationStore.session
 
+    def _getTemporaryCopy(self, filePath):
+        '''Copy file at *filePath* to a temporary directory and return path.
+
+        .. note::
+
+            The copied file does not retain the original files meta data or
+            permissions.
+        '''
+        temporaryDirectory = tempfile.mkdtemp(prefix='ftrack_connect')
+        targetPath = os.path.join(
+            temporaryDirectory, os.path.basename(filePath)
+        )
+        shutil.copyfile(filePath, targetPath)
+        return targetPath
+
     def launch(self, applicationIdentifier, context=None):
         '''Launch application matching *applicationIdentifier*.
 
@@ -447,6 +464,38 @@ class ApplicationLauncher(object):
         if CtxApplaunchArguments:
             command.extend(CtxApplaunchArguments)
 
+        if command is not None and context is not None:
+            self.logger.debug(
+                u'Launching action with context {0!r}'.format(context)
+            )
+            selection = context.get('selection')
+            extension = context.get('extension')
+            if selection and context.get('launchWithLatest', False) and extension:
+                entity = selection[0]
+                component = None
+
+                component, component_path = self._findLatestComponent(
+                    entity['entityId'],
+                    entity['entityType'],
+                    extension
+                )
+
+                if component is not None:
+                    filePath = self._getTemporaryCopy(
+                        component_path
+                    )
+                    self.logger.info(
+                        u'Launching application with file {0!r}'.format(
+                            filePath
+                        )
+                    )
+                    command.append(filePath)
+                else:
+                    self.logger.warning(
+                        'Unable to find an appropriate component when '
+                        'launching with latest version.'
+                    )
+
         return command
 
     def _findLatestComponent(self, entityId, entityType, extension=''):
@@ -495,7 +544,7 @@ class ApplicationLauncher(object):
                         latestComponent = component
                         lastDate = version.getDate()
 
-        return latestComponent
+        return latestComponent, fileSystemPath
 
     def _getApplicationEnvironment(
         self, application, context=None
@@ -521,17 +570,6 @@ class ApplicationLauncher(object):
             self.session.event_hub.get_server_url(),
             'FTRACK_EVENT_SERVER', environment
         )
-
-        # TODO: Check if this was needed in order to get connect dependencies....
-        # egg_dependencies = [egg_path for egg_path in sys.path if egg_path.endswith('.egg')]
-        # self.logger.debug("egg_dependencies : {}".format(egg_dependencies))
-        # #This is returning an empty list for now
-        # 
-        # for dependency in egg_dependencies:
-        #     self.logger.debug('Adding {} to PYTHOPATH'.format(dependency))
-        #     environment = prependPath(
-        #         dependency, 'PYTHONPATH', environment
-        #     )
 
         laucher_dependencies = os.path.normpath(
             os.path.join(
@@ -689,6 +727,32 @@ class ApplicationLaunchAction(BaseAction):
         application_identifier = event['data']['applicationIdentifier']
         context = event['data'].copy()
         context['source'] = event['source']
+        selection = context.get('selection', [])
+
+        # If the selected entity is an asset version, change the selection
+        # to parent task/shot instead since it is not possible to publish
+        # to an asset version in ftrack connect.
+
+        entity_type, entity_id = entities[0]
+        resolved_entity = self.session.get(entity_type, entity_id)
+
+        if (
+            selection and
+            resolved_entity.entity_type == 'AssetVersion'
+        ):
+
+            entityId = resolved_entity.get('task_id')
+
+            if not entityId:
+                asset = resolved_entity['asset']
+                entity = asset['parent']
+
+                entityId = entity['id']
+
+            context['selection'] = [{
+                'entityId': entityId,
+                'entityType': 'task'
+            }]
 
         return self.launcher.launch(
             application_identifier, context

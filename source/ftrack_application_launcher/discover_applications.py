@@ -44,6 +44,8 @@ class DiscoverApplications(object):
             search_path = config['search_path'][self.current_os]
             prefix = search_path['prefix']
             expression = search_path['expression']
+            launch_with_latest = config.get('launch_with_latest', False)
+            extension = config.get('extension')
 
             applications = store._searchFilesystem(
                 expression=prefix + expression,
@@ -51,16 +53,27 @@ class DiscoverApplications(object):
                 applicationIdentifier=config['applicationIdentifier'],
                 icon=config['icon'],
                 variant=config['variant'],
-                launchArguments=config.get('launch_arguments')
+                launchArguments=config.get('launch_arguments'),
             )
+
+            # add extra information to the launcher
+            for application in applications:
+                application['launchWithLatest'] = launch_with_latest
+                application['extension'] = extension
+
             self.logger.info('Discovered applications {}'.format(applications))
             store.applications = applications
 
             launcher = ApplicationLauncher(store)
 
             action = ApplicationLaunchAction(
-                self._session, store, launcher, config['label'],
-                config['variant'], config['identifier'], config['context']
+                self._session,
+                store,
+                launcher,
+                config['label'],
+                config['variant'],
+                config['identifier'],
+                config['context']
             )
 
             self.logger.info('Creating App launcher {}'.format(action))
