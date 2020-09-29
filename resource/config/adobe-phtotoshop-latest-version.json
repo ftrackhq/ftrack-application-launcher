@@ -5,7 +5,8 @@
     "label": "Photoshop",
     "icon": "photoshop",
     "variant": "CC {version} with latest version",
-    "extensions": ["psd"],
+    "launch_with_latest":true,
+    "extension": "psd",
     "search_path":{
         "windows": {
             "prefix":["C:\\", "Program Files.*"],

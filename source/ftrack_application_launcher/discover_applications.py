@@ -56,7 +56,7 @@ class DiscoverApplications(object):
                 variant=config['variant'],
                 launchArguments=config.get('launch_arguments'),
             )
-
+            self.logger.info('launch with latest: {}, extension {}'.format(launch_with_latest, extension))
             # add extra information to the launcher
             for application in applications:
                 if launch_with_latest and extension:

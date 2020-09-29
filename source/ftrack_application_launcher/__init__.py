@@ -466,7 +466,9 @@ class ApplicationLauncher(object):
 
         if command is not None and context is not None:
             self.logger.debug(
-                u'Launching action with context {0!r}'.format(context)
+                u'Launching action with context {0}'.format(
+                    pprint.pformat(context)
+                )
             )
             selection = context.get('selection')
             extension = context.get('extension')
@@ -498,6 +500,7 @@ class ApplicationLauncher(object):
 
         return command
 
+
     def _findLatestComponent(self, entityId, entityType, extension=''):
         '''Return latest published component from *entityId* and *entityType*.
 
@@ -505,6 +508,9 @@ class ApplicationLauncher(object):
         their file system path.
 
         '''
+        self.logger.info('Looking for latest version of {} {} {}'.format(
+            entityId, entityType, extension
+        ))
         if entityType == 'task':
             versions = self.session.query(
                 'select components from AssetVersion where task.id is {}'.format(
@@ -539,10 +545,10 @@ class ApplicationLauncher(object):
                 if fileSystemPath and fileSystemPath.endswith(extension):
                     if (
                         lastDate is None or
-                        version.getDate() > lastDate
+                        version['date'] > lastDate
                     ):
                         latestComponent = component
-                        lastDate = version.getDate()
+                        lastDate = version['date']
 
         return latestComponent, fileSystemPath
 
@@ -700,7 +706,9 @@ class ApplicationLaunchAction(BaseAction):
                 'label': label,
                 'icon': application.get('icon', 'default'),
                 'variant': application.get('variant', None),
-                'applicationIdentifier': application_identifier
+                'applicationIdentifier': application_identifier,
+                'extension': application.get('extension'),
+                'launchWithLatest': application.get('launchWithLatest', False)
             })
 
         return {

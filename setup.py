@@ -133,7 +133,7 @@ setup(
         'write_to_template': version_template,
     },
     install_requires=[
-        'ftrack-python-api >= 1, < 3',
+        'ftrack-python-api >= 2, < 3',
         'future >=0.16.0, < 1',
         'ftrack-action-handler'
     ],
