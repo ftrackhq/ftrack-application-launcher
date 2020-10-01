@@ -522,17 +522,6 @@ class ApplicationLauncher(object):
             'FTRACK_EVENT_SERVER', environment
         )
 
-        # TODO: Check if this was needed in order to get connect dependencies....
-        # egg_dependencies = [egg_path for egg_path in sys.path if egg_path.endswith('.egg')]
-        # self.logger.debug("egg_dependencies : {}".format(egg_dependencies))
-        # #This is returning an empty list for now
-        # 
-        # for dependency in egg_dependencies:
-        #     self.logger.debug('Adding {} to PYTHOPATH'.format(dependency))
-        #     environment = prependPath(
-        #         dependency, 'PYTHONPATH', environment
-        #     )
-
         laucher_dependencies = os.path.normpath(
             os.path.join(
                 os.path.abspath(
@@ -586,6 +575,7 @@ class ApplicationLauncher(object):
 
 
 class ApplicationLaunchAction(BaseAction):
+    context = []
 
     def __repr__(self):
         return "<label:{}|id:{}|ctx:{}>".format(
@@ -600,20 +590,14 @@ class ApplicationLaunchAction(BaseAction):
         return self._session
 
     def __init__(
-            self, session, application_store, launcher, label, variant,
-            identifier, context, priority=sys.maxint
+            self, session, application_store, launcher, priority=sys.maxint
     ):
-        self.label = label
-        self.variant = variant
-        self.identifier = identifier
-        self.context = context
-
         super(ApplicationLaunchAction, self).__init__(session)
 
         self.logger = logging.getLogger(
             __name__ + '.' + self.__class__.__name__
         )
-        self._session = session
+
         self.priority = priority
         self.application_store = application_store
         self.launcher = launcher
@@ -662,7 +646,7 @@ class ApplicationLaunchAction(BaseAction):
                 'label': label,
                 'icon': application.get('icon', 'default'),
                 'variant': application.get('variant', None),
-                'applicationIdentifier': application_identifier
+                'applicationIdentifier': application_identifier,
             })
 
         return {
