@@ -1,6 +1,6 @@
 import os
 import sys
-
+import logging
 
 cwd = os.path.dirname(__file__)
 sources = os.path.abspath(os.path.join(cwd, '..', 'dependencies'))
@@ -24,7 +24,18 @@ def register(api_object, **kw):
         os.path.abspath(os.path.join(cwd, '..', 'config'))
     )
 
-    print('using config path: {}'.format(configs))
+    logging.info('using config path: {}'.format(configs))
     # Create store containing applications.
     applications = DiscoverApplications(api_object, configs)
     applications.register()
+
+
+if __name__ == "__main__":
+    session = ftrack_api.Session(auto_connect_event_hub=True)
+    logging.info(
+        'Registered application launchers and listening for events. Use Ctrl-C to abort.'
+    )
+    register(session)
+    session.event_hub.wait()
+
+
