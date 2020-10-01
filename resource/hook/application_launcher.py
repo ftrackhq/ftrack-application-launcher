@@ -9,6 +9,8 @@ sys.path.append(sources)
 import ftrack_api
 from ftrack_application_launcher.discover_applications import DiscoverApplications
 
+logging.basicConfig(level=logging.INFO)
+
 
 def register(api_object, **kw):
     '''Register hooks.'''
@@ -32,10 +34,10 @@ def register(api_object, **kw):
 
 if __name__ == "__main__":
     session = ftrack_api.Session(auto_connect_event_hub=True)
+    register(session)
     logging.info(
         'Registered application launchers and listening for events. Use Ctrl-C to abort.'
     )
-    register(session)
     session.event_hub.wait()
 
 
