@@ -21,14 +21,15 @@ def register(api_object, **kw):
     if not isinstance(api_object, ftrack_api.Session):
         return
 
-    configs = os.environ.setdefault(
-        'FTRACK_APPLICATION_LAUNCHER_CONFIG_PATH',
+    # Ensure the config path is in form of a list
+    config_paths = os.environ.setdefault(
+        'FTRACK_APPLICATION_LAUNCHER_CONFIG_PATHS',
         os.path.abspath(os.path.join(cwd, '..', 'config'))
-    )
+    ).split(os.path.pathsep)
 
-    logging.info('using config path: {}'.format(configs))
+    logging.info('using config path: {}'.format(config_paths))
     # Create store containing applications.
-    applications = DiscoverApplications(api_object, configs)
+    applications = DiscoverApplications(api_object, config_paths)
     applications.register()
 
 
