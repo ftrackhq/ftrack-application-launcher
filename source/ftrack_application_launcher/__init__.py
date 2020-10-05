@@ -11,6 +11,7 @@ import base64
 import getpass
 import json
 import logging
+import platform
 from operator import itemgetter
 from distutils.version import LooseVersion
 
@@ -647,6 +648,7 @@ class ApplicationLaunchAction(BaseAction):
                 'icon': application.get('icon', 'default'),
                 'variant': application.get('variant', None),
                 'applicationIdentifier': application_identifier,
+                'node': platform.node()
             })
 
         return {
@@ -682,17 +684,22 @@ class ApplicationLaunchAction(BaseAction):
         '''Register discover actions on logged in user.'''
 
         self.session.event_hub.subscribe(
-            'topic=ftrack.action.discover and source.user.username={0}'.format(
-                self.session.api_user
+            'topic=ftrack.action.discover '
+            'and source.user.username={0}'.format(
+                getpass.getuser()
             ),
             self._discover,
             priority=self.priority
         )
 
         self.session.event_hub.subscribe(
-            'topic=ftrack.action.launch and source.user.username={0} '
-            'and data.actionIdentifier={1}'.format(
-                self.session.api_user , self.identifier
+            'topic=ftrack.action.launch '
+            'and source.user.username={0} '
+            'and data.actionIdentifier={1} '
+            'and data.node={2}'.format(
+                getpass.getuser(), 
+                self.identifier,
+                platform.node()
             ),
             self._launch,
             priority=self.priority
