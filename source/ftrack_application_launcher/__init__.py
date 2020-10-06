@@ -13,6 +13,8 @@ import json
 import logging
 import tempfile
 import shutil
+import platform
+
 from operator import itemgetter
 from distutils.version import LooseVersion
 
@@ -630,6 +632,7 @@ class ApplicationLauncher(object):
 
 
 class ApplicationLaunchAction(BaseAction):
+    context = []
 
     def __repr__(self):
         return "<label:{}|id:{}|ctx:{}>".format(
@@ -644,20 +647,14 @@ class ApplicationLaunchAction(BaseAction):
         return self._session
 
     def __init__(
-            self, session, application_store, launcher, label, variant,
-            identifier, context, priority=sys.maxint
+            self, session, application_store, launcher, priority=sys.maxint
     ):
-        self.label = label
-        self.variant = variant
-        self.identifier = identifier
-        self.context = context
-
         super(ApplicationLaunchAction, self).__init__(session)
 
         self.logger = logging.getLogger(
             __name__ + '.' + self.__class__.__name__
         )
-        self._session = session
+
         self.priority = priority
         self.application_store = application_store
         self.launcher = launcher
@@ -708,7 +705,8 @@ class ApplicationLaunchAction(BaseAction):
                 'variant': application.get('variant', None),
                 'applicationIdentifier': application_identifier,
                 'extension': application.get('extension'),
-                'launchWithLatest': application.get('launchWithLatest', False)
+                'launchWithLatest': application.get('launchWithLatest', False),
+                'node': platform.node()
             })
 
         return {
@@ -770,7 +768,8 @@ class ApplicationLaunchAction(BaseAction):
         '''Register discover actions on logged in user.'''
 
         self.session.event_hub.subscribe(
-            'topic=ftrack.action.discover and source.user.username={0}'.format(
+            'topic=ftrack.action.discover '
+            'and source.user.username={0}'.format(
                 getpass.getuser()
             ),
             self._discover,
@@ -778,9 +777,13 @@ class ApplicationLaunchAction(BaseAction):
         )
 
         self.session.event_hub.subscribe(
-            'topic=ftrack.action.launch and source.user.username={0} '
-            'and data.actionIdentifier={1}'.format(
-                getpass.getuser(), self.identifier
+            'topic=ftrack.action.launch '
+            'and source.user.username={0} '
+            'and data.actionIdentifier={1} '
+            'and data.node={2}'.format(
+                getpass.getuser(), 
+                self.identifier,
+                platform.node()
             ),
             self._launch,
             priority=self.priority
