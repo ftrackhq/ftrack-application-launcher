@@ -19,7 +19,7 @@ class DiscoverApplications(object):
         )
 
         # If a single path is passed by mistake, handle it here.
-        if isinstance(applications_config_paths, basestring):
+        if isinstance(applications_config_paths, str):
             applications_config_paths = [applications_config_paths]
 
         self._actions = []
@@ -73,7 +73,7 @@ class DiscoverApplications(object):
             prefix = search_path['prefix']
             expression = search_path['expression']
 
-            applications = store._searchFilesystem(
+            applications = store._search_filesystem(
                 expression=prefix + expression,
                 label=config['label'],
                 applicationIdentifier=config['applicationIdentifier'],
@@ -96,9 +96,10 @@ class DiscoverApplications(object):
                     'context': config['context']
                 }
             )
-            action = NewAction(self._session, store, launcher)
+            priority = config.get('priority', sys.maxint)
+            action = NewAction(self._session, store, launcher, priority=priority)
 
-            self.logger.info('Creating App launcher {}'.format(action))
+            self.logger.info('Creating App launcher {} with priority {}'.format(action, priority))
 
             self._actions.append(action)
 
