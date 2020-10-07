@@ -32,7 +32,7 @@ DEFAULT_VERSION_EXPRESSION = re.compile(
 )
 
 
-def prependPath(path, key, environment):
+def prepend_path(path, key, environment):
     '''Prepend *path* to *key* in *environment*.'''
     try:
         environment[key] = (
@@ -46,7 +46,7 @@ def prependPath(path, key, environment):
     return environment
 
 
-def appendPath(path, key, environment):
+def append_path(path, key, environment):
     '''Append *path* to *key* in *environment*.'''
     try:
         environment[key] = (
@@ -78,9 +78,9 @@ class ApplicationStore(object):
         self._session = session
 
         # Discover applications and store.
-        self.applications = self._discoverApplications()
+        self.applications = self._discover_applications()
 
-    def getApplication(self, identifier):
+    def get_application(self, identifier):
         '''Return first application with matching *identifier*.
 
         *identifier* may contain a wildcard at the end to match the first
@@ -103,7 +103,7 @@ class ApplicationStore(object):
 
         return None
 
-    def _discoverApplications(self):
+    def _discover_applications(self):
         '''Return a list of applications that can be launched from this host.
 
         An application should be of the form:
@@ -135,10 +135,10 @@ class ApplicationStore(object):
 
         return applications
 
-    def _searchFilesystem(self, expression, label, applicationIdentifier,
-                          versionExpression=None, icon=None,
-                          launchArguments=None, variant='', 
-                          description=None):
+    def _search_filesystem(self, expression, label, applicationIdentifier,
+                           versionExpression=None, icon=None,
+                           launchArguments=None, variant='',
+                           description=None):
         '''
         Return list of applications found in filesystem matching *expression*.
 
@@ -312,7 +312,7 @@ class ApplicationLauncher(object):
         # Look up application.
         applicationIdentifierPattern = applicationIdentifier
 
-        application = self.applicationStore.getApplication(
+        application = self.applicationStore.get_application(
             applicationIdentifierPattern
         )
 
@@ -326,11 +326,11 @@ class ApplicationLauncher(object):
             }
 
         # Construct command and environment.
-        command = self._getApplicationLaunchCommand(application, context)
-        environment = self._getApplicationEnvironment(application, context)
+        command = self._get_application_launch_command(application, context)
+        environment = self._get_application_environment(application, context)
 
         # Environment must contain only strings.
-        self._conformEnvironment(environment)
+        self._conform_environment(environment)
 
         success = True
         message = '{0} application started.'.format(application['label'])
@@ -414,7 +414,7 @@ class ApplicationLauncher(object):
             'message': message
         }
 
-    def _getApplicationLaunchCommand(self, application, context=None):
+    def _get_application_launch_command(self, application, context=None):
         '''Return *application* command based on OS and *context*.
 
         *application* should be a mapping describing the application, as in the
@@ -450,7 +450,7 @@ class ApplicationLauncher(object):
 
         return command
 
-    def _findLatestComponent(self, entityId, entityType, extension=''):
+    def _find_latest_component(self, entityId, entityType, extension=''):
         '''Return latest published component from *entityId* and *entityType*.
 
         *extension* can be used to find suitable components by matching with
@@ -498,7 +498,7 @@ class ApplicationLauncher(object):
 
         return latestComponent
 
-    def _getApplicationEnvironment(
+    def _get_application_environment(
         self, application, context=None
     ):
         '''Return mapping of environment for *application* using *context*.
@@ -518,7 +518,7 @@ class ApplicationLauncher(object):
         environment.pop('FTRACK_EVENT_PLUGIN_PATH', None)
 
         # Add FTRACK_EVENT_SERVER variable.
-        environment = prependPath(
+        environment = prepend_path(
             self.session.event_hub.get_server_url(),
             'FTRACK_EVENT_SERVER', environment
         )
@@ -532,7 +532,7 @@ class ApplicationLauncher(object):
             )
         )
         self.logger.debug('Adding {} to PYTHOPATH'.format(laucher_dependencies))
-        environment = prependPath(
+        environment = prepend_path(
             laucher_dependencies, 'PYTHONPATH', environment
         )
 
@@ -554,7 +554,7 @@ class ApplicationLauncher(object):
 
         return environment
 
-    def _conformEnvironment(self, mapping):
+    def _conform_environment(self, mapping):
         '''Ensure all entries in *mapping* are strings.
 
         .. note::
@@ -567,7 +567,7 @@ class ApplicationLauncher(object):
 
         for key, value in mapping.items():
             if isinstance(value, collections.Mapping):
-                self._conformEnvironment(value)
+                self._conform_environment(value)
             else:
                 value = str(value)
 
