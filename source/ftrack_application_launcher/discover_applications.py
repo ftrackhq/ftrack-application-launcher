@@ -70,6 +70,7 @@ class DiscoverApplications(object):
                 )
                 continue
 
+
             prefix = search_path['prefix']
             expression = search_path['expression']
 
@@ -96,9 +97,10 @@ class DiscoverApplications(object):
                     'context': config['context']
                 }
             )
-            action = NewAction(self._session, store, launcher)
+            priority = config.get('priority', sys.maxint)
+            action = NewAction(self._session, store, launcher, priority=priority)
 
-            self.logger.info('Creating App launcher {}'.format(action))
+            self.logger.info('Creating App launcher {} with priority {}'.format(action, priority))
 
             self._actions.append(action)
 
