@@ -224,6 +224,8 @@ class ApplicationStore(object):
                         path = os.path.join(start, location, entry)
 
                         versionMatch = versionExpression.search(path)
+                        loose_version = LooseVersion('0.0.0')
+
                         if versionMatch:
                             version = versionMatch.group('version')
                             
@@ -236,27 +238,21 @@ class ApplicationStore(object):
                                         version, path
                                     )
                                 )
-                                # If no version is found, let's set it to a default.
-                                loose_version = LooseVersion('0.0.0')
 
-                            applications.append({
-                                'identifier': applicationIdentifier.format(
-                                    version=version
-                                ),
-                                'path': path,
-                                'launchArguments': launchArguments,
-                                'version': loose_version,
-                                'label': label.format(version=version),
-                                'icon': icon,
-                                'variant': variant.format(version=version),
-                                'description': description
-                            })
-                        else:
-                            self.logger.debug(
-                                'Discovered application executable, but it '
-                                'does not appear to o contain required version '
-                                'information: {0}'.format(path)
-                            )
+                        applications.append({
+                            'identifier': applicationIdentifier.format(
+                                version=str(loose_version)
+                            ),
+                            'path': path,
+                            'launchArguments': launchArguments,
+                            'version': loose_version,
+                            'label': label.format(version=str(loose_version)),
+                            'icon': icon,
+                            'variant': variant.format(version=str(loose_version)),
+                            'description': description
+                        })
+
+
 
                 # Don't descend any further as out of patterns to match.
                 del folders[:]
