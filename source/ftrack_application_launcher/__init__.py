@@ -591,7 +591,7 @@ class ApplicationLaunchAction(BaseAction):
         return self._session
 
     def __init__(
-            self, session, application_store, launcher, priority=sys.maxint
+            self, session, application_store, launcher, priority=sys.maxsize
     ):
         super(ApplicationLaunchAction, self).__init__(session)
 

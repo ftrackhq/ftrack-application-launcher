@@ -40,7 +40,7 @@ class DiscoverApplications(object):
 
             files = os.listdir(config_path)
             json_configs = [
-                open(os.path.join(config_path, config), 'r').read()
+                open(os.path.join(config_path, str(config)), 'r').read()
                 for config in files
                 if config.endswith('json')
             ]
@@ -96,7 +96,7 @@ class DiscoverApplications(object):
                     'context': config['context']
                 }
             )
-            priority = config.get('priority', sys.maxint)
+            priority = config.get('priority', sys.maxsize)
             action = NewAction(self._session, store, launcher, priority=priority)
 
             self.logger.info('Creating App launcher {} with priority {}'.format(action, priority))
