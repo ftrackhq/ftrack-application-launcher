@@ -203,7 +203,7 @@ class ApplicationStore(object):
                 .format(start, expression)
             )
 
-        expressions = map(re.compile, pieces)
+        expressions = list(map(re.compile, pieces))
         expressionsCount = len(expressions)
 
         for location, folders, files in os.walk(start, topdown=True, followlinks=True):
