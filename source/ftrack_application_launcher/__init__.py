@@ -624,9 +624,9 @@ class ApplicationLaunchAction(BaseAction):
         return False
 
     def _discover(self, event):
+        self.logger.info('DISCOVERING EE {}'.format(event))
 
         entities, event = self._translate_event(self.session, event)
-
         if not self.validate_selection(
             entities
         ):
