@@ -131,12 +131,6 @@ class ApplicationStore(object):
         elif self.current_os == 'windows':
             prefix = ['C:\\', 'Program Files.*']
 
-        self.logger.debug(
-            'Discovered applications:\n{0}'.format(
-                pprint.pformat(applications)
-            )
-        )
-
         return applications
 
     def _search_filesystem(self, expression, label, applicationIdentifier,
@@ -262,7 +256,9 @@ class ApplicationStore(object):
                 # Don't descend any further as out of patterns to match.
                 del folders[:]
 
-        return sorted(applications, key=itemgetter('version'), reverse=True)
+        results = sorted(applications, key=itemgetter('version'), reverse=True)
+        self.logger.debug('Discovered applications {}'.format(results))
+        return results
 
 
 class ApplicationLauncher(object):
@@ -629,7 +625,6 @@ class ApplicationLaunchAction(BaseAction):
         return False
 
     def _discover(self, event):
-        self.logger.info('DISCOVERING EE {}'.format(event))
 
         entities, event = self._translate_event(self.session, event)
         if not self.validate_selection(

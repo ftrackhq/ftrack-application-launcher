@@ -81,7 +81,6 @@ class DiscoverApplications(object):
                 variant=config['variant'],
                 launchArguments=config.get('launch_arguments')
             )
-            self.logger.info('Discovered applications {}'.format(applications))
             store.applications = applications
 
             launcher = ApplicationLauncher(store)
