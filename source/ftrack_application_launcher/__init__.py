@@ -64,6 +64,10 @@ class ApplicationStore(object):
     '''Discover and store available applications on this host.'''
 
     @property
+    def current_os(self):
+        return platform.system().lower()
+
+    @property
     def session(self):
         '''Return current session.'''
         return self._session
@@ -121,10 +125,10 @@ class ApplicationStore(object):
         '''
         applications = []
 
-        if sys.platform == 'darwin':
+        if self.current_os == 'darwin':
             prefix = ['/', 'Applications']
 
-        elif sys.platform == 'win32':
+        elif self.current_os == 'windows':
             prefix = ['C:\\', 'Program Files.*']
 
         self.logger.debug(
@@ -190,7 +194,8 @@ class ApplicationStore(object):
 
         pieces = expression[:]
         start = pieces.pop(0)
-        if sys.platform == 'win32':
+
+        if self.current_os == 'windows':
             # On Windows C: means current directory so convert roots that look
             # like drive letters to the C:\ format.
             if start and start[-1] == ':':
@@ -269,6 +274,10 @@ class ApplicationLauncher(object):
     '''
 
     @property
+    def current_os(self):
+        return platform.system().lower()
+
+    @property
     def location(self):
         '''Return current location.'''
         return self._session.pick_location()
@@ -345,7 +354,7 @@ class ApplicationLauncher(object):
 
             # Ensure subprocess is detached so closing connect will not also
             # close launched applications.
-            if sys.platform == 'win32':
+            if self.current_os == 'windows':
                 options['creationflags'] = subprocess.CREATE_NEW_CONSOLE
             else:
                 options['preexec_fn'] = os.setsid
@@ -423,10 +432,10 @@ class ApplicationLauncher(object):
         command = None
         context = context or {}
 
-        if sys.platform in ('win32', 'linux'):
+        if self.current_os in ('windows', 'linux'):
             command = [application['path']]
 
-        elif sys.platform == 'darwin':
+        elif self.current_os == 'darwin':
             command = ['open', application['path']]
 
         else:
