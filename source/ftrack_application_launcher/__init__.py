@@ -423,7 +423,7 @@ class ApplicationLauncher(object):
         command = None
         context = context or {}
 
-        if sys.platform in ('win32', 'linux2'):
+        if sys.platform in ('win32', 'linux'):
             command = [application['path']]
 
         elif sys.platform == 'darwin':
@@ -538,7 +538,7 @@ class ApplicationLauncher(object):
                 applicationContext = base64.b64encode(
                     json.dumps(
                         context
-                    )
+                    ).encode("utf-8")
                 )
             except (TypeError, ValueError):
                 self.logger.exception(
