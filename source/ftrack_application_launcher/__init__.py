@@ -686,7 +686,7 @@ class ApplicationLaunchAction(BaseAction):
         self.session.event_hub.subscribe(
             'topic=ftrack.action.discover '
             'and source.user.username={0}'.format(
-                getpass.getuser()
+                self.session.api_user
             ),
             self._discover,
             priority=self.priority
@@ -697,7 +697,7 @@ class ApplicationLaunchAction(BaseAction):
             'and source.user.username={0} '
             'and data.actionIdentifier={1} '
             'and data.node={2}'.format(
-                getpass.getuser(), 
+                self.session.api_user,
                 self.identifier,
                 platform.node()
             ),
