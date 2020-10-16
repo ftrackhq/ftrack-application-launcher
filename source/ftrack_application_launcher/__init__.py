@@ -692,7 +692,7 @@ class ApplicationLaunchAction(BaseAction):
             'topic=ftrack.action.launch '
             'and source.user.username={0} '
             'and data.actionIdentifier={1} '
-            'and data.node={2}'.format(
+            'and data.host={2}'.format(
                 self.session.api_user,
                 self.identifier,
                 platform.node()
