@@ -137,13 +137,13 @@ setup(
         'future >=0.16.0, < 1',
         'ftrack-action-handler'
     ],
-    python_requires='>= 2.7.9, < 4.0',
+    python_requires='>= 3, < 4.0',
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3'
     ],
-    cmdclass={'build_plugin':BuildPlugin},
+    cmdclass={'build_plugin': BuildPlugin},
     zip_safe=False,
 )
