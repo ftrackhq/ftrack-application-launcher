@@ -72,7 +72,7 @@ class BuildPlugin(Command):
             os.path.join(STAGING_PATH, 'hook')
         )
         # Install local dependencies
-        pip_main.main(
+        pip_main(
             [
                 'install',
                 '.',
@@ -129,7 +129,6 @@ setup(
     },
     install_requires=[
         'ftrack-python-api >= 2, < 3',
-        'future >=0.16.0, < 1',
         'ftrack-action-handler'
     ],
     python_requires='>= 3, < 4.0',
