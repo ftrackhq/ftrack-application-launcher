@@ -18,7 +18,6 @@ def register(api_object, **kw):
     # assume that register is being called to regiter Locations or from a new
     # or incompatible API, and return without doing anything.
 
-    logging.info('REGISTERING WITH {}'.format(api_object))
     if not isinstance(api_object, ftrack_api.Session):
         return
 
