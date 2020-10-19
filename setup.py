@@ -4,12 +4,7 @@
 import os
 import shutil
 
-from pkg_resources import parse_version
 from setuptools import Command
-import pip
-
-if parse_version(pip.__version__) < parse_version('19.3.0'):
-    raise ValueError('Pip should be version 19.3.0 or higher')
 
 from pip._internal import main as pip_main
 
