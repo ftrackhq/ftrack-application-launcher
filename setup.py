@@ -6,8 +6,7 @@ import shutil
 
 from setuptools import Command
 
-from pip._internal import main as pip_main
-
+from pip.__main__ import _main as pip_main
 
 from pkg_resources import DistributionNotFound, get_distribution
 from setuptools import find_packages, setup
