@@ -566,7 +566,7 @@ class ApplicationLauncher(object):
         if not isinstance(mapping, collections.MutableMapping):
             return
 
-        for key, value in mapping.items():
+        for key, value in mapping.copy().items():
             if isinstance(value, collections.Mapping):
                 self._conform_environment(value)
             else:
