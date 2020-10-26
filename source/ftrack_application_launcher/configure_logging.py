@@ -15,7 +15,7 @@ def get_log_directory():
     Raise if the directory can not be created.
     '''
     user_data_dir = appdirs.user_data_dir('ftrack-connect', 'ftrack')
-    log_directory = os.path.join(user_data_dir, 'log').encode('utf8')
+    log_directory = os.path.join(user_data_dir, 'log')
 
     if not os.path.exists(log_directory):
         try:
@@ -42,12 +42,12 @@ def configure_logging(logger_name, level=None, format=None, extra_modules=None):
 
     # Provide default values for level and format.
     format = format or '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    level = level or logging.DEBUG
+    level = level or logging.INFO
 
     log_directory = get_log_directory()
     logfile = os.path.join(
         log_directory, '{0}.log'.format(logger_name)
-    ).encode('utf8')
+    )
 
     # Sanitise the variable, checking the type.
     if not isinstance(extra_modules, (list, tuple, type(None))):
@@ -71,7 +71,7 @@ def configure_logging(logger_name, level=None, format=None, extra_modules=None):
         'handlers': {
             'console': {
                 'class': 'logging.StreamHandler',
-                'level': logging._levelNames[level],
+                'level': logging._levelToName[level],
                 'formatter': 'file',
                 'stream': 'ext://sys.stdout',
             },
@@ -102,7 +102,7 @@ def configure_logging(logger_name, level=None, format=None, extra_modules=None):
     }
 
     for module in modules:
-        current_level = logging._levelNames[level]
+        current_level = logging._levelToName[level]
         logging_settings['loggers'].setdefault(
             module, {'level': current_level}
         )

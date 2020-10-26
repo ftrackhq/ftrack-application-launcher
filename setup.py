@@ -4,15 +4,9 @@
 import os
 import shutil
 
-from pkg_resources import parse_version
 from setuptools import Command
-import pip
 
-if parse_version(pip.__version__) < parse_version('19.3.0'):
-    raise ValueError('Pip should be version 19.3.0 or higher')
-
-from pip._internal import main as pip_main
-
+from pip.__main__ import _main as pip_main
 
 from pkg_resources import DistributionNotFound, get_distribution
 from setuptools import find_packages, setup
@@ -77,7 +71,7 @@ class BuildPlugin(Command):
             os.path.join(STAGING_PATH, 'hook')
         )
         # Install local dependencies
-        pip_main.main(
+        pip_main(
             [
                 'install',
                 '.',
@@ -133,17 +127,16 @@ setup(
         'write_to_template': version_template,
     },
     install_requires=[
-        'ftrack-python-api >= 1, < 3',
-        'future >=0.16.0, < 1',
+        'ftrack-python-api >= 2, < 3',
         'ftrack-action-handler'
     ],
-    python_requires='>= 2.7.9, < 4.0',
+    python_requires='>= 3, < 4.0',
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3'
     ],
-    cmdclass={'build_plugin':BuildPlugin},
+    cmdclass={'build_plugin': BuildPlugin},
     zip_safe=False,
 )

@@ -64,6 +64,10 @@ class ApplicationStore(object):
     '''Discover and store available applications on this host.'''
 
     @property
+    def current_os(self):
+        return platform.system().lower()
+
+    @property
     def session(self):
         '''Return current session.'''
         return self._session
@@ -121,17 +125,11 @@ class ApplicationStore(object):
         '''
         applications = []
 
-        if sys.platform == 'darwin':
+        if self.current_os == 'darwin':
             prefix = ['/', 'Applications']
 
-        elif sys.platform == 'win32':
+        elif self.current_os == 'windows':
             prefix = ['C:\\', 'Program Files.*']
-
-        self.logger.debug(
-            'Discovered applications:\n{0}'.format(
-                pprint.pformat(applications)
-            )
-        )
 
         return applications
 
@@ -190,7 +188,8 @@ class ApplicationStore(object):
 
         pieces = expression[:]
         start = pieces.pop(0)
-        if sys.platform == 'win32':
+
+        if self.current_os == 'windows':
             # On Windows C: means current directory so convert roots that look
             # like drive letters to the C:\ format.
             if start and start[-1] == ':':
@@ -203,7 +202,7 @@ class ApplicationStore(object):
                 .format(start, expression)
             )
 
-        expressions = map(re.compile, pieces)
+        expressions = list(map(re.compile, pieces))
         expressionsCount = len(expressions)
 
         for location, folders, files in os.walk(start, topdown=True, followlinks=True):
@@ -257,7 +256,9 @@ class ApplicationStore(object):
                 # Don't descend any further as out of patterns to match.
                 del folders[:]
 
-        return sorted(applications, key=itemgetter('version'), reverse=True)
+        results = sorted(applications, key=itemgetter('version'), reverse=True)
+        self.logger.debug('Discovered applications {}'.format(results))
+        return results
 
 
 class ApplicationLauncher(object):
@@ -267,6 +268,10 @@ class ApplicationLauncher(object):
     not close launched applications.
 
     '''
+
+    @property
+    def current_os(self):
+        return platform.system().lower()
 
     @property
     def location(self):
@@ -345,7 +350,7 @@ class ApplicationLauncher(object):
 
             # Ensure subprocess is detached so closing connect will not also
             # close launched applications.
-            if sys.platform == 'win32':
+            if self.current_os == 'windows':
                 options['creationflags'] = subprocess.CREATE_NEW_CONSOLE
             else:
                 options['preexec_fn'] = os.setsid
@@ -423,10 +428,10 @@ class ApplicationLauncher(object):
         command = None
         context = context or {}
 
-        if sys.platform in ('win32', 'linux2'):
+        if self.current_os in ('windows', 'linux'):
             command = [application['path']]
 
-        elif sys.platform == 'darwin':
+        elif self.current_os == 'darwin':
             command = ['open', application['path']]
 
         else:
@@ -538,7 +543,7 @@ class ApplicationLauncher(object):
                 applicationContext = base64.b64encode(
                     json.dumps(
                         context
-                    )
+                    ).encode("utf-8")
                 )
             except (TypeError, ValueError):
                 self.logger.exception(
@@ -561,7 +566,7 @@ class ApplicationLauncher(object):
         if not isinstance(mapping, collections.MutableMapping):
             return
 
-        for key, value in mapping.items():
+        for key, value in mapping.copy().items():
             if isinstance(value, collections.Mapping):
                 self._conform_environment(value)
             else:
@@ -587,7 +592,7 @@ class ApplicationLaunchAction(BaseAction):
         return self._session
 
     def __init__(
-            self, session, application_store, launcher, priority=sys.maxint
+            self, session, application_store, launcher, priority=sys.maxsize
     ):
         super(ApplicationLaunchAction, self).__init__(session)
 
@@ -622,7 +627,6 @@ class ApplicationLaunchAction(BaseAction):
     def _discover(self, event):
 
         entities, event = self._translate_event(self.session, event)
-
         if not self.validate_selection(
             entities
         ):
