@@ -364,15 +364,11 @@ class ApplicationLauncher(object):
                 command=command,
                 options=options,
                 application=application,
-                context=context
+                context=context,
+                integration={'name': None, 'version': None}
             )
 
             topic='ftrack.connect.application.launch'
-
-            if context.get('integrations'):
-                for integration_name, integration_topics in list(context['integrations'].items()):
-                    for integration_topic in integration_topics:
-                        topic += ' and data.options.integration.name is "{}"'.format(integration_topic)
 
             self.logger.info(topic)
             results = self.session.event_hub.publish(
@@ -384,10 +380,19 @@ class ApplicationLauncher(object):
             )
 
             if not results:
-                self.logger.warning('No result returned from : {}'.format(topic))
+                self.logger.error(
+                    'No information returned from : {}.'.format(topic)
+                )
 
             env_dict = {}
             for result in results:
+                self.logger.info('RESULT: P{'.format(result))
+                for integration_name, integration_topics in list(context.get('integrations', {}).items()):
+                    name = result['data']['integration']['name']
+                    if name not in integration_topics:
+                        self.logger.debug('Skipping {}'.format(name))
+                        continue
+
                 self.logger.debug(
                     'Discovered environments for cwd: {} \n env: {}'.format(
                         result.get('cwd'), result.get('env')
