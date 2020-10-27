@@ -240,10 +240,9 @@ class ApplicationStore(object):
                                 )
                         variant_str = variant.format(version=str(loose_version))
                         if integrations:
-                            integrations = integrations or {}
-                            variant_str = "{} | {}".format(variant_str, ':'.join(integrations.keys()))
+                            variant_str = "{} | {}".format(variant_str, ':'.join(list(integrations.keys())))
 
-                        applications.append({
+                        application = {
                             'identifier': applicationIdentifier.format(
                                 version=str(loose_version)
                             ),
@@ -255,7 +254,9 @@ class ApplicationStore(object):
                             'variant': variant_str,
                             'description': description,
                             'integrations': integrations
-                        })
+                        }
+
+                        applications.append(application)
 
                 # Don't descend any further as out of patterns to match.
                 del folders[:]
@@ -368,8 +369,8 @@ class ApplicationLauncher(object):
 
             topic='ftrack.connect.application.launch'
 
-            if 'integrations' in application and application['integrations']:
-                for integration_name, integration_topics in application['integrations']:
+            if context.get('integrations'):
+                for integration_name, integration_topics in list(context['integrations'].items()):
                     for integration_topic in integration_topics:
                         topic += ' and data.options.integration.name is "{}"'.format(integration_topic)
 
@@ -381,6 +382,9 @@ class ApplicationLauncher(object):
                 ),
                 synchronous=True
             )
+
+            if not results:
+                self.logger.warning('No result returned from : {}'.format(topic))
 
             env_dict = {}
             for result in results:
@@ -661,6 +665,7 @@ class ApplicationLaunchAction(BaseAction):
                 'icon': application.get('icon', 'default'),
                 'variant': application.get('variant', None),
                 'applicationIdentifier': application_identifier,
+                'integrations': application.get('integrations'),
                 'host': platform.node()
             })
 
