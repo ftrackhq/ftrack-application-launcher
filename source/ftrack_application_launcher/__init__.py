@@ -136,7 +136,7 @@ class ApplicationStore(object):
     def _search_filesystem(self, expression, label, applicationIdentifier,
                            versionExpression=None, icon=None,
                            launchArguments=None, variant='',
-                           description=None):
+                           description=None, integrations=None):
         '''
         Return list of applications found in filesystem matching *expression*.
 
@@ -185,6 +185,7 @@ class ApplicationStore(object):
             versionExpression = DEFAULT_VERSION_EXPRESSION
         else:
             versionExpression = re.compile(versionExpression)
+
 
         pieces = expression[:]
         start = pieces.pop(0)
@@ -237,6 +238,10 @@ class ApplicationStore(object):
                                         version, path
                                     )
                                 )
+                        variant_str = variant.format(version=str(loose_version))
+                        if integrations:
+                            integrations = integrations or {}
+                            variant_str = "{} | {}".format(variant_str, ':'.join(integrations.keys()))
 
                         applications.append({
                             'identifier': applicationIdentifier.format(
@@ -247,11 +252,10 @@ class ApplicationStore(object):
                             'version': loose_version,
                             'label': label.format(version=str(loose_version)),
                             'icon': icon,
-                            'variant': variant.format(version=str(loose_version)),
-                            'description': description
+                            'variant': variant_str,
+                            'description': description,
+                            'integrations': integrations
                         })
-
-
 
                 # Don't descend any further as out of patterns to match.
                 del folders[:]
@@ -362,9 +366,17 @@ class ApplicationLauncher(object):
                 context=context
             )
 
+            topic='ftrack.connect.application.launch'
+
+            if 'integrations' in application and application['integrations']:
+                for integration_name, integration_topics in application['integrations']:
+                    for integration_topic in integration_topics:
+                        topic += ' and data.options.integration.name is "{}"'.format(integration_topic)
+
+            self.logger.info(topic)
             results = self.session.event_hub.publish(
                 ftrack_api.event.base.Event(
-                    topic='ftrack.connect.application.launch',
+                    topic=topic,
                     data=launchData
                 ),
                 synchronous=True
@@ -498,6 +510,7 @@ class ApplicationLauncher(object):
                         lastDate = version.getDate()
 
         return latestComponent
+
 
     def _get_application_environment(
         self, application, context=None
