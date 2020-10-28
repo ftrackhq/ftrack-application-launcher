@@ -1,4 +1,5 @@
 {
+    "priority":100,
     "context": ["Task"],
     "identifier": "ftrack-connect-launch-maya",
     "applicationIdentifier":"maya_{version}",
