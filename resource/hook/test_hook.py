@@ -6,11 +6,9 @@ logger= logging.getLogger('test_hook')
 
 def on_discover_something(event):
     '''Handle application launch and add environment to *event*.'''
-    logger.info('DISCONVERING SOMETHING')
-    data = event['data']
-    integration = data.setdefault('integration', {})
-    integration['name'] = 'ftrack-connect-maya'
-    integration['version'] = '1.0'
+    logger.info('Discovering testing hook')
+    event['data']['integration']['name'] = 'ftrack-connect-maya'
+    event['data']['integration']['version'] = '1.0'
     return event
 
 

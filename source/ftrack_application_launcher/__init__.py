@@ -365,15 +365,15 @@ class ApplicationLauncher(object):
                 options=options,
                 application=application,
                 context=context,
-                integration={'name': None, 'version': None}
+                integration={
+                    'name': None,
+                    'version': None
+                }
             )
 
-            topic='ftrack.connect.application.launch'
-
-            self.logger.info(topic)
             results = self.session.event_hub.publish(
                 ftrack_api.event.base.Event(
-                    topic=topic,
+                    topic='ftrack.connect.application.launch',
                     data=launchData
                 ),
                 synchronous=True
@@ -385,20 +385,22 @@ class ApplicationLauncher(object):
                 )
 
             env_dict = {}
+            integrations = context.get('integrations', {})
+
             for result in results:
-                self.logger.info('RESULT: P{'.format(result))
-                for integration_name, integration_topics in list(context.get('integrations', {}).items()):
-                    name = result['data']['integration']['name']
-                    if name not in integration_topics:
-                        self.logger.debug('Skipping {}'.format(name))
+                for integration_group, integration_names in list(integrations.items()):
+                    integration_name = result['data']['integration']['name']
+
+                    if integration_name not in integration_names:
+                        self.logger.warning('Skipping {}'.format(integration_name))
                         continue
 
-                self.logger.debug(
-                    'Discovered environments for cwd: {} \n env: {}'.format(
-                        result.get('cwd'), result.get('env')
+                    integration_version = result['data']['integration']['version']
+
+                    self.logger.info(
+                        'Discovered integration: {} : {}'.format(integration_name, integration_version)
                     )
-                )
-                env_dict.update(result.get('env', {}))
+                    env_dict.update(result.get('env', {}))
 
             # Reset variables passed through the hook since they might
             # have been replaced by a handler.
@@ -519,7 +521,6 @@ class ApplicationLauncher(object):
                         lastDate = version.getDate()
 
         return latestComponent
-
 
     def _get_application_environment(
         self, application, context=None
