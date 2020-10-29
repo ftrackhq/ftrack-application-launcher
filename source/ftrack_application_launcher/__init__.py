@@ -386,28 +386,46 @@ class ApplicationLauncher(object):
 
             env_dict = {}
 
+            # parse integration returned from listeners.
             returned_integrations_names = set([result.get('integration', {}).get('name') for result in results])
 
-            for result in results:
-                if not result.get('integration', {}).get('name'):
-                    # no integrations
+            for integration_group, requested_integration_names in list(context.get('integrations', {}).items()):
+
+                difference = set(requested_integration_names).difference(returned_integrations_names)
+
+                if difference:
+                    self.logger.info(
+                        'Ignoring group {} as integration {} has not been discovered.'.format(
+                            integration_group, difference
+                        )
+                    )
                     continue
 
-                for integration_group, requested_integration_names in list(context.get('integrations', {}).items()):
+                for requested_integration_name in requested_integration_names:
 
-                    difference = set(requested_integration_names).difference(returned_integrations_names)
+                    result = [
+                        result for result in results
+                        if result['integration']['name'] == requested_integration_name
+                    ][0]
 
-                    if difference:
-                        self.logger.info(
-                            'Ignoring group {} as integration {} has not been discovered.'.format(
-                                integration_group, difference
+                    self.logger.info(
+                        'Integration for group {}, have been found.'.format(integration_group)
+                    )
+
+                    envs = result.get('env', {})
+
+                    if not envs:
+                        self.logger.warning(
+                            'No environments exported from integration {}'.format(
+                                requested_integration_name
                             )
                         )
                         continue
 
-                    self.logger.info('Integration for group {}, have been found. Handling envs'.format(integration_group))
-                    env_dict.update(result.get('env', {}))
-
+                    self.logger.info(
+                        'Merging environment variables for integration {}'.format(requested_integration_name)
+                    )
+                    env_dict.update(envs)
 
             # Reset variables passed through the hook since they might
             # have been replaced by a handler.
