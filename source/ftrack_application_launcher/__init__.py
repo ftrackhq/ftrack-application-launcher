@@ -381,16 +381,16 @@ class ApplicationLauncher(object):
 
             if not results:
                 self.logger.error(
-                    'No information returned from : {}.'.format(topic)
+                    'No information returned from : {}.'.format(launchData)
                 )
 
             env_dict = {}
             integrations = context.get('integrations', {})
 
             for result in results:
-                for integration_group, integration_names in list(integrations.items()):
-                    integration_name = result['data']['integration']['name']
+                integration_name = result['data']['integration']['name']
 
+                for integration_group, integration_names in list(integrations.items()):
                     if integration_name not in integration_names:
                         self.logger.warning('Skipping {}'.format(integration_name))
                         continue
