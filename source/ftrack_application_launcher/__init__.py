@@ -425,7 +425,9 @@ class ApplicationLauncher(object):
                     self.logger.info(
                         'Merging environment variables for integration {}'.format(requested_integration_name)
                     )
-                    env_dict.update(envs)
+                    for key, value in list(envs.items()):
+                        # rely on result order to append envs
+                        append_path(key, value, env_dict)
 
             # Reset variables passed through the hook since they might
             # have been replaced by a handler.
