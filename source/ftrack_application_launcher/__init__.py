@@ -385,22 +385,44 @@ class ApplicationLauncher(object):
                 )
 
             env_dict = {}
-            integrations = context.get('integrations', {})
-
             for result in results:
-                integration_name = result['data']['integration']['name']
+                print('RESULT {} integration {}'.format(result['id'], result['data']['integration']))
+            #
+            # returned_integrations_names = set([result['data']['integration']['name'] for result in results])
+            #
+            # for integration_group, requested_integration_names in list(context.get('integrations', {}).items()):
+            #     print('DISCOVERED: {}'.format(returned_integrations_names))
+            #     print('REQUESTED: {}'.format(set(requested_integration_names)))
+            #
+            #     intersection = set(returned_integrations_names).difference(requested_integration_names)
+            #     self.logger.info("{} {}".format(integration_group, intersection))
 
-                for integration_group, integration_names in list(integrations.items()):
-                    if integration_name not in integration_names:
-                        self.logger.warning('Skipping {}'.format(integration_name))
-                        continue
+                # for integration_name in integration_names:
+                #     if integration_name not in returned_integrations_names:
+                #         self.logger.warning(
+                #             'Requested integrations "{}" for "{}" have not been found.'.format(
+                #                 integration_name, integration_group)
+                #         )
+                #         continue
 
-                    integration_version = result['data']['integration']['version']
+            # 
+            # for result in results:
+            #     integration_name = result['data']['integration']['name']
+            # 
+            #     if integration_name not in requested_integrations_names:
+            #         self.logger.warning('Integration {} was not requested. Skipping it.'.format(integration_name))
+            #         continue
+            # 
+            #     integration_version = result['data']['integration']['version']
+            # 
+            #     self.logger.info(
+            #         'Discovered integration: {} : {} .Setting environemnts.'.format(integration_name, integration_version)
+            #     )
+            #     env_dict.update(result.get('env', {}))
 
-                    self.logger.info(
-                        'Discovered integration: {} : {}'.format(integration_name, integration_version)
-                    )
-                    env_dict.update(result.get('env', {}))
+
+            return
+
 
             # Reset variables passed through the hook since they might
             # have been replaced by a handler.

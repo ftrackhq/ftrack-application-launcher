@@ -1,14 +1,14 @@
 import ftrack_api
 import logging
 
-logger= logging.getLogger('test_hook')
+logger= logging.getLogger('test_hook2')
 
 
-def on_discover_something(event):
+def on_discover_another(event):
     '''Handle application launch and add environment to *event*.'''
-    logger.info('Discovering testing hook')
-    event['data']['integration']['name'] = 'ftrack-connect-maya'
-    event['data']['integration']['version'] = '1.0'
+    logger.info('Discovering testing hook2')
+    event['data']['integration']['name'] = 'another-connect-integration'
+    event['data']['integration']['version'] = '10.0'
     return event
 
 
@@ -17,9 +17,9 @@ def register(session):
     if not isinstance(session, ftrack_api.session.Session):
         return
 
-    logger.info('discovering :{}'.format('app launcher testing hook'))
+    logger.info('discovering :{}'.format('app launcher testing hook2'))
 
     session.event_hub.subscribe(
         'topic=ftrack.connect.application.launch',
-        on_discover_something
+        on_discover_another
     )
