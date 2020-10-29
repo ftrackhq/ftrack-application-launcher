@@ -384,8 +384,6 @@ class ApplicationLauncher(object):
                     'No information returned from : {}.'.format(launchData)
                 )
 
-            env_dict = {}
-
             # parse integration returned from listeners.
             returned_integrations_names = set([result.get('integration', {}).get('name') for result in results])
 
@@ -395,8 +393,8 @@ class ApplicationLauncher(object):
 
                 if difference:
                     self.logger.info(
-                        'Ignoring group {} as integration {} has not been discovered.'.format(
-                            integration_group, difference
+                        'Ignoring group {} as integration/s {} has not been discovered.'.format(
+                            integration_group, list(difference)
                         )
                     )
                     continue
@@ -407,10 +405,6 @@ class ApplicationLauncher(object):
                         result for result in results
                         if result['integration']['name'] == requested_integration_name
                     ][0]
-
-                    self.logger.info(
-                        'Integration for group {}, have been found.'.format(integration_group)
-                    )
 
                     envs = result.get('env', {})
 
@@ -423,11 +417,12 @@ class ApplicationLauncher(object):
                         continue
 
                     self.logger.info(
-                        'Merging environment variables for integration {}'.format(requested_integration_name)
+                        'Merging environment variables for integration {} for group {}'.format(
+                            requested_integration_name, integration_group)
                     )
                     for key, value in list(envs.items()):
                         # rely on result order to append envs
-                        append_path(key, value, env_dict)
+                        append_path(key, value, environment)
 
             # Reset variables passed through the hook since they might
             # have been replaced by a handler.
@@ -435,7 +430,7 @@ class ApplicationLauncher(object):
             options = launchData['options']
             application = launchData['application']
             context = launchData['context']
-            options['env'].update(env_dict)
+            options['env'] = environment
 
             self.logger.debug(
                 'Launching {0} with options {1}'.format(command, options)

@@ -13,7 +13,9 @@ def on_discover_something(event):
             "name": 'ftrack-connect-maya',
             'version': 1.0
         },
-        'env': {}
+        'env': {
+            'MAYA_SCRIPT_PATH': 'SomeWhere'
+        }
     }
     return data
 
@@ -26,7 +28,9 @@ def on_discover_another(event):
             "name": 'another-connect-integration',
             'version': 1.0
         },
-        'env': {}
+        'env': {
+            'MAYA_SCRIPT_PATH': 'SomeWhereElse'
+        }
     }
     return data
 

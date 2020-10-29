@@ -5,7 +5,7 @@
     "applicationIdentifier":"maya_{version}",
     "integrations": {
         "should-fail":["ftrack-connect-maya", "another-integration"],
-        "should-succeed":["ftrack-connect-maya"]
+        "should-succeed":["ftrack-connect-maya", "another-connect-integration"]
     },
     "label": "Maya",
     "icon": "maya",
