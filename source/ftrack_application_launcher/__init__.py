@@ -240,7 +240,7 @@ class ApplicationStore(object):
                                 )
                         variant_str = variant.format(version=str(loose_version))
                         if integrations:
-                            variant_str = "{} | {}".format(variant_str, ':'.join(list(integrations.keys())))
+                            variant_str = "{} [{}]".format(variant_str, ':'.join(list(integrations.keys())))
 
                         application = {
                             'identifier': applicationIdentifier.format(
@@ -253,7 +253,7 @@ class ApplicationStore(object):
                             'icon': icon,
                             'variant': variant_str,
                             'description': description,
-                            'integrations': integrations
+                            'integrations': integrations or {}
                         }
 
                         applications.append(application)
@@ -379,8 +379,12 @@ class ApplicationLauncher(object):
                 synchronous=True
             )
 
-            if 'integrations' in context:
+            if context.get('integrations'):
                 environment = self._get_integrations_environments(results, context, environment)
+            else:
+                self.logger.warning('No integrations provided for {}:{}'.format(
+                    applicationIdentifier, context.get('variant'))
+                )
 
             # Reset variables passed through the hook since they might
             # have been replaced by a handler.
@@ -695,7 +699,7 @@ class ApplicationLaunchAction(BaseAction):
                 'icon': application.get('icon', 'default'),
                 'variant': application.get('variant', None),
                 'applicationIdentifier': application_identifier,
-                'integrations': application.get('integrations'),
+                'integrations': application.get('integrations', {}),
                 'host': platform.node()
             })
 
