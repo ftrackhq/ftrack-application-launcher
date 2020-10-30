@@ -6,8 +6,6 @@ logger= logging.getLogger('test_hook')
 
 def on_discover_something(event):
     '''Handle application launch and add environment to *event*.'''
-    logger.info('Discovering testing hook')
-
     data = {
         'integration': {
             "name": 'ftrack-connect-maya',
@@ -22,7 +20,6 @@ def on_discover_something(event):
 
 def on_discover_another(event):
     '''Handle application launch and add environment to *event*.'''
-    logger.info('Discovering testing hook2')
     data = {
         'integration': {
             "name": 'another-connect-integration',
@@ -37,7 +34,6 @@ def on_discover_another(event):
 
 def on_discover_another_one(event):
     '''Handle application launch and add environment to *event*.'''
-    logger.info('Discovering testing hook3')
     data = {
         'integration': {
             "name": 'not-requested-at-all',

@@ -379,57 +379,14 @@ class ApplicationLauncher(object):
                 synchronous=True
             )
 
-            if not results:
-                self.logger.error(
-                    'No information returned from : {}.'.format(launchData)
-                )
-
-            # parse integration returned from listeners.
-            returned_integrations_names = set([result.get('integration', {}).get('name') for result in results])
-
-            for integration_group, requested_integration_names in list(context.get('integrations', {}).items()):
-
-                difference = set(requested_integration_names).difference(returned_integrations_names)
-
-                if difference:
-                    self.logger.info(
-                        'Ignoring group {} as integration/s {} has not been discovered.'.format(
-                            integration_group, list(difference)
-                        )
-                    )
-                    continue
-
-                for requested_integration_name in requested_integration_names:
-
-                    result = [
-                        result for result in results
-                        if result['integration']['name'] == requested_integration_name
-                    ][0]
-
-                    envs = result.get('env', {})
-
-                    if not envs:
-                        self.logger.warning(
-                            'No environments exported from integration {}'.format(
-                                requested_integration_name
-                            )
-                        )
-                        continue
-
-                    self.logger.info(
-                        'Merging environment variables for integration {} for group {}'.format(
-                            requested_integration_name, integration_group)
-                    )
-                    for key, value in list(envs.items()):
-                        # rely on result order to append envs
-                        append_path(key, value, environment)
+            if 'integrations' in context:
+                environment = self._get_integrations_environments(results, context, environment)
 
             # Reset variables passed through the hook since they might
             # have been replaced by a handler.
             command = launchData['command']
             options = launchData['options']
             application = launchData['application']
-            context = launchData['context']
             options['env'] = environment
 
             self.logger.debug(
@@ -459,6 +416,51 @@ class ApplicationLauncher(object):
             'success': success,
             'message': message
         }
+
+    def _get_integrations_environments(self, results, context, environments):
+
+        # parse integration returned from listeners.
+        returned_integrations_names = set([result.get('integration', {}).get('name') for result in results])
+
+        for integration_group, requested_integration_names in list(context.get('integrations', {}).items()):
+
+            difference = set(requested_integration_names).difference(returned_integrations_names)
+
+            if difference:
+                self.logger.warning(
+                    'Ignoring group {} as integration/s {} has not been discovered.'.format(
+                        integration_group, list(difference)
+                    )
+                )
+                continue
+
+            for requested_integration_name in requested_integration_names:
+
+                result = [
+                    result for result in results
+                    if result['integration']['name'] == requested_integration_name
+                ][0]
+
+                envs = result.get('env', {})
+
+                if not envs:
+                    self.logger.warning(
+                        'No environments exported from integration {}'.format(
+                            requested_integration_name
+                        )
+                    )
+                    continue
+
+                self.logger.debug(
+                    'Merging environment variables for integration {} for group {}'.format(
+                        requested_integration_name, integration_group)
+                )
+                for key, value in list(envs.items()):
+                    # rely on result order to append envs
+                    self.logger.info('Appending {} to {}'.format(value, key))
+                    append_path(value, key, environments)
+
+        return environments
 
     def _get_application_launch_command(self, application, context=None):
         '''Return *application* command based on OS and *context*.
