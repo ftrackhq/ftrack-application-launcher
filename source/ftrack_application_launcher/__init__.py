@@ -571,7 +571,6 @@ class ApplicationLauncher(object):
 
         # Remove LOGNAME environment variable, this is usually set to the desktop user but legacy api assume is set
         # to ftrack user. This way we can override it if/when needed.
-
         environment.pop('LOGNAME', None)
 
         # Add FTRACK_EVENT_SERVER variable.
