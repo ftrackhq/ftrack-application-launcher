@@ -460,10 +460,29 @@ class ApplicationLauncher(object):
                         requested_integration_name, integration_group)
                 )
                 for key, value in list(envs.items()):
-                    # rely on result order to append envs
-                    self.logger.info('Appending {} to {}'.format(value, key))
-                    append_path(value, key, environments)
+                    action = 'append' # append by default
+                    action_results = key.split('.')
+                    if len(action_results) == 2:
+                        key, action = action_results
+        
+                    if action == 'append':
+                        self.logger.info('Appending {} to {}'.format(value, key))
+                        append_path(value, key, environments)
 
+                    elif action == 'prepend':
+                        self.logger.info('Prepending {} to {}'.format(value, key))
+                        prepend_path(value, key, environments)    
+
+                    elif action == 'set':
+                        self.logger.info('Setting {} to {}'.format(value, key))
+                        environments[key] = value
+
+                    elif action == 'unset':   
+                        self.logger.info('Unsetting {} to {}'.format(value, key))
+                        if key in environments:
+                            environments.pop(key)
+                    
+                        
         return environments
 
     def _get_application_launch_command(self, application, context=None):
