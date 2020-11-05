@@ -588,10 +588,6 @@ class ApplicationLauncher(object):
         environment.pop('PYTHONHOME', None)
         environment.pop('FTRACK_EVENT_PLUGIN_PATH', None)
 
-        # Remove LOGNAME environment variable, this is usually set to the desktop user but legacy api assume is set
-        # to ftrack user. This way we can override it if/when needed.
-        environment.pop('LOGNAME', None)
-
         # Add FTRACK_EVENT_SERVER variable.
         environment = prepend_path(
             self.session.event_hub.get_server_url(),
