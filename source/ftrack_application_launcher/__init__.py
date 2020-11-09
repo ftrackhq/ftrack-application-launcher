@@ -459,12 +459,14 @@ class ApplicationLauncher(object):
                     'Merging environment variables for integration {} for group {}'.format(
                         requested_integration_name, integration_group)
                 )
+
                 for key, value in list(envs.items()):
-                    action = 'append' # append by default
+                    action = 'append'  # append by default
                     action_results = key.split('.')
+
                     if len(action_results) == 2:
                         key, action = action_results
-        
+
                     if action == 'append':
                         self.logger.info('Appending {} to {}'.format(value, key))
                         append_path(value, key, environments)
@@ -478,11 +480,15 @@ class ApplicationLauncher(object):
                         environments[key] = value
 
                     elif action == 'unset':   
-                        self.logger.info('Unsetting {} to {}'.format(value, key))
+                        self.logger.info('Unsetting {}'.format(key))
                         if key in environments:
                             environments.pop(key)
-                    
-                        
+                    else:
+                        self.logger.error(
+                            'Environment variable action {} not recognised for {}'.format(action, key)
+                        )
+                        continue
+
         return environments
 
     def _get_application_launch_command(self, application, context=None):
