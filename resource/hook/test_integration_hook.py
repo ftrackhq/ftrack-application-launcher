@@ -45,21 +45,25 @@ def on_discover_another_one(event):
 
 
 def register(session):
-    '''Subscribe to application launch events on *registry*.'''
-    if not isinstance(session, ftrack_api.session.Session):
-        return
+    pass
 
-    session.event_hub.subscribe(
-        'topic=ftrack.connect.application.launch',
-        on_discover_something
-    )
+#       UNCOMMENT FOR TESTING
+#
+#     '''Subscribe to application launch events on *registry*.'''
+#     if not isinstance(session, ftrack_api.session.Session):
+#         return
 
-    session.event_hub.subscribe(
-        'topic=ftrack.connect.application.launch',
-        on_discover_another
-    )
+#     session.event_hub.subscribe(
+#         'topic=ftrack.connect.application.launch',
+#         on_discover_something
+#     )
 
-    session.event_hub.subscribe(
-        'topic=ftrack.connect.application.launch',
-        on_discover_another_one
-    )
+#     session.event_hub.subscribe(
+#         'topic=ftrack.connect.application.launch',
+#         on_discover_another
+#     )
+
+#     session.event_hub.subscribe(
+#         'topic=ftrack.connect.application.launch',
+#         on_discover_another_one
+#     )

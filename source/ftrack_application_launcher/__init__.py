@@ -425,6 +425,9 @@ class ApplicationLauncher(object):
 
         # parse integration returned from listeners.
         returned_integrations_names = set([result.get('integration', {}).get('name') for result in results])
+        
+        self.logger.info('Discovered integrations {}'.format(returned_integrations_names))
+        self.logger.info('Requested integrations {}'.format(list(context.get('integrations', {}).items())))
 
         for integration_group, requested_integration_names in list(context.get('integrations', {}).items()):
 

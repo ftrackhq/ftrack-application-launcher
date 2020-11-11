@@ -4,7 +4,7 @@
     "identifier": "ftrack-connect-launch-maya",
     "applicationIdentifier":"maya_{version}",
     "integrations": {
-        "legacy":["ftrack-connect-maya"]
+        "connector":["ftrack-connect-maya"]
     },
     "label": "Maya",
     "icon": "maya",
