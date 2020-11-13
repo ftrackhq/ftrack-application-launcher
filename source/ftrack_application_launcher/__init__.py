@@ -471,15 +471,15 @@ class ApplicationLauncher(object):
                         key, action = action_results
 
                     if action == 'append':
-                        self.logger.info('Appending {} to {}'.format(value, key))
+                        self.logger.info('Appending {} with {}'.format(key, value))
                         append_path(value, key, environments)
 
                     elif action == 'prepend':
-                        self.logger.info('Prepending {} to {}'.format(value, key))
+                        self.logger.info('Prepending {} with {}'.format(key, value))
                         prepend_path(value, key, environments)    
 
                     elif action == 'set':
-                        self.logger.info('Setting {} to {}'.format(value, key))
+                        self.logger.info('Setting {} to {}'.format(key, value))
                         environments[key] = value
 
                     elif action == 'unset':   
