@@ -5,6 +5,8 @@ import sys
 import pprint
 import re
 import os
+import ssl
+
 import subprocess
 import collections
 import base64
@@ -517,6 +519,10 @@ class ApplicationLauncher(object):
 
         environment.pop('PYTHONHOME', None)
         environment.pop('FTRACK_EVENT_PLUGIN_PATH', None)
+
+        # Ensure SSL_CERT_FILE points to the default cert.
+        if 'linux' in sys.platform:
+            environment['SSL_CERT_FILE'] = ssl.get_default_verify_paths().cafile        
 
         # Add FTRACK_EVENT_SERVER variable.
         environment = prepend_path(
