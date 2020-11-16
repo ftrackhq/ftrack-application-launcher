@@ -128,7 +128,8 @@ setup(
     },
     install_requires=[
         'ftrack-python-api >= 2, < 3',
-        'ftrack-action-handler'
+        'ftrack-action-handler',
+        'future'
     ],
     python_requires='>= 3, < 4.0',
     classifiers=[

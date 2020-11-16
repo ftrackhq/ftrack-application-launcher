@@ -5,6 +5,9 @@
     "label": "Nuke",
     "icon": "nuke",
     "variant": "{version}",
+    "integrations": {
+        "connector":["ftrack-connect-nuke"]
+    },
     "search_path":{
         "linux": {
             "prefix":["/", "usr","local","Nuke.*"],

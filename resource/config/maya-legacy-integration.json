@@ -3,6 +3,9 @@
     "context": ["Task"],
     "identifier": "ftrack-connect-launch-maya",
     "applicationIdentifier":"maya_{version}",
+    "integrations": {
+        "connector":["ftrack-connect-maya"]
+    },
     "label": "Maya",
     "icon": "maya",
     "variant": "{version}",
