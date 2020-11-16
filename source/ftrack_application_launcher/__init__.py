@@ -138,7 +138,7 @@ class ApplicationStore(object):
     def _search_filesystem(self, expression, label, applicationIdentifier,
                            versionExpression=None, icon=None,
                            launchArguments=None, variant='',
-                           description=None):
+                           description=None, integrations=None):
         '''
         Return list of applications found in filesystem matching *expression*.
 
@@ -187,6 +187,7 @@ class ApplicationStore(object):
             versionExpression = DEFAULT_VERSION_EXPRESSION
         else:
             versionExpression = re.compile(versionExpression)
+
 
         pieces = expression[:]
         start = pieces.pop(0)
@@ -239,8 +240,11 @@ class ApplicationStore(object):
                                         version, path
                                     )
                                 )
+                        variant_str = variant.format(version=str(loose_version))
+                        if integrations:
+                            variant_str = "{} [{}]".format(variant_str, ':'.join(list(integrations.keys())))
 
-                        applications.append({
+                        application = {
                             'identifier': applicationIdentifier.format(
                                 version=str(loose_version)
                             ),
@@ -249,11 +253,12 @@ class ApplicationStore(object):
                             'version': loose_version,
                             'label': label.format(version=str(loose_version)),
                             'icon': icon,
-                            'variant': variant.format(version=str(loose_version)),
-                            'description': description
-                        })
+                            'variant': variant_str,
+                            'description': description,
+                            'integrations': integrations or {}
+                        }
 
-
+                        applications.append(application)
 
                 # Don't descend any further as out of patterns to match.
                 del folders[:]
@@ -361,7 +366,11 @@ class ApplicationLauncher(object):
                 command=command,
                 options=options,
                 application=application,
-                context=context
+                context=context,
+                integration={
+                    'name': None,
+                    'version': None
+                }
             )
 
             results = self.session.event_hub.publish(
@@ -372,22 +381,19 @@ class ApplicationLauncher(object):
                 synchronous=True
             )
 
-            env_dict = {}
-            for result in results:
-                self.logger.debug(
-                    'Discovered environments for cwd: {} \n env: {}'.format(
-                        result.get('cwd'), result.get('env')
-                    )
+            if context.get('integrations'):
+                environment = self._get_integrations_environments(results, context, environment)
+            else:
+                self.logger.warning('No integrations provided for {}:{}'.format(
+                    applicationIdentifier, context.get('variant'))
                 )
-                env_dict.update(result.get('env', {}))
 
             # Reset variables passed through the hook since they might
             # have been replaced by a handler.
             command = launchData['command']
             options = launchData['options']
             application = launchData['application']
-            context = launchData['context']
-            options['env'].update(env_dict)
+            options['env'] = environment
 
             self.logger.debug(
                 'Launching {0} with options {1}'.format(command, options)
@@ -416,6 +422,79 @@ class ApplicationLauncher(object):
             'success': success,
             'message': message
         }
+
+    def _get_integrations_environments(self, results, context, environments):
+
+        # parse integration returned from listeners.
+        returned_integrations_names = set([result.get('integration', {}).get('name') for result in results])
+        
+        self.logger.info('Discovered integrations {}'.format(returned_integrations_names))
+        self.logger.info('Requested integrations {}'.format(list(context.get('integrations', {}).items())))
+
+        for integration_group, requested_integration_names in list(context.get('integrations', {}).items()):
+
+            difference = set(requested_integration_names).difference(returned_integrations_names)
+
+            if difference:
+                self.logger.warning(
+                    'Ignoring group {} as integration/s {} has not been discovered.'.format(
+                        integration_group, list(difference)
+                    )
+                )
+                continue
+
+            for requested_integration_name in requested_integration_names:
+
+                result = [
+                    result for result in results
+                    if result['integration']['name'] == requested_integration_name
+                ][0]
+
+                envs = result.get('env', {})
+
+                if not envs:
+                    self.logger.warning(
+                        'No environments exported from integration {}'.format(
+                            requested_integration_name
+                        )
+                    )
+                    continue
+
+                self.logger.debug(
+                    'Merging environment variables for integration {} for group {}'.format(
+                        requested_integration_name, integration_group)
+                )
+
+                for key, value in list(envs.items()):
+                    action = 'append'  # append by default
+                    action_results = key.split('.')
+
+                    if len(action_results) == 2:
+                        key, action = action_results
+
+                    if action == 'append':
+                        self.logger.info('Appending {} with {}'.format(key, value))
+                        append_path(value, key, environments)
+
+                    elif action == 'prepend':
+                        self.logger.info('Prepending {} with {}'.format(key, value))
+                        prepend_path(value, key, environments)    
+
+                    elif action == 'set':
+                        self.logger.info('Setting {} to {}'.format(key, value))
+                        environments[key] = value
+
+                    elif action == 'unset':   
+                        self.logger.info('Unsetting {}'.format(key))
+                        if key in environments:
+                            environments.pop(key)
+                    else:
+                        self.logger.error(
+                            'Environment variable action {} not recognised for {}'.format(action, key)
+                        )
+                        continue
+
+        return environments
 
     def _get_application_launch_command(self, application, context=None):
         '''Return *application* command based on OS and *context*.
@@ -654,6 +733,7 @@ class ApplicationLaunchAction(BaseAction):
                 'icon': application.get('icon', 'default'),
                 'variant': application.get('variant', None),
                 'applicationIdentifier': application_identifier,
+                'integrations': application.get('integrations', {}),
                 'host': platform.node()
             })
 

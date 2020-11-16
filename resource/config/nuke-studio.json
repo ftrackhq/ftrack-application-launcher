@@ -5,6 +5,9 @@
     "label": "Nuke Studio",
     "icon": "nuke_studio",
     "variant": "{version}",
+    "integrations": {
+        "connector":["ftrack-connect-nuke-studio"]
+    },
     "search_path":{
         "linux": {
             "prefix":["/", "usr","local","Nuke.*"],

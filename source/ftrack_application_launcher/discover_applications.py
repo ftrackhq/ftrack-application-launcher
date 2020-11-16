@@ -79,7 +79,8 @@ class DiscoverApplications(object):
                 applicationIdentifier=config['applicationIdentifier'],
                 icon=config['icon'],
                 variant=config['variant'],
-                launchArguments=config.get('launch_arguments')
+                launchArguments=config.get('launch_arguments'),
+                integrations=config.get('integrations')
             )
             store.applications = applications
 
