@@ -60,6 +60,7 @@ class DiscoverApplications(object):
     def _build_launchers(self, configurations):
         for config in configurations:
             store = ApplicationStore(self._session)
+
             # extract data from app config
             search_path = config['search_path'].get(self.current_os)
             if not search_path:
@@ -69,7 +70,8 @@ class DiscoverApplications(object):
                     )
                 )
                 continue
-
+            
+            launch_arguments = search_path.get('launch_arguments')
             prefix = search_path['prefix']
             expression = search_path['expression']
 
@@ -79,7 +81,7 @@ class DiscoverApplications(object):
                 applicationIdentifier=config['applicationIdentifier'],
                 icon=config['icon'],
                 variant=config['variant'],
-                launchArguments=config.get('launch_arguments'),
+                launchArguments=launch_arguments,
                 integrations=config.get('integrations')
             )
             store.applications = applications
