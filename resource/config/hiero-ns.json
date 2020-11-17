@@ -1,6 +1,6 @@
 {
     "context": ["Project"],
-    "identifier": "ftrack-connect-launch-nuke-studio",
+    "identifier": "ftrack-connect-launch-hiero",
     "applicationIdentifier":"hiero_{version}",
     "label": "Hiero",
     "icon": "hiero",
