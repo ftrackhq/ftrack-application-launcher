@@ -20,7 +20,7 @@ from distutils.version import LooseVersion
 import ftrack_api
 from ftrack_action_handler.action import BaseAction
 from ftrack_application_launcher.configure_logging import configure_logging
-
+from ftrack_application_launcher.usage import send_event
 
 configure_logging(__name__)
 
@@ -382,6 +382,7 @@ class ApplicationLauncher(object):
             )
 
             if context.get('integrations'):
+                self._notify_integration_usage(results, application)
                 environment = self._get_integrations_environments(results, context, environment)
             else:
                 self.logger.warning('No integrations provided for {}:{}'.format(
@@ -398,6 +399,7 @@ class ApplicationLauncher(object):
             self.logger.debug(
                 'Launching {0} with options {1}'.format(command, options)
             )
+
             process = subprocess.Popen(command, **options)
 
         except (OSError, TypeError):
@@ -418,10 +420,42 @@ class ApplicationLauncher(object):
                 )
             )
 
+
+
         return {
             'success': success,
             'message': message
         }
+
+
+    def _notify_integration_usage(self, results, application):
+        for result in results: 
+            integration = result.get('integration')
+
+            metadata = {
+                'application':{
+                    'name': application['label'],
+                    'version': str(application['version'])
+                },
+                'plugin':{
+                    'name': integration.get('name', 'Unknown'),
+                    'version': integration.get('version', 'Unknown')
+                },
+                'system':{
+                    'name': self.current_os,
+                    'version': platform.platform()
+                }
+            }
+            topic = 'USED-{}'.format(integration['name'].upper())
+
+            self.logger.info(
+                'Sending topic: {}, metadata {}'.format(topic, metadata)
+            )
+
+            send_event(
+                topic,
+                metadata
+            )
 
     def _get_integrations_environments(self, results, context, environments):
 
