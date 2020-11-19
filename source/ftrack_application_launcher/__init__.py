@@ -429,18 +429,19 @@ class ApplicationLauncher(object):
 
 
     def _notify_integration_usage(self, results, application):
+        metadata = {
+            'operating_system': platform.platform(),
+            '{}_version'.format(
+                    application['label'].lower()
+                    ): str(application['version']),
+        }
         for result in results: 
             integration = result.get('integration')
 
-            metadata = {
-                '{}_version'.format(
-                    application['label'].lower()
-                    ): str(application['version']),
-                '{}_version'.format(
-                    integration['name'].lower()
-                    ): str(integration.get('version', 'Unknown')),
-                'operating_system': platform.platform()
-            }
+            metadata.setdefault('{}_version'.format(
+                    integration['name'].lower()), 
+                    str(integration.get('version', 'Unknown'))
+            )
 
             topic = 'USED-{}'.format(integration['name'].upper())
 
