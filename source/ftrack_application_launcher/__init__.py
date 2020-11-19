@@ -433,19 +433,15 @@ class ApplicationLauncher(object):
             integration = result.get('integration')
 
             metadata = {
-                'application':{
-                    'name': application['label'],
-                    'version': str(application['version'])
-                },
-                'plugin':{
-                    'name': integration.get('name', 'Unknown'),
-                    'version': integration.get('version', 'Unknown')
-                },
-                'system':{
-                    'name': self.current_os,
-                    'version': platform.platform()
-                }
+                '{}_version'.format(
+                    application['label'].lower()
+                    ): str(application['version']),
+                '{}_version'.format(
+                    integration['name'].lower()
+                    ): str(integration.get('version', 'Unknown')),
+                'operating_system': platform.platform()
             }
+
             topic = 'USED-{}'.format(integration['name'].upper())
 
             self.logger.info(
