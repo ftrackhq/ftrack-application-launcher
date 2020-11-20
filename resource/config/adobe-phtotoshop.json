@@ -8,12 +8,12 @@
     "search_path":{
         "windows": {
             "prefix":["C:\\", "Program Files.*"],
-            "expression":["Adobe", "Adobe Photoshop ((?:CC )?\\d+)", "Photoshop.exe"],
+            "expressions":[["Adobe", "Adobe Photoshop ((?:CC )?\\d+)", "Photoshop.exe"]],
             "version_expression": "(?P<version>\\d[\\d.]*)[^\\w\\d]"
         },
         "darwin": {
             "prefix":["/", "Applications"],
-            "expression": ["Adobe Photoshop ((?:CC )?\\d+)", "Adobe Photoshop ((?:CC )?\\d+)\\.app"],
+            "expressions": [["Adobe Photoshop ((?:CC )?\\d+)", "Adobe Photoshop ((?:CC )?\\d+)\\.app"]],
             "version_expression": "(?P<version>\\d[\\d.]*)[^\\w\\d]"
         }
     }

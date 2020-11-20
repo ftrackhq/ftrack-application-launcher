@@ -73,17 +73,21 @@ class DiscoverApplications(object):
             
             launch_arguments = search_path.get('launch_arguments')
             prefix = search_path['prefix']
-            expression = search_path['expression']
+            expressions = search_path['expressions']
+            applications = []
 
-            applications = store._search_filesystem(
-                expression=prefix + expression,
-                label=config['label'],
-                applicationIdentifier=config['applicationIdentifier'],
-                icon=config['icon'],
-                variant=config['variant'],
-                launchArguments=launch_arguments,
-                integrations=config.get('integrations')
-            )
+            for expression in expressions:
+                
+                applications.extend(store._search_filesystem(
+                    expression=prefix + expression,
+                    label=config['label'],
+                    applicationIdentifier=config['applicationIdentifier'],
+                    icon=config['icon'],
+                    variant=config['variant'],
+                    launchArguments=launch_arguments,
+                    integrations=config.get('integrations')
+                ))
+    
             store.applications = applications
 
             launcher = ApplicationLauncher(store)

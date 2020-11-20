@@ -11,20 +11,20 @@
     "search_path":{
         "linux": {
             "prefix":["/", "usr","local"],
-            "expression":["Nuke.*", "'Nuke\\d.+'"],
+            "expressions":[["Nuke.*", "'Nuke\\d.+'"]],
             "version_expression": "(?P<version>[\\d.]+[vabc]+[\\dvabc.]*)",
             "launch_arguments": ["--hiero"]
         },
         "windows": {
             "prefix":["C:\\", "Program Files.*"],
             "version_expression": "(?P<version>[\\d.]+[vabc]+[\\dvabc.]*)",
-            "expression":["Nuke.*", "Nuke\\d.+.exe"],
+            "expressions":[["Nuke.*", "Nuke\\d.+.exe"]],
             "launch_arguments": ["--hiero"]
         },
         "darwin": {
             "prefix":["/", "Applications"],
             "version_expression": "Nuke(?P<version>.*)\/.+$",
-            "expression": ["Nuke.*", "Hiero\\d[\\w.]+.app"]
+            "expressions": [["Nuke.*", "Hiero\\d[\\w.]+.app"]]
         }
     }
  }

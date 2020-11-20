@@ -9,7 +9,7 @@
     "search_path":{
         "windows": {
             "prefix":["C:\\", "Program Files.*"],
-            "expression":["Blackmagic Design", "DaVinci Resolve", "Resolve.exe"]
+            "expressions":[["Blackmagic Design", "DaVinci Resolve", "Resolve.exe"]]
         }
     }
  }

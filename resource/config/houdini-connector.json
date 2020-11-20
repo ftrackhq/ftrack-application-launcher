@@ -12,15 +12,15 @@
     "search_path":{
         "linux": {
             "prefix":["/", "opt"],
-            "expression":["hfs*", "bin", "houdinifx-bin"]
+            "expressions":[["hfs*", "bin", "houdinifx-bin"]]
         },
         "windows": {
             "prefix":["C:\\", "Program Files.*"],
-            "expression":["Side Effects Software", "Houdini*", "bin", "houdini.exe"]
+            "expressions":[["Side Effects Software", "Houdini*", "bin", "houdini.exe"]]
         },
         "darwin": {
             "prefix":["/", "Applications"],
-            "expression": ["Apprentice", "Core", "FX", "Indie", "Houdini", "Houdini.*",  "Houdini *\\.app"]
+            "expressions": [["Apprentice", "Core", "FX", "Indie", "Houdini", "Houdini.*",  "Houdini *\\.app"]]
         }
     }
  }
