@@ -8,11 +8,12 @@
     },
     "label": "Houdini",
     "icon": "houdini",
-    "variant": "{version}",
+    "variant": "apprentice {version}",
     "search_path":{
         "linux": {
             "prefix":["/", "opt"],
-            "expression":["hfs*", "bin", "houdinifx-bin"]
+            "version_expression": "(?P<version>[\\d.{3}]*)",
+            "expression":["hfs*", "bin", "happrentice-bin"]
         },
         "windows": {
             "prefix":["C:\\", "Program Files.*"],
@@ -20,7 +21,7 @@
         },
         "darwin": {
             "prefix":["/", "Applications"],
-            "expression": ["Apprentice", "Core", "FX", "Indie", "Houdini", "Houdini.*",  "Houdini *\\.app"]
+            "expression": ["Houdini",  "Houdini*", "Houdini Apprentice.*\\.app", "Contents", "MacOS", "houdini"]
         }
     }
  }

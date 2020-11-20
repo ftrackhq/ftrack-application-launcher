@@ -1,0 +1,27 @@
+{
+    "priority":100,
+    "context": ["Task"],
+    "identifier": "ftrack-connect-launch-houdini",
+    "applicationIdentifier":"houdini_{version}",
+    "integrations": {
+        "connector":["ftrack-connect-houdini"]
+    },
+    "label": "Houdini",
+    "icon": "houdini",
+    "variant": "indie {version}",
+    "search_path":{
+        "linux": {
+            "prefix":["/", "opt"],
+            "expression":["hfs*", "bin", "hindie-bin"]
+        },
+        "windows": {
+            "prefix":["C:\\", "Program Files.*"],
+            "expression":["Side Effects Software", "Houdini*", "bin", "houdini.exe"]
+        },
+        "darwin": {
+            "prefix":["/", "Applications"],
+            "expression": ["Houdini",  "Houdini*", "Houdini Indie.*\\.app", "Contents", "MacOS", "houdini"]
+        }
+    }
+ }
+ 
