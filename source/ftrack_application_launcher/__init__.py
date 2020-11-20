@@ -435,7 +435,11 @@ class ApplicationLauncher(object):
                     application['label'].lower()
                     ): str(application['version']),
         }
+
         for result in results: 
+            if result is None:
+                continue
+
             integration = result.get('integration')
 
             metadata.setdefault('{}_version'.format(
@@ -457,7 +461,7 @@ class ApplicationLauncher(object):
     def _get_integrations_environments(self, results, context, environments):
 
         # parse integration returned from listeners.
-        returned_integrations_names = set([result.get('integration', {}).get('name') for result in results])
+        returned_integrations_names = set([result.get('integration', {}).get('name') for result in results if result])
         
         self.logger.info('Discovered integrations {}'.format(returned_integrations_names))
         self.logger.info('Requested integrations {}'.format(list(context.get('integrations', {}).items())))
@@ -478,7 +482,7 @@ class ApplicationLauncher(object):
 
                 result = [
                     result for result in results
-                    if result['integration']['name'] == requested_integration_name
+                    if result and result['integration']['name'] == requested_integration_name
                 ][0]
 
                 envs = result.get('env', {})
