@@ -20,7 +20,7 @@ from distutils.version import LooseVersion
 import ftrack_api
 from ftrack_action_handler.action import BaseAction
 from ftrack_application_launcher.configure_logging import configure_logging
-
+from ftrack_application_launcher.usage import send_event
 
 configure_logging(__name__)
 
@@ -382,6 +382,7 @@ class ApplicationLauncher(object):
             )
 
             if context.get('integrations'):
+                self._notify_integration_usage(results, application)
                 environment = self._get_integrations_environments(results, context, environment)
             else:
                 self.logger.warning('No integrations provided for {}:{}'.format(
@@ -398,6 +399,7 @@ class ApplicationLauncher(object):
             self.logger.debug(
                 'Launching {0} with options {1}'.format(command, options)
             )
+
             process = subprocess.Popen(command, **options)
 
         except (OSError, TypeError):
@@ -418,15 +420,48 @@ class ApplicationLauncher(object):
                 )
             )
 
+
+
         return {
             'success': success,
             'message': message
         }
 
+
+    def _notify_integration_usage(self, results, application):
+        metadata = {
+            'operating_system': platform.platform(),
+            '{}_version'.format(
+                    application['label'].lower()
+                    ): str(application['version']),
+        }
+
+        for result in results: 
+            if result is None:
+                continue
+
+            integration = result.get('integration')
+
+            metadata.setdefault('{}_version'.format(
+                    integration['name'].lower()), 
+                    str(integration.get('version', 'Unknown'))
+            )
+
+            topic = 'USED-{}'.format(integration['name'].upper())
+
+            self.logger.info(
+                'Sending topic: {}, metadata {}'.format(topic, metadata)
+            )
+
+            send_event(
+                topic,
+                metadata
+            )
+
     def _get_integrations_environments(self, results, context, environments):
 
         # parse integration returned from listeners.
-        returned_integrations_names = set([result.get('integration', {}).get('name') for result in results])
+        returned_integrations_names = set([result.get('integration', {}).get('name') for result in results if result])
         
         self.logger.info('Discovered integrations {}'.format(returned_integrations_names))
         self.logger.info('Requested integrations {}'.format(list(context.get('integrations', {}).items())))
@@ -447,7 +482,7 @@ class ApplicationLauncher(object):
 
                 result = [
                     result for result in results
-                    if result['integration']['name'] == requested_integration_name
+                    if result and result['integration']['name'] == requested_integration_name
                 ][0]
 
                 envs = result.get('env', {})
