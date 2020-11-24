@@ -383,14 +383,18 @@ class ApplicationLauncher(object):
                 synchronous=True
             )
             
+
             # recompose launch_arguments coming from integrations
             flatten = lambda t: [item for sublist in t for item in sublist]
             launch_arguments = flatten([
-                r['integration'].get('launch_arguments') 
-                for r in results if 'integration' in r
-            ] or [])
+                r['integration']['launch_arguments'] 
+                for r in results if 
+                ('integration' in r 
+                    and 'launch_arguments' in r['integration']
+                ) 
+            ])
 
-            launch_command = launchData['command'].extend(launch_arguments)
+            launchData['command'].extend(launch_arguments)
     
             if context.get('integrations'):
                 environment = self._get_integrations_environments(results, context, environment)
@@ -400,7 +404,7 @@ class ApplicationLauncher(object):
                 )
             # Reset variables passed through the hook since they might
             # have been replaced by a handler.
-            command = launch_command
+            command = launchData['command']
             options = launchData['options']
             application = launchData['application']
             options['env'] = environment
@@ -459,7 +463,7 @@ class ApplicationLauncher(object):
                     result for result in results
                     if result['integration']['name'] == requested_integration_name
                 ][0]
-
+                
                 envs = result['integration'].get('env', {})
 
                 if not envs:
