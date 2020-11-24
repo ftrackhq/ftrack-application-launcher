@@ -258,7 +258,10 @@ class ApplicationStore(object):
                             'integrations': integrations or {}
                         }
 
-                        applications.append(application)
+                        if application['variant'] not in [
+                            a['variant'] for a in applications
+                        ]:                    
+                            applications.append(application)
 
                 # Don't descend any further as out of patterns to match.
                 del folders[:]
