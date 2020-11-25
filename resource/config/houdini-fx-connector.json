@@ -12,7 +12,8 @@
     "search_path":{
         "linux": {
             "prefix":["/", "opt"],
-            "expression":["hfs*", "bin", "houdinifx-bin"]
+            "version_expression": "(?P<version>[\\d.+]{4})",
+            "expression":["hfs*", "bin", "houdinifx-bin$"]
         },
         "windows": {
             "prefix":["C:\\", "Program Files.*"],

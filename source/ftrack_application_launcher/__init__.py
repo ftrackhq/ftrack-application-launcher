@@ -257,7 +257,7 @@ class ApplicationStore(object):
                             'description': description,
                             'integrations': integrations or {}
                         }
-
+        
                         applications.append(application)
 
                 # Don't descend any further as out of patterns to match.

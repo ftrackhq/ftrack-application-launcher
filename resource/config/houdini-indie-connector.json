@@ -12,8 +12,8 @@
     "search_path":{
         "linux": {
             "prefix":["/", "opt"],
-            "version_expression": "(?P<version>[\\d*].{4})",
-            "expression":["hfs*", "bin", "hindie-bin"]
+            "version_expression": "(?P<version>[\\d.+]{4})",
+            "expression":["hfs*", "bin", "hindie-bin$"]
         },
         "windows": {
             "prefix":["C:\\", "Program Files.*"],
