@@ -336,6 +336,7 @@ class ApplicationLauncher(object):
         # Construct command and environment.
         command = self._get_application_launch_command(application, context)
         environment = self._get_application_environment(application, context)
+        
 
         # Environment must contain only strings.
         self._conform_environment(environment)
@@ -657,6 +658,11 @@ class ApplicationLauncher(object):
             self.session.event_hub.get_server_url(),
             'FTRACK_EVENT_SERVER', environment
         )
+
+        # add legacy_environments
+        environment['LOGNAME'] = self.session.api_user
+        environment['FTRACK_APIUSER'] = self.session.api_user
+        environment['FTRACK_APIKEY']=self.session.api_key
 
         laucher_dependencies = os.path.normpath(
             os.path.join(
