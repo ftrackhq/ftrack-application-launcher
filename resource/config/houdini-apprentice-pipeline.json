@@ -1,0 +1,33 @@
+{
+    "priority":100,
+    "context": ["Task"],
+    "identifier": "ftrack-connect-launch-houdini",
+    "applicationIdentifier":"houdini_{version}",
+    "integrations": {
+        "pipeline":[
+            "ftrack-connect-pipeline", 
+            "ftrack-connect-pipeline-qt", 
+            "ftrack-connect-pipeline-definition", 
+            "ftrack-connect-pipeline-3dsmax"
+        ]
+    },
+    "label": "Houdini",
+    "icon": "houdini",
+    "variant": "apprentice {version}",
+    "search_path":{
+        "linux": {
+            "prefix":["/", "opt"],
+            "version_expression": "(?P<version>[\\d.+]{4})",
+            "expression":["hfs*", "bin", "happrentice-bin"]
+        },
+        "windows": {
+            "prefix":["C:\\", "Program Files.*"],
+            "expression":["Side Effects Software", "Houdini*", "bin", "houdini.exe"]
+        },
+        "darwin": {
+            "prefix":["/", "Applications"],
+            "expression": ["Houdini",  "Houdini*", "Houdini Apprentice.*\\.app", "Contents", "MacOS", "houdini"]
+        }
+    }
+ }
+ 
