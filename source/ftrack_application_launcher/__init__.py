@@ -661,7 +661,6 @@ class ApplicationLauncher(object):
 
         # add legacy_environments
         environment['LOGNAME'] = self.session.api_user
-        environment['FTRACK_APIUSER'] = self.session.api_user
         environment['FTRACK_APIKEY']=self.session.api_key
 
         laucher_dependencies = os.path.normpath(
