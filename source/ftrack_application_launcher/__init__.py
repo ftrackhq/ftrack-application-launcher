@@ -257,7 +257,7 @@ class ApplicationStore(object):
                             'description': description,
                             'integrations': integrations or {}
                         }
-
+        
                         applications.append(application)
 
                 # Don't descend any further as out of patterns to match.
@@ -369,7 +369,9 @@ class ApplicationLauncher(object):
                 context=context,
                 integration={
                     'name': None,
-                    'version': None
+                    'version': None,
+                    'env':{},
+                    'launch_arguments': []
                 }
             )
 
@@ -380,7 +382,20 @@ class ApplicationLauncher(object):
                 ),
                 synchronous=True
             )
+            
 
+            # recompose launch_arguments coming from integrations
+            flatten = lambda t: [item for sublist in t for item in sublist]
+            launch_arguments = flatten([
+                r['integration']['launch_arguments'] 
+                for r in results if 
+                ('integration' in r 
+                    and 'launch_arguments' in r['integration']
+                ) 
+            ])
+
+            launchData['command'].extend(launch_arguments)
+    
             if context.get('integrations'):
                 self._notify_integration_usage(results, application)
                 environment = self._get_integrations_environments(results, context, environment)
@@ -388,7 +403,6 @@ class ApplicationLauncher(object):
                 self.logger.warning('No integrations provided for {}:{}'.format(
                     applicationIdentifier, context.get('variant'))
                 )
-
             # Reset variables passed through the hook since they might
             # have been replaced by a handler.
             command = launchData['command']
@@ -484,8 +498,8 @@ class ApplicationLauncher(object):
                     result for result in results
                     if result and result['integration']['name'] == requested_integration_name
                 ][0]
-
-                envs = result.get('env', {})
+                
+                envs = result['integration'].get('env', {})
 
                 if not envs:
                     self.logger.warning(
