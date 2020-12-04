@@ -71,7 +71,7 @@ def configure_logging(logger_name, level=None, format=None, extra_modules=None):
         'handlers': {
             'console': {
                 'class': 'logging.StreamHandler',
-                'level': logging.getLevelName(level),
+                'level': level,
                 'formatter': 'file',
                 'stream': 'ext://sys.stdout',
             },
@@ -80,7 +80,6 @@ def configure_logging(logger_name, level=None, format=None, extra_modules=None):
                 'level': 'DEBUG',
                 'formatter': 'file',
                 'filename': logfile,
-                'filters': ['application_launcher_only'],
                 'mode': 'a',
                 'maxBytes': 10485760,
                 'backupCount': 5,
@@ -102,7 +101,7 @@ def configure_logging(logger_name, level=None, format=None, extra_modules=None):
     }
 
     for module in modules:
-        current_level = logging.getLevelName(level)
+        current_level = level
         logging_settings['loggers'].setdefault(
             module, {'level': current_level}
         )

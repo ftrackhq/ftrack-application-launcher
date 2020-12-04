@@ -6,6 +6,7 @@ import logging
 from ftrack_application_launcher import ApplicationStore, ApplicationLaunchAction, ApplicationLauncher
 
 
+
 class DiscoverApplications(object):
 
     @property
