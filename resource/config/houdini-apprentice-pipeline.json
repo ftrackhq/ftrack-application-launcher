@@ -8,7 +8,7 @@
             "ftrack-connect-pipeline", 
             "ftrack-connect-pipeline-qt", 
             "ftrack-connect-pipeline-definition", 
-            "ftrack-connect-pipeline-3dsmax"
+            "ftrack-connect-pipeline-houdini"
         ]
     },
     "label": "Houdini",

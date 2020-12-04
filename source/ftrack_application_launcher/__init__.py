@@ -524,15 +524,15 @@ class ApplicationLauncher(object):
 
                     if action == 'append':
                         self.logger.info('Appending {} with {}'.format(key, value))
-                        append_path(value, key, environments)
+                        append_path(str(value), key, environments)
 
                     elif action == 'prepend':
                         self.logger.info('Prepending {} with {}'.format(key, value))
-                        prepend_path(value, key, environments)    
+                        prepend_path(str(value), key, environments)    
 
                     elif action == 'set':
                         self.logger.info('Setting {} to {}'.format(key, value))
-                        environments[key] = value
+                        environments[key] = str(value)
 
                     elif action == 'unset':   
                         self.logger.info('Unsetting {}'.format(key))
@@ -543,7 +543,7 @@ class ApplicationLauncher(object):
                             'Environment variable action {} not recognised for {}'.format(action, key)
                         )
                         continue
-
+                        
         return environments
 
     def _get_application_launch_command(self, application, context=None):
