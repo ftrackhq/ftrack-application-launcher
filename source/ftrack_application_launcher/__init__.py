@@ -719,10 +719,10 @@ class ApplicationLaunchAction(BaseAction):
     context = []
 
     def __repr__(self):
-        return "<label:{}|id:{}|ctx:{}>".format(
+        return "<label:{}|id:{}|variant:{}>".format(
             self.label,
             self.identifier,
-            ' '.join(self.context)
+            self.variant
         )
 
     @property
