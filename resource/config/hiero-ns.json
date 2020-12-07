@@ -1,7 +1,7 @@
 {
     "context": ["Project"],
     "identifier": "ftrack-connect-launch-hiero",
-    "applicationIdentifier":"hiero_{version}",
+    "applicationIdentifier":"hiero_{variant}",
     "label": "Hiero",
     "icon": "hiero",
     "variant": "{version}",

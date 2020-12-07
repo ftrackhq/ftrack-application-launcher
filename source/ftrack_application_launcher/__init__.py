@@ -246,7 +246,7 @@ class ApplicationStore(object):
 
                         application = {
                             'identifier': applicationIdentifier.format(
-                                version=str(loose_version)
+                                variant=str(variant_str)
                             ),
                             'path': path,
                             'launchArguments': launchArguments,

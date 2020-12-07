@@ -1,7 +1,7 @@
 {
     "context": ["Task"],
     "identifier": "ftrack-connect-launch-nukex",
-    "applicationIdentifier":"nukex_{version}",
+    "applicationIdentifier":"nukex_{variant}",
     "label": "NukeX",
     "icon": "nukex",
     "variant": "{version}",

@@ -1,7 +1,7 @@
 {
     "context": ["Task"],
     "identifier": "ftrack-connect-launch-3dsmax",
-    "applicationIdentifier":"3ds-max_{version}",
+    "applicationIdentifier":"3ds-max_{variant}",
     "integrations": {
         "pipeline":[
             "ftrack-connect-pipeline", 
