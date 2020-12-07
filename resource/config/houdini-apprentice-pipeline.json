@@ -26,7 +26,7 @@
         },
         "darwin": {
             "prefix":["/", "Applications"],
-            "expression": ["Houdini",  "Houdini*", "Houdini Apprentice.*\\.app", "Contents", "MacOS", "houdini"]
+            "expression": ["Houdini",  "Houdini*", "Houdini Apprentice.*\\.app"]
         }
     }
  }
