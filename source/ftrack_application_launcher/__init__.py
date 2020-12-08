@@ -100,6 +100,8 @@ class ApplicationStore(object):
             identifier = identifier[:-1]
 
         for application in self.applications:
+            self.logger.warning('------> {} {}'.format(application, identifier))
+
             if hasWildcard:
                 if application['identifier'].startswith(identifier):
                     return application
