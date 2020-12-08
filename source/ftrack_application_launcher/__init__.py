@@ -6,6 +6,7 @@ import pprint
 import re
 import os
 import ssl
+import tempfile
 
 import subprocess
 import collections
@@ -138,7 +139,7 @@ class ApplicationStore(object):
     def _search_filesystem(self, expression, label, applicationIdentifier,
                            versionExpression=None, icon=None,
                            launchArguments=None, variant='',
-                           description=None, integrations=None):
+                           description=None, integrations=None, console=False):
         '''
         Return list of applications found in filesystem matching *expression*.
 
@@ -246,7 +247,7 @@ class ApplicationStore(object):
 
                         application = {
                             'identifier': applicationIdentifier.format(
-                                version=str(loose_version)
+                                variant=str(variant_str)
                             ),
                             'path': path,
                             'launchArguments': launchArguments,
@@ -255,7 +256,8 @@ class ApplicationStore(object):
                             'icon': icon,
                             'variant': variant_str,
                             'description': description,
-                            'integrations': integrations or {}
+                            'integrations': integrations or {},
+                            'console': console
                         }
         
                         applications.append(application)
@@ -411,6 +413,32 @@ class ApplicationLauncher(object):
             application = launchData['application']
             options['env'] = environment
 
+            if application.get('console') is True:
+
+                if self.current_os == 'darwin':
+
+                    script_path = tempfile.NamedTemporaryFile(
+                        delete=False,
+                        dir=os.path.join(os.environ['TMPDIR'], 'ftrack'),
+                        suffix='.command'
+                    ).name
+
+                    with open(script_path, "w") as f:
+                        f.write('#!/bin/bash\n')
+
+                        for key,value in options['env'].items():
+                            f.write('export {}="{}"\n'.format(key, value))
+
+                        f.write(' '.join('"{}"'.format(c) for c in command))
+
+                    os.system('chmod 755 {}'.format(script_path))
+
+                    command = ['open', '-a', 'Terminal', script_path]
+
+                else:
+
+                    self.logger.warning('Console launch only supported on Mac OS')
+
             self.logger.debug(
                 'Launching {0} with options {1}'.format(command, options)
             )
@@ -563,8 +591,10 @@ class ApplicationLauncher(object):
             command = [application['path']]
 
         elif self.current_os == 'darwin':
-            command = ['open', application['path']]
-
+            if not application.get('console') is True:
+                command = ['open', application['path']]
+            else:
+                command = [application['path']]
         else:
             self.logger.warning(
                 'Unable to find launch command for {0} on this platform.'
@@ -650,7 +680,7 @@ class ApplicationLauncher(object):
         environment.pop('FTRACK_EVENT_PLUGIN_PATH', None)
 
         # Ensure SSL_CERT_FILE points to the default cert.
-        if 'linux' in sys.platform:
+        if 'linux' in sys.platform or 'darwin' in sys.platform:
             environment['SSL_CERT_FILE'] = ssl.get_default_verify_paths().cafile        
 
         # Add FTRACK_EVENT_SERVER variable.
@@ -788,7 +818,8 @@ class ApplicationLaunchAction(BaseAction):
                 'variant': application.get('variant', None),
                 'applicationIdentifier': application_identifier,
                 'integrations': application.get('integrations', {}),
-                'host': platform.node()
+                'host': platform.node(),
+                'console': application.get('console', False),
             })
 
         return {
