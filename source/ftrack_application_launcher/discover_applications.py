@@ -109,7 +109,6 @@ class DiscoverApplications(object):
                 {
                     'label': config['label'],
                     'identifier': identifier,
-                    'variant': config['variant'],
                     'context': config['context']
                 }
             )
