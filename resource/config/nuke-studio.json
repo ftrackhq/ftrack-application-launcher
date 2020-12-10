@@ -1,7 +1,7 @@
 {
     "context": ["Project"],
     "identifier": "ftrack-connect-launch-nuke-studio",
-    "applicationIdentifier":"nuke-studio_{version}",
+    "applicationIdentifier":"nuke-studio_{variant}",
     "label": "Nuke Studio",
     "icon": "nuke_studio",
     "variant": "{version}",

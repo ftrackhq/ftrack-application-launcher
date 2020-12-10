@@ -2,9 +2,9 @@ import sys
 import os
 import json
 import platform
+from collections import defaultdict
 import logging
 from ftrack_application_launcher import ApplicationStore, ApplicationLaunchAction, ApplicationLauncher
-
 
 
 class DiscoverApplications(object):
@@ -58,46 +58,57 @@ class DiscoverApplications(object):
         
         return loaded_filtered_files
 
+    def _group_configurations(self, configurations):
+        '''group configuration based on identifier'''
+        result_dict = defaultdict(list)
+
+        for configuration in configurations:
+            result_dict.setdefault(configuration['identifier'], []).append(configuration)
+
+        return result_dict
+
     def _build_launchers(self, configurations):
-        for config in configurations:
+        grouped_configurations = self._group_configurations(configurations)
+        for identifier, identified_configuration in grouped_configurations.items():
+            self.logger.debug('building config store for {}'.format(identifier))
             store = ApplicationStore(self._session)
 
-            # extract data from app config
-            search_path = config['search_path'].get(self.current_os)
-            if not search_path:
-                self.logger.warning(
-                    'No entry found for os: {} in config {}'.format(
-                        self.current_os, config['label']
-                    )
-                )
-                continue
-            
-            launch_arguments = search_path.get('launch_arguments')
-            prefix = search_path['prefix']
-            expression = search_path['expression']
-            version_expression = search_path.get('version_expression')
+            for config in identified_configuration:
 
-            applications = store._search_filesystem(
-                versionExpression=version_expression,
-                expression=prefix + expression,
-                label=config['label'],
-                applicationIdentifier=config['applicationIdentifier'],
-                icon=config['icon'],
-                variant=config['variant'],
-                launchArguments=launch_arguments,
-                integrations=config.get('integrations')
-            )
-            store.applications = applications
+                # extract data from app config
+                search_path = config['search_path'].get(self.current_os)
+                if not search_path:
+                    self.logger.warning(
+                        'No entry found for os: {} in config {}'.format(
+                            self.current_os, config['label']
+                        )
+                    )
+                    continue
+
+                launch_arguments = search_path.get('launch_arguments')
+                prefix = search_path['prefix']
+                expression = search_path['expression']
+                version_expression = search_path.get('version_expression')
+
+                applications = store._search_filesystem(
+                    versionExpression=version_expression,
+                    expression=prefix + expression,
+                    label=config['label'],
+                    applicationIdentifier=config['applicationIdentifier'],
+                    icon=config['icon'],
+                    variant=config['variant'],
+                    launchArguments=launch_arguments,
+                    integrations=config.get('integrations')
+                )
+                store.applications.extend(applications)
 
             launcher = ApplicationLauncher(store)
-
             NewAction = type(
                 'ApplicationLauncherAction-{}'.format(config['label']),
                 (ApplicationLaunchAction,),
                 {
                     'label': config['label'],
-                    'identifier': config['identifier'],
-                    'variant': config['variant'],
+                    'identifier': identifier,
                     'context': config['context']
                 }
             )

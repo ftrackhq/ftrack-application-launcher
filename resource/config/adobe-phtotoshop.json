@@ -1,7 +1,7 @@
 {
     "context": ["Task"],
     "identifier": "ftrack-connect-launch-adobe",
-    "applicationIdentifier":"photoshop_cc_{version}",
+    "applicationIdentifier":"photoshop_cc_{variant}",
     "label": "Photoshop",
     "icon": "photoshop",
     "variant": "CC {version}",

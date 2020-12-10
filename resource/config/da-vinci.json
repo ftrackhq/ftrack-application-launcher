@@ -2,7 +2,7 @@
     "priority":100,
     "context": ["Project"],
     "identifier": "ftrack-connect-launch-da-vinci-resolve",
-    "applicationIdentifier":"resolve_{version}",
+    "applicationIdentifier":"resolve_{variant}",
     "label": "Resolve",
     "icon": "https://icons.iconarchive.com/icons/papirus-team/papirus-apps/256/resolve-icon.png",
     "variant": "{version}",
