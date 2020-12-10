@@ -650,7 +650,7 @@ class ApplicationLauncher(object):
         environment.pop('FTRACK_EVENT_PLUGIN_PATH', None)
 
         # Ensure SSL_CERT_FILE points to the default cert.
-        if 'linux' in sys.platform:
+        if 'win32' not in sys.platform:
             environment['SSL_CERT_FILE'] = ssl.get_default_verify_paths().cafile        
 
         # Add FTRACK_EVENT_SERVER variable.
