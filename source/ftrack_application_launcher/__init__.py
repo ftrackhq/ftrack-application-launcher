@@ -417,7 +417,23 @@ class ApplicationLauncher(object):
 
                 if self.current_os == 'darwin':
 
-                    command = ['open', '-a', 'Terminal', command[0]]
+                    script_path = tempfile.NamedTemporaryFile(
+                        delete=False,
+                        dir=os.path.join(os.environ['TMPDIR'], 'ftrack'),
+                        suffix='.command'
+                    ).name
+
+                    with open(script_path, "w") as f:
+                        f.write('#!/bin/bash\n')
+
+                        for key,value in options['env'].items():
+                            f.write('export {}="{}"\n'.format(key, value))
+
+                        f.write(' '.join('"{}"'.format(c) for c in command))
+
+                    os.system('chmod 755 {}'.format(script_path))
+
+                    command = ['open', '-a', 'Terminal', script_path]
 
                 else:
 
@@ -426,6 +442,8 @@ class ApplicationLauncher(object):
             self.logger.debug(
                 'Launching {0} with options {1}'.format(command, options)
             )
+
+            print ('@@@ Launching {0} with options {1}'.format(command, options))
 
             process = subprocess.Popen(command, **options)
 
