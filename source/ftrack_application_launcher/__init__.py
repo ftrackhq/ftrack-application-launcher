@@ -417,7 +417,7 @@ class ApplicationLauncher(object):
 
                 if self.current_os == 'darwin':
 
-                    command = ['open', '-a', 'Terminal', commands[0]]
+                    command = ['open', '-a', 'Terminal', command[0]]
 
                 else:
 
