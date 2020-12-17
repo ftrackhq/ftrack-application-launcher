@@ -2,7 +2,7 @@
     "priority":100,
     "context": ["Task"],
     "identifier": "ftrack-connect-launch-houdini",
-    "applicationIdentifier":"houdini_{version}",
+    "applicationIdentifier":"houdini_{variant}",
     "integrations": {
         "pipeline":[
             "ftrack-connect-pipeline", 
