@@ -62,6 +62,23 @@ def append_path(path, key, environment):
     return environment
 
 
+def remove_path(path, key, environment):
+    '''Remove *path* to *key* in *environment*.'''
+    if key in list(environment.keys()):
+        env_paths = os.pathsep(environment[key])
+        logger = logging.getLogger(__name__)
+        logger.debug('all paths: {}'.format(env_paths))
+        for i, env_path in enumerate(env_paths):
+            if env_path == path:
+                env_paths.pop(i)
+                logger.debug('pop index: {}, path: {}'.format(i, path))
+                logger.debug('env_paths: {}'.format(env_paths))
+        environment[key] = (os.pathsep.join(env_paths))
+        logger.debug('result environment: {}'.format(environment[key]))
+
+    return environment
+
+
 class ApplicationStore(object):
     '''Discover and store available applications on this host.'''
 
@@ -415,6 +432,11 @@ class ApplicationLauncher(object):
                 'Launching {0} with options {1}'.format(command, options)
             )
 
+            self.logger.debug("os.getenv {}".format(os.getenv('PYTHONPATH')))
+            self.logger.debug("options['env'] {}".format(options['env']))
+            self.logger.debug("command {}".format(command))
+            self.logger.debug("options {}".format(options))
+
             process = subprocess.Popen(command, **options)
 
         except (OSError, TypeError):
@@ -538,7 +560,11 @@ class ApplicationLauncher(object):
                         self.logger.info('Unsetting {}'.format(key))
                         if key in environments:
                             environments.pop(key)
-                    else:
+                    elif action == 'remove':
+                        self.logger.info(
+                            'removing {} with {}'.format(key, value))
+                        remove_path(str(value), key, environments)
+                else:
                         self.logger.error(
                             'Environment variable action {} not recognised for {}'.format(action, key)
                         )
