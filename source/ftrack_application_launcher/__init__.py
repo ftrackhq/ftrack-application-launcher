@@ -432,11 +432,6 @@ class ApplicationLauncher(object):
                 'Launching {0} with options {1}'.format(command, options)
             )
 
-            self.logger.debug("os.getenv {}".format(os.getenv('PYTHONPATH')))
-            self.logger.debug("options['env'] {}".format(options['env']))
-            self.logger.debug("command {}".format(command))
-            self.logger.debug("options {}".format(options))
-
             process = subprocess.Popen(command, **options)
 
         except (OSError, TypeError):
@@ -564,11 +559,11 @@ class ApplicationLauncher(object):
                         self.logger.info(
                             'removing {} with {}'.format(key, value))
                         remove_path(str(value), key, environments)
-                else:
-                        self.logger.error(
-                            'Environment variable action {} not recognised for {}'.format(action, key)
-                        )
-                        continue
+                    else:
+                            self.logger.error(
+                                'Environment variable action {} not recognised for {}'.format(action, key)
+                            )
+                            continue
                         
         return environments
 
