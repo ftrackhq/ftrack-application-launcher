@@ -560,10 +560,10 @@ class ApplicationLauncher(object):
                             'removing {} with {}'.format(key, value))
                         remove_path(str(value), key, environments)
                     else:
-                            self.logger.error(
-                                'Environment variable action {} not recognised for {}'.format(action, key)
-                            )
-                            continue
+                        self.logger.error(
+                            'Environment variable action {} not recognised for {}'.format(action, key)
+                        )
+                        continue
                         
         return environments
 
