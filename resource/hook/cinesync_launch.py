@@ -12,6 +12,7 @@ from ftrack_action_handler.action import BaseAction
 class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction):
     '''Cinesync launch action.'''
 
+    context = ['List', 'AssetVersion', 'ReviewSession']
     identifier = 'ftrack-connect-cinesync-application'
     label = 'cineSync'
 
@@ -27,9 +28,9 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
         self.applicationStore = applicationStore
 
         self.allowed_entity_types_fn = {
-            'list': self._get_version_from_lists,
-            'assetversion': self._get_version,
-            'reviewsession': self._get_version_from_review
+            'List': self._get_version_from_lists,
+            'AssetVersion': self._get_version,
+            'ReviewSession': self._get_version_from_review
         }
 
     def _get_version(self, entity_id):
@@ -94,7 +95,7 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
         selection = data.get('selection', [])
         return selection
 
-    def discover(self, session, entities, event):
+    def _discover(self, event):
         '''Return true if we can handle the selected entities.
 
         *session* is a `ftrack_api.Session` instance
@@ -218,7 +219,7 @@ def register(session, **kw):
     if not isinstance(session, ftrack_api.session.Session):
         return
 
-    applicationStore = CinesyncApplicationStore()
+    applicationStore = CinesyncApplicationStore(session)
     # Create action and register to respond to discover and launch events.
     action = CinesyncActionLauncher(applicationStore, session)
     action.register()

@@ -731,7 +731,7 @@ class ApplicationLaunchAction(BaseAction):
         return self._session
 
     def __init__(
-            self, session, application_store, launcher, priority=sys.maxsize
+            self, session, application_store=None, launcher=None, priority=sys.maxsize
     ):
         super(ApplicationLaunchAction, self).__init__(session)
 
@@ -739,9 +739,18 @@ class ApplicationLaunchAction(BaseAction):
             __name__ + '.' + self.__class__.__name__
         )
 
+        if not application_store:
+            self.logger.warning('No Application store defined for {}'.format(self))
+
+
+        if not launcher:
+            self.logger.warning('No Application launcher defined {}'.format(self))
+
+    
         self.priority = priority
         self.application_store = application_store
         self.launcher = launcher
+
 
     def validate_selection(self, entities):
         '''Return True if the selection is valid.
@@ -756,6 +765,12 @@ class ApplicationLaunchAction(BaseAction):
             return False
 
         entity_type, entity_id = entities[0]
+
+        if entity_type not in self.session.types.keys():
+            self.logger.warning('Entity {} is not of a known type.'.format(entity_type))
+
+            return False
+
         resolved_entity_type = self.session.get(entity_type, entity_id).entity_type
 
         if resolved_entity_type in self.context:
@@ -772,6 +787,7 @@ class ApplicationLaunchAction(BaseAction):
             return
 
         items = []
+
         applications = self.application_store.applications
 
         applications = sorted(
