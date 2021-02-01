@@ -2,11 +2,8 @@
 # :copyright: Copyright (c) 2018 ftrack
 
 import subprocess
-import sys
-
 import ftrack_api
 import ftrack_application_launcher
-from ftrack_action_handler.action import BaseAction
 
 
 class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction):
@@ -154,6 +151,7 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
             subprocess.call(['xdg-open', url])
 
     def _launch(self, event):
+        '''rework logic to run custom launch function'''
         args = self._translate_event(
             self.session, event
         )
@@ -184,6 +182,7 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
         event.stop()
         versions = self.get_versions(event['data']['selection'])
         self.open_url(versions)
+        return True
 
 
 class CinesyncApplicationStore(ftrack_application_launcher.ApplicationStore):
