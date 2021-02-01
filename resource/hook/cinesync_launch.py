@@ -17,16 +17,17 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
     label = 'cineSync'
 
     def __init__(self, application_store, session):
-        super(CinesyncActionLauncher, self).__init__(
-            session=session,
-            application_store=application_store
-        )
 
         self.allowed_entity_types_fn = {
             'list': self._get_version_from_lists,
             'assetversion': self._get_version,
             'reviewsession': self._get_version_from_review
         }
+
+        super(CinesyncActionLauncher, self).__init__(
+            session=session,
+            application_store=application_store
+        )
 
     def _get_version(self, entity_id):
         '''Return a single *entity_id* from version'''
@@ -93,7 +94,7 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
         selection = data.get('selection', [])
         return selection
 
-    def _discover(self, event):
+    def discover(self, session, entities, event):
         '''Return true if we can handle the selected entities.
 
         *session* is a `ftrack_api.Session` instance
@@ -112,13 +113,13 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
             return False
 
         selection = self.get_selection(event)
-        self.logger.info(selection)
         if not selection:
             self.logger.debug(
                 'No entity selected.'
             )
             return False
 
+        selection = self.get_selection(event)
         if not self.is_valid_selection(selection):
             valid_types = self.allowed_entity_types_fn.keys()
             self.logger.warning(
@@ -131,7 +132,6 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
         applications = sorted(
             applications, key=lambda application: application['label']
         )
-        self.logger.info(applications)
 
         self.variant = applications[0].get('variant', None)
         return True
@@ -152,6 +152,19 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
 
         elif self.current_os == 'linux':
             subprocess.call(['xdg-open', url])
+
+    def _launch(self, event):
+        args = self._translate_event(
+            self.session, event
+        )
+
+        response = self.launch(
+            self.session, *args
+        )
+
+        return self._handle_result(
+            self.session, response, *args
+        )
 
     def launch(self, session, entities, event):
         '''Callback method for the action.

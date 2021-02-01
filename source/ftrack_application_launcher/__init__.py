@@ -823,6 +823,10 @@ class ApplicationLaunchAction(BaseAction):
             *applicationIdentifier* to identify which application to start.
 
         '''
+        if not self.launcher:
+            self.logger.info('No Launcher defined.')
+            return
+
         event.stop()
 
         entities, event = self._translate_event(self.session, event)
