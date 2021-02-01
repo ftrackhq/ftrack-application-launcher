@@ -726,6 +726,11 @@ class ApplicationLaunchAction(BaseAction):
         )
 
     @property
+    def current_os(self):
+        return platform.system().lower()
+
+
+    @property
     def session(self):
         '''Return convenient exposure of the self._session reference.'''
         return self._session
@@ -750,7 +755,6 @@ class ApplicationLaunchAction(BaseAction):
         self.priority = priority
         self.application_store = application_store
         self.launcher = launcher
-
 
     def validate_selection(self, entities):
         '''Return True if the selection is valid.

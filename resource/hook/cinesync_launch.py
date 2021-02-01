@@ -16,16 +16,11 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
     identifier = 'ftrack-connect-cinesync-application'
     label = 'cineSync'
 
-    def __init__(self, applicationStore, session):
-        '''Initialise action with *applicationStore*.
-
-        *applicationStore* should be an instance of
-        :class:`ftrack_connect.application.ApplicationStore`.
-
-        '''
-        super(CinesyncActionLauncher, self).__init__(session=session)
-
-        self.applicationStore = applicationStore
+    def __init__(self, application_store, session):
+        super(CinesyncActionLauncher, self).__init__(
+            session=session,
+            application_store=application_store
+        )
 
         self.allowed_entity_types_fn = {
             'list': self._get_version_from_lists,
@@ -40,7 +35,7 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
     def _get_version_from_lists(self, entity_id):
         '''Return list of version ids from AssetVersionList from *entity_id*'''
 
-        asset_version_lists = self._session.query(
+        asset_version_lists = self.session.query(
             'AssetVersionList where id is {0}'.format(entity_id)
         ).one()
 
@@ -53,7 +48,7 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
     def _get_version_from_review(self, entity_id):
         '''Return list of versions ids from ReviewSession from *entity_id*'''
 
-        review_session = self._session.query(
+        review_session = self.session.query(
             'select review_session_objects.version_id'
             ' from ReviewSession where id is {0}'.format(entity_id)
         ).one()
@@ -68,10 +63,13 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
         '''Check whether the given *selection* is valid'''
         results = []
 
+        self.logger.info(selection)
         for selected_item in selection:
             allowed_entity_types = self.allowed_entity_types_fn.keys()
             if selected_item.get('entityType') in allowed_entity_types:
                 results.append(selected_item)
+
+        self.logger.info(results)
 
         return results
 
@@ -108,12 +106,13 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
 
         *event* the unmodified original event'''
 
-        applications = self.applicationStore.applications
+        applications = self.application_store.applications
         if not applications:
             self.logger.warning('No application found form {}'.format(self))
             return False
 
         selection = self.get_selection(event)
+        self.logger.info(selection)
         if not selection:
             self.logger.debug(
                 'No entity selected.'
@@ -132,6 +131,7 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
         applications = sorted(
             applications, key=lambda application: application['label']
         )
+        self.logger.info(applications)
 
         self.variant = applications[0].get('variant', None)
         return True
@@ -144,13 +144,13 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
 
         self.logger.debug('Opening Cynesinc Url: {0}'.format(url))
 
-        if sys.platform == 'darwin':
+        if self.current_os == 'darwin':
             subprocess.call(['open', url])
 
-        elif sys.platform == 'win32':
+        elif self.current_os == 'windows':
             subprocess.call(['cmd', '/c', 'start', '', '/b', url])
 
-        elif sys.platform == 'linux2':
+        elif self.current_os == 'linux':
             subprocess.call(['xdg-open', url])
 
     def launch(self, session, entities, event):
