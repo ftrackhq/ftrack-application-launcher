@@ -28,9 +28,9 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
         self.applicationStore = applicationStore
 
         self.allowed_entity_types_fn = {
-            'List': self._get_version_from_lists,
-            'AssetVersion': self._get_version,
-            'ReviewSession': self._get_version_from_review
+            'list': self._get_version_from_lists,
+            'assetversion': self._get_version,
+            'reviewsession': self._get_version_from_review
         }
 
     def _get_version(self, entity_id):
@@ -110,6 +110,7 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
 
         applications = self.applicationStore.applications
         if not applications:
+            self.logger.warning('No application found form {}'.format(self))
             return False
 
         selection = self.get_selection(event)
@@ -175,14 +176,14 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
 class CinesyncApplicationStore(ftrack_application_launcher.ApplicationStore):
     '''Discover and store available applications on this host.'''
 
-    def _discoverApplications(self):
+    def _discover_applications(self):
         '''Return list of applications that can be launched from this host.'''
         applications = []
 
-        if sys.platform == 'darwin':
+        if self.current_os == 'darwin':
             prefix = ['/', 'Applications']
 
-            applications.extend(self._searchFilesystem(
+            applications.extend(self._search_filesystem(
                 expression=prefix + ['cineSync.app'],
                 label='cineSync',
                 applicationIdentifier='cineSync',
@@ -190,17 +191,17 @@ class CinesyncApplicationStore(ftrack_application_launcher.ApplicationStore):
                 versionExpression=r'(?P<version>.*)'
             ))
 
-        elif sys.platform == 'win32':
+        elif self.current_os == 'windows':
             prefix = ['C:\\', 'Program Files.*']
 
-            applications.extend(self._searchFilesystem(
+            applications.extend(self._search_filesystem(
                 expression=prefix + ['cineSync', 'cineSync.exe'],
                 label='cineSync',
                 applicationIdentifier='cineSync',
                 icon='cinesync'
             ))
 
-        elif sys.platform == 'linux2':
+        elif self.current_os == 'linux':
             # TODO: Find consistent way to decide where the application is
             # installed. Placeholder for linux
             return
