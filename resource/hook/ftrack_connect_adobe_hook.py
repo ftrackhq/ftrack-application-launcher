@@ -301,10 +301,10 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
 class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
 
     application_extensions = {
-        'photoshop_cc': 'psd',
-        'premiere_pro_cc': 'prproj',
-        'after_effects_cc': 'aep',
-        'illustrator_cc': 'ai',
+        'photoshop': 'psd',
+        'premiere_pro': 'prproj',
+        'after_effects': 'aep',
+        'illustrator': 'ai',
     }
 
     def _get_temporary_copy(self, filePath):
