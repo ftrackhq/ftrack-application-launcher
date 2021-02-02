@@ -26,6 +26,7 @@ class LaunchAction(ftrack_application_launcher.ApplicationLaunchAction):
     '''Adobe plugins discover and launch action.'''
     context = ['Task']
     identifier = 'ftrack-connect-launch-adobe'
+    label = 'Adobe'
 
     def __init__(self, session,  applicationStore, launcher):
         '''Initialise action with *applicationStore* and *launcher*.
@@ -177,7 +178,7 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 ],
                 label='Photoshop',
                 variant='CC {version}',
-                applicationIdentifier='photoshop_cc_{version}',
+                applicationIdentifier='photoshop_{variant}',
                 versionExpression=ADOBE_VERSION_EXPRESSION,
                 icon='photoshop'
             ))
@@ -188,7 +189,7 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 ],
                 label='Premiere Pro',
                 variant='CC {version}',
-                applicationIdentifier='premiere_pro_cc_{version}',
+                applicationIdentifier='premiere_pro_{variant}',
                 versionExpression=ADOBE_VERSION_EXPRESSION,
                 icon='premiere'
             ))
@@ -199,7 +200,7 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 ],
                 label='After Effects',
                 variant='CC {version}',
-                applicationIdentifier='after_effects_cc_{version}',
+                applicationIdentifier='after_effects_{variant}',
                 versionExpression=ADOBE_VERSION_EXPRESSION,
                 icon='after_effects'
             ))
@@ -210,7 +211,7 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 ],
                 label='Illustrator',
                 variant='CC {version}',
-                applicationIdentifier='illustrator_cc_{version}',
+                applicationIdentifier='illustrator_{variant}',
                 versionExpression=ADOBE_VERSION_EXPRESSION,
                 icon='illustrator'
             ))
@@ -226,7 +227,7 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 ),
                 label='Photoshop',
                 variant='CC {version}',
-                applicationIdentifier='photoshop_cc_{version}',
+                applicationIdentifier='photoshop_{variant}',
                 versionExpression=ADOBE_VERSION_EXPRESSION,
                 icon='photoshop'
             ))
@@ -239,7 +240,7 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 ),
                 label='Premiere Pro',
                 variant='CC {version}',
-                applicationIdentifier='premiere_pro_cc_{version}',
+                applicationIdentifier='premiere_pro_{variant}',
                 versionExpression=ADOBE_VERSION_EXPRESSION,
                 icon='premiere'
             ))
@@ -252,7 +253,7 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 ),
                 label='After Effects',
                 variant='CC {version}',
-                applicationIdentifier='after_effects_cc_{version}',
+                applicationIdentifier='after_effects_{variant}',
                 versionExpression=ADOBE_VERSION_EXPRESSION,
                 icon='after_effects'
             ))
@@ -265,7 +266,7 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 ),
                 label='Illustrator',
                 variant='CC {version}',
-                applicationIdentifier='illustrator_cc_{version}',
+                applicationIdentifier='illustrator_{variant}',
                 versionExpression=ADOBE_VERSION_EXPRESSION,
                 icon='illustrator'
             ))

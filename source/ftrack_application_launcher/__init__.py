@@ -239,7 +239,10 @@ class ApplicationStore(object):
                                         version, path
                                     )
                                 )
+
+
                         variant_str = variant.format(version=str(loose_version))
+
                         if integrations:
                             variant_str = "{} [{}]".format(variant_str, ':'.join(list(integrations.keys())))
 
