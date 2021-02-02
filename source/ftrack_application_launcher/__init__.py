@@ -188,7 +188,6 @@ class ApplicationStore(object):
         else:
             versionExpression = re.compile(versionExpression)
 
-
         pieces = expression[:]
         start = pieces.pop(0)
 
@@ -820,6 +819,14 @@ class ApplicationLaunchAction(BaseAction):
             application_identifier, context
         )
 
+    def get_version_information(self):
+        return [
+            dict(
+                name=self.label,
+                version='-'
+            )
+        ]
+
     def register(self):
         '''Register discover actions on logged in user.'''
 
@@ -843,4 +850,9 @@ class ApplicationLaunchAction(BaseAction):
             ),
             self._launch,
             priority=self.priority
+        )
+
+        self.session.event_hub.subscribe(
+            'topic=ftrack.connect.plugin.debug-information',
+            self.get_version_information
         )
