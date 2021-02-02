@@ -1,16 +1,15 @@
 # :coding: utf-8
 # :copyright: Copyright (c) 2015 ftrack
 
-import getpass
 import sys
 import pprint
-import logging
 import tempfile
 import os
 import shutil
 import re
 
-import subprocess
+import platform
+
 import ftrack_api
 import ftrack_application_launcher
 
@@ -22,13 +21,13 @@ ADOBE_VERSION_EXPRESSION = re.compile(
 )
 
 
-class LaunchAction(ftrack_application_launcher.ApplicationLaunchAction):
+class LaunchAdobeAction(ftrack_application_launcher.ApplicationLaunchAction):
     '''Adobe plugins discover and launch action.'''
-    context = ['Task']
+    context = ['Task', 'AssetVersion']
     identifier = 'ftrack-connect-launch-adobe'
     label = 'Adobe'
 
-    def __init__(self, session,  applicationStore, launcher):
+    def __init__(self, session,  application_store, launcher):
         '''Initialise action with *applicationStore* and *launcher*.
 
         *applicationStore* should be an instance of
@@ -38,10 +37,22 @@ class LaunchAction(ftrack_application_launcher.ApplicationLaunchAction):
         :class:`ftrack_connect.application.ApplicationLauncher`.
 
         '''
-        super(LaunchAction, self).__init__(session,  applicationStore, launcher)
+        super(LaunchAdobeAction, self).__init__(
+            session=session,
+            application_store=application_store,
+            launcher=launcher,
+            priority=0
+        )
 
     def _discover(self, event):
         '''Return discovered applications.'''
+
+        entities, event = self._translate_event(self.session, event)
+        if not self.validate_selection(
+            entities
+        ):
+            return
+
         selection = event['data'].get('selection', [])
         items = []
         applications = self.application_store.applications
@@ -58,7 +69,8 @@ class LaunchAction(ftrack_application_launcher.ApplicationLaunchAction):
                 'variant': application.get('variant', None),
                 'description': application.get('description', None),
                 'icon': application.get('icon', 'default'),
-                'applicationIdentifier': applicationIdentifier
+                'applicationIdentifier': applicationIdentifier,
+                'host': platform.node()
             })
 
             if selection:
@@ -71,7 +83,8 @@ class LaunchAction(ftrack_application_launcher.ApplicationLaunchAction):
                     'description': application.get('description', None),
                     'icon': application.get('icon', 'default'),
                     'launchWithLatest': True,
-                    'applicationIdentifier': applicationIdentifier
+                    'applicationIdentifier': applicationIdentifier,
+                    'host': platform.node()
                 })
 
         return {
@@ -86,15 +99,17 @@ class LaunchAction(ftrack_application_launcher.ApplicationLaunchAction):
             *applicationIdentifier* to identify which application to start.
 
         '''
-        # Prevent further processing by other listeners.
-        # TODO: Only do this when actually have managed to launch a relevant
-        # application.
+
         event.stop()
+        entities, event = self._translate_event(self.session, event)
 
-        applicationIdentifier = (
-            event['data']['applicationIdentifier']
-        )
+        if not self.validate_selection(
+            entities
+        ):
+            self.logger.info('No valid selection')
+            return
 
+        application_identifier = event['data']['applicationIdentifier']
         context = event['data'].copy()
         context['source'] = event['source']
         selection = context.get('selection', [])
@@ -102,20 +117,21 @@ class LaunchAction(ftrack_application_launcher.ApplicationLaunchAction):
         # If the selected entity is an asset version, change the selection
         # to parent task/shot instead since it is not possible to publish
         # to an asset version in ftrack connect.
+
+        entity_type, entity_id = entities[0]
+        resolved_entity = self.session.get(entity_type, entity_id)
+
         if (
             selection and
-            selection[0]['entityType'] == 'assetversion'
+            resolved_entity.entity_type == 'AssetVersion'
         ):
-            # assetVersion = ftrack.AssetVersion(
-            #     selection[0]['entityId']
-            # )
 
-            asset_version = self.session.get('AssetVersion', selection[0]['entityId'])
-            entityId = asset_version['task_id']
+            entityId = resolved_entity.get('task_id')
 
             if not entityId:
-                asset = asset_version['asset']
+                asset = resolved_entity['asset']
                 entity = asset['parent']
+
                 entityId = entity['id']
 
             context['selection'] = [{
@@ -123,8 +139,10 @@ class LaunchAction(ftrack_application_launcher.ApplicationLaunchAction):
                 'entityType': 'task'
             }]
 
+
+
         return self.launcher.launch(
-            applicationIdentifier, context
+            application_identifier, context
         )
 
     def get_version_information(self, event):
@@ -374,6 +392,7 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
             application, context
         )
 
+
         if command is not None and context is not None:
             self.logger.debug(
                 u'Launching action with context {0}'.format(
@@ -415,70 +434,17 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
 
         return command
 
-    def _launch(self, event):
-        '''Handle *event*.
 
-        event['data'] should contain:
-
-            *applicationIdentifier* to identify which application to start.
-
-        '''
-        event.stop()
-
-        entities, event = self._translate_event(self.session, event)
-
-        if not self.validate_selection(
-            entities
-        ):
-            return
-
-        application_identifier = event['data']['applicationIdentifier']
-        context = event['data'].copy()
-        context['source'] = event['source']
-        selection = context.get('selection', [])
-
-        # If the selected entity is an asset version, change the selection
-        # to parent task/shot instead since it is not possible to publish
-        # to an asset version in ftrack connect.
-
-        entity_type, entity_id = entities[0]
-        resolved_entity = self.session.get(entity_type, entity_id)
-
-        if (
-            selection and
-            resolved_entity.entity_type == 'AssetVersion'
-        ):
-
-            entityId = resolved_entity.get('task_id')
-
-            if not entityId:
-                asset = resolved_entity['asset']
-                entity = asset['parent']
-
-                entityId = entity['id']
-
-            context['selection'] = [{
-                'entityId': entityId,
-                'entityType': 'task'
-            }]
-
-        return self.launcher.launch(
-            application_identifier, context
-        )
-
-
-def register(api_object, **kw):
+def register(session, **kw):
     '''Register hooks for Adobe plugins.'''
 
-    if not isinstance(api_object, ftrack_api.session.Session):
+    if not isinstance(session, ftrack_api.session.Session):
         return
 
-    applicationStore = ApplicationStore(api_object)
+    application_store = ApplicationStore(session)
 
-    launcher = ApplicationLauncher(
-        applicationStore
-    )
+    launcher = ApplicationLauncher(application_store)
 
     # Create action and register to respond to discover and launch events.
-    action = LaunchAction(api_object, applicationStore, launcher)
+    action = LaunchAdobeAction(session, application_store, launcher)
     action.register()

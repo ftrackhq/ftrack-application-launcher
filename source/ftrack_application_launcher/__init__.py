@@ -240,7 +240,6 @@ class ApplicationStore(object):
                                     )
                                 )
 
-
                         variant_str = variant.format(version=str(loose_version))
 
                         if integrations:
@@ -825,7 +824,7 @@ class ApplicationLaunchAction(BaseAction):
     def get_version_information(self):
         return [
             dict(
-                name=self.label,
+                name=self.applicationIdentifier,
                 version='-'
             )
         ]
@@ -857,5 +856,6 @@ class ApplicationLaunchAction(BaseAction):
 
         self.session.event_hub.subscribe(
             'topic=ftrack.connect.plugin.debug-information',
-            self.get_version_information
+            self.get_version_information,
+            priority=self.priority
         )
