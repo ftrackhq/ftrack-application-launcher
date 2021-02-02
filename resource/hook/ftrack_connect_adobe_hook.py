@@ -345,7 +345,7 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
                     'select components from AssetVersion where id is {}'.format(
                         entityId
                     )
-                )
+                ).all()
             ]
         else:
             self.logger.debug(
@@ -361,6 +361,8 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
 
         last_date = None
         latest_component = None
+        file_system_path = None
+
         for version in versions:
             for component in version['components']:
                 file_system_path = self.location.get_filesystem_path(component)
