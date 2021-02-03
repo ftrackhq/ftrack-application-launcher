@@ -304,6 +304,17 @@ class ApplicationLauncher(object):
         self.applicationStore = applicationStore
         self._session = applicationStore.session
 
+    def discover(self, application):
+        self.logger.info('Discovering application launcher {}'.format(application))
+
+        results = self.session.event_hub.publish(
+            ftrack_api.event.base.Event(
+                topic='ftrack.connect.application.discover',
+                data=application
+            ),
+            synchronous=True
+        )
+
     def launch(self, applicationIdentifier, context=None):
         '''Launch application matching *applicationIdentifier*.
 
@@ -336,7 +347,6 @@ class ApplicationLauncher(object):
         # Construct command and environment.
         command = self._get_application_launch_command(application, context)
         environment = self._get_application_environment(application, context)
-        
 
         # Environment must contain only strings.
         self._conform_environment(environment)
@@ -404,6 +414,8 @@ class ApplicationLauncher(object):
                 self.logger.warning('No integrations provided for {}:{}'.format(
                     applicationIdentifier, context.get('variant'))
                 )
+
+
             # Reset variables passed through the hook since they might
             # have been replaced by a handler.
             command = launchData['command']
@@ -434,8 +446,6 @@ class ApplicationLauncher(object):
                     applicationIdentifier, process.pid
                 )
             )
-
-
 
         return {
             'success': success,
@@ -781,6 +791,12 @@ class ApplicationLaunchAction(BaseAction):
         for application in applications:
             application_identifier = application['identifier']
             label = application['label']
+
+            if self.launcher:
+                integrations = self.launcher.discover(
+                    application
+                )
+
             items.append({
                 'actionIdentifier': self.identifier,
                 'label': label,
