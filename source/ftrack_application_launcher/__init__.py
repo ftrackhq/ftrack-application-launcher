@@ -389,9 +389,9 @@ class ApplicationLauncher(object):
             flatten = lambda t: [item for sublist in t for item in sublist]
             launch_arguments = flatten([
                 r['integration']['launch_arguments'] 
-                for r in results if 
-                ('integration' in r 
-                    and 'launch_arguments' in r['integration']
+                for r in results if
+                (not r is None and 'integration' in r
+                 and 'launch_arguments' in r['integration']
                 ) 
             ])
 
