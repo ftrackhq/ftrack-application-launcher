@@ -66,15 +66,10 @@ def remove_path(path, key, environment):
     '''Remove *path* to *key* in *environment*.'''
     if key in list(environment.keys()):
         env_paths = os.pathsep(environment[key])
-        logger = logging.getLogger(__name__)
-        logger.debug('all paths: {}'.format(env_paths))
         for i, env_path in enumerate(env_paths):
             if env_path == path:
                 env_paths.pop(i)
-                logger.debug('pop index: {}, path: {}'.format(i, path))
-                logger.debug('env_paths: {}'.format(env_paths))
         environment[key] = (os.pathsep.join(env_paths))
-        logger.debug('result environment: {}'.format(environment[key]))
 
     return environment
 
@@ -555,10 +550,12 @@ class ApplicationLauncher(object):
                         self.logger.info('Unsetting {}'.format(key))
                         if key in environments:
                             environments.pop(key)
+
                     elif action == 'remove':
                         self.logger.info(
                             'removing {} with {}'.format(key, value))
                         remove_path(str(value), key, environments)
+
                     else:
                         self.logger.error(
                             'Environment variable action {} not recognised for {}'.format(action, key)
