@@ -365,6 +365,10 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
 
         for version in versions:
             for component in version['components']:
+                avail = self.location.get_component_availability(component)
+                if avail < 100:
+                    continue
+
                 file_system_path = self.location.get_filesystem_path(component)
                 if file_system_path and file_system_path.endswith(extension):
                     if (
@@ -394,7 +398,6 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
             application, context
         )
 
-
         if command is not None and context is not None:
             self.logger.debug(
                 u'Launching action with context {0}'.format(
@@ -418,6 +421,7 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
                         break
 
                 if component is not None:
+
                     component_path = self.location.get_filesystem_path(component)
                     file_path = self._get_temporary_copy(
                         component_path
