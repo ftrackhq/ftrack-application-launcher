@@ -1,5 +1,5 @@
 # :coding: utf-8
-# :copyright: Copyright (c) 2015 ftrack
+# :copyright: Copyright (c) 2020 ftrack
 
 import sys
 import pprint
@@ -19,7 +19,6 @@ import ftrack_application_launcher
 ADOBE_VERSION_EXPRESSION = re.compile(
     r'(?P<version>\d[\d.]*)[^\w\d]'
 )
-
 
 class LaunchAdobeAction(ftrack_application_launcher.ApplicationLaunchAction):
     '''Adobe plugins discover and launch action.'''
@@ -410,21 +409,21 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
             if selection and context.get('launchWithLatest', False):
                 entity = selection[0]
                 component = None
+                file_system_path = None
 
                 for identifier, extension in self.application_extensions.items():
                     if application['identifier'].startswith(identifier):
-                        component = self._find_latest_component(
+                        component , file_system_path = self._find_latest_component(
                             entity['entityId'],
                             entity['entityType'],
                             extension
                         )
                         break
 
-                if component is not None:
+                if component is not None and file_system_path is not None:
 
-                    component_path = self.location.get_filesystem_path(component)
                     file_path = self._get_temporary_copy(
-                        component_path
+                        file_system_path
                     )
                     self.logger.info(
                         u'Launching application with file {0!r}'.format(
