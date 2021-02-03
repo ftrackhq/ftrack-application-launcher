@@ -138,8 +138,6 @@ class LaunchAdobeAction(ftrack_application_launcher.ApplicationLaunchAction):
                 'entityType': 'task'
             }]
 
-
-
         return self.launcher.launch(
             application_identifier, context
         )

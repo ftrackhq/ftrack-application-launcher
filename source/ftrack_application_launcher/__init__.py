@@ -243,7 +243,9 @@ class ApplicationStore(object):
                         variant_str = variant.format(version=str(loose_version))
 
                         if integrations:
-                            variant_str = "{} [{}]".format(variant_str, ':'.join(list(integrations.keys())))
+                            variant_str = "{} [{}]".format(
+                                variant_str, ':'.join(list(integrations.keys()))
+                            )
 
                         application = {
                             'identifier': applicationIdentifier.format(
@@ -337,7 +339,6 @@ class ApplicationLauncher(object):
         # Construct command and environment.
         command = self._get_application_launch_command(application, context)
         environment = self._get_application_environment(application, context)
-        
 
         # Environment must contain only strings.
         self._conform_environment(environment)
