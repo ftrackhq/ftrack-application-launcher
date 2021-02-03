@@ -584,54 +584,6 @@ class ApplicationLauncher(object):
 
         return command
 
-    def _find_latest_component(self, entityId, entityType, extension=''):
-        '''Return latest published component from *entityId* and *entityType*.
-
-        *extension* can be used to find suitable components by matching with
-        their file system path.
-
-        '''
-        if entityType == 'task':
-            versions = self.session.query(
-                'select components from AssetVersion where task.id is {}'.format(
-                    entityId
-                )
-            ).all()
-        elif entityType == 'assetversion':
-            versions = [
-                self.session.query(
-                    'select components from AssetVersion where id is {}'.format(
-                        entityId
-                    )
-                )
-            ]
-        else:
-            self.logger.debug(
-                (
-                    'Unable to find latest version from entityId={entityId} '
-                    'with entityType={entityType}.'
-                ).format(
-                    entityId=entityId,
-                    entityType=entityType
-                )
-            )
-            return None
-
-        lastDate = None
-        latestComponent = None
-        for version in versions:
-            for component in version['components']:
-                fileSystemPath = self.location.get_filesystem_path(component)
-                if fileSystemPath and fileSystemPath.endswith(extension):
-                    if (
-                        lastDate is None or
-                        version.getDate() > lastDate
-                    ):
-                        latestComponent = component
-                        lastDate = version.getDate()
-
-        return latestComponent
-
     def _get_application_environment(
         self, application, context=None
     ):
