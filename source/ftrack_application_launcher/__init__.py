@@ -820,7 +820,7 @@ class ApplicationLaunchAction(BaseAction):
 
             if self.launcher and application.get('integrations'):
 
-                discovered_integration_groups, lost_integration_groups = self.launcher.discover_integrations(
+                _, lost_integration_groups = self.launcher.discover_integrations(
                     application, context
                 )
 
