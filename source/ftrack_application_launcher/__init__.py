@@ -305,8 +305,8 @@ class ApplicationLauncher(object):
         self._session = applicationStore.session
 
     def discover_integrations(self, application, context):
-        # merge values in unique list
-        requested_integrations = list(set(sum(application['integrations'].values(), [])))
+
+        requested_integrations = application['integrations']
 
         results = self.session.event_hub.publish(
             ftrack_api.event.base.Event(
@@ -319,12 +319,26 @@ class ApplicationLauncher(object):
             synchronous=True
         )
 
-        result = [
-            True if result.get('integration', {}).get('name')
-            in requested_integrations else False for result in results
-        ]
+        discovered_integrations = set([
+            result.get('integration', {}).get('name') for result in results
+        ])
 
-        return bool(result) and all(result)
+        found_integrations = []
+        lost_integrations = []
+
+        for requested_integration_name, requested_integration_items in requested_integrations.items():
+            # Check if all the requested integration are present in the one available.
+            dependency_resolved = not bool(set(requested_integration_items).difference(discovered_integrations))
+            if dependency_resolved:
+                found_integrations.append(
+                    requested_integration_name
+                )
+            else:
+                lost_integrations.append(
+                    requested_integration_name
+                )
+
+        return found_integrations, lost_integrations
 
     def launch(self, applicationIdentifier, context=None):
         '''Launch application matching *applicationIdentifier*.
@@ -805,16 +819,25 @@ class ApplicationLaunchAction(BaseAction):
             context['source'] = event['source']
 
             if self.launcher and application.get('integrations'):
-                integration_check = self.launcher.discover_integrations(
+
+                discovered_integration_groups, lost_integration_groups = self.launcher.discover_integrations(
                     application, context
                 )
-                if not integration_check:
+
+                for lost_integration_group in lost_integration_groups:
+                    removed_integrations = application['integrations'][lost_integration_group]
                     self.logger.debug(
                         (
-                            'Application launcher for {} could not be loaded.\n'
+                            'Application integration group {} for {} could not be loaded.\n'
                             'Some of the integrations defined could not be found: {}'
-                        ).format(application['label'], application['integrations'])
+                        ).format(
+                            lost_integration_group,
+                            application['label'],
+                            removed_integrations
+                        )
                     )
+
+                if lost_integration_groups:
                     continue
 
             items.append({
