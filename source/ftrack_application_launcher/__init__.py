@@ -304,16 +304,29 @@ class ApplicationLauncher(object):
         self.applicationStore = applicationStore
         self._session = applicationStore.session
 
-    def discover(self, application):
-        self.logger.info('Discovering application launcher {}'.format(application))
+    def discover_integrations(self, application, context):
+        # merge values in unique list
+        requested_integrations = list(set(sum(application['integrations'].values(), [])))
 
         results = self.session.event_hub.publish(
             ftrack_api.event.base.Event(
                 topic='ftrack.connect.application.discover',
-                data=application
+                data=dict(
+                    application=application,
+                    context=context
+                )
             ),
             synchronous=True
         )
+
+        result = [
+            True if result.get('integration', {}).get('name')
+            in requested_integrations else False for result in results
+        ]
+
+        self.logger.info('app {} result {}'.format(application['label'], result))
+
+        return bool(result) and all(result)
 
     def launch(self, applicationIdentifier, context=None):
         '''Launch application matching *applicationIdentifier*.
@@ -393,7 +406,6 @@ class ApplicationLauncher(object):
                 ),
                 synchronous=True
             )
-            
 
             # recompose launch_arguments coming from integrations
             flatten = lambda t: [item for sublist in t for item in sublist]
@@ -414,7 +426,6 @@ class ApplicationLauncher(object):
                 self.logger.warning('No integrations provided for {}:{}'.format(
                     applicationIdentifier, context.get('variant'))
                 )
-
 
             # Reset variables passed through the hook since they might
             # have been replaced by a handler.
@@ -792,10 +803,21 @@ class ApplicationLaunchAction(BaseAction):
             application_identifier = application['identifier']
             label = application['label']
 
-            if self.launcher:
-                integrations = self.launcher.discover(
-                    application
+            context = event['data'].copy()
+            context['source'] = event['source']
+
+            if self.launcher and application.get('integrations'):
+                integration_check = self.launcher.discover_integrations(
+                    application, context
                 )
+                if not integration_check:
+                    self.logger.info(
+                        (
+                            'Application launcher for {} could not be loaded.\n'
+                            'Some of the integrations defined could not be found: {}'
+                        ).format(application['label'], application['integrations'])
+                    )
+                    continue
 
             items.append({
                 'actionIdentifier': self.identifier,
