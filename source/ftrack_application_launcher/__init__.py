@@ -324,8 +324,6 @@ class ApplicationLauncher(object):
             in requested_integrations else False for result in results
         ]
 
-        self.logger.info('app {} result {}'.format(application['label'], result))
-
         return bool(result) and all(result)
 
     def launch(self, applicationIdentifier, context=None):
