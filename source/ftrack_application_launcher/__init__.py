@@ -811,7 +811,7 @@ class ApplicationLaunchAction(BaseAction):
                     application, context
                 )
                 if not integration_check:
-                    self.logger.info(
+                    self.logger.debug(
                         (
                             'Application launcher for {} could not be loaded.\n'
                             'Some of the integrations defined could not be found: {}'
