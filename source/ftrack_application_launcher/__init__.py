@@ -307,6 +307,42 @@ class ApplicationLauncher(object):
         self.applicationStore = applicationStore
         self._session = applicationStore.session
 
+    def discover_integrations(self, application, context):
+
+        requested_integrations = application['integrations']
+
+        results = self.session.event_hub.publish(
+            ftrack_api.event.base.Event(
+                topic='ftrack.connect.application.discover',
+                data=dict(
+                    application=application,
+                    context=context
+                )
+            ),
+            synchronous=True
+        )
+
+        discovered_integrations = set([
+            result.get('integration', {}).get('name') for result in results
+        ])
+
+        found_integrations = []
+        lost_integrations = []
+
+        for requested_integration_name, requested_integration_items in requested_integrations.items():
+            # Check if all the requested integration are present in the one available.
+            dependency_resolved = not bool(set(requested_integration_items).difference(discovered_integrations))
+            if dependency_resolved:
+                found_integrations.append(
+                    requested_integration_name
+                )
+            else:
+                lost_integrations.append(
+                    requested_integration_name
+                )
+
+        return found_integrations, lost_integrations
+
     def launch(self, applicationIdentifier, context=None):
         '''Launch application matching *applicationIdentifier*.
 
@@ -385,7 +421,6 @@ class ApplicationLauncher(object):
                 ),
                 synchronous=True
             )
-            
 
             # recompose launch_arguments coming from integrations
             flatten = lambda t: [item for sublist in t for item in sublist]
@@ -406,6 +441,7 @@ class ApplicationLauncher(object):
                 self.logger.warning('No integrations provided for {}:{}'.format(
                     applicationIdentifier, context.get('variant'))
                 )
+
             # Reset variables passed through the hook since they might
             # have been replaced by a handler.
             command = launchData['command']
@@ -436,8 +472,6 @@ class ApplicationLauncher(object):
                     applicationIdentifier, process.pid
                 )
             )
-
-
 
         return {
             'success': success,
@@ -735,6 +769,33 @@ class ApplicationLaunchAction(BaseAction):
         for application in applications:
             application_identifier = application['identifier']
             label = application['label']
+
+            context = event['data'].copy()
+            context['source'] = event['source']
+
+            if self.launcher and application.get('integrations'):
+
+                _, lost_integration_groups = self.launcher.discover_integrations(
+                    application, context
+                )
+
+                for lost_integration_group in lost_integration_groups:
+                    removed_integrations = application['integrations'][lost_integration_group]
+                    self.logger.debug(
+                        (
+                            'Application integration group {} for {} {} could not be loaded.\n'
+                            'Some of the integrations defined could not be found: {}'
+                        ).format(
+                            lost_integration_group,
+                            application['label'],
+                            application['variant'],
+                            removed_integrations
+                        )
+                    )
+
+                if lost_integration_groups:
+                    continue
+
             items.append({
                 'actionIdentifier': self.identifier,
                 'label': label,
