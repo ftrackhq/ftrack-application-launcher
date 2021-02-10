@@ -832,7 +832,7 @@ class ApplicationLaunchAction(BaseAction):
                             'Some of the integrations defined could not be found: {}'
                         ).format(
                             lost_integration_group,
-                            application['label'],
+                            application['variant'],
                             removed_integrations
                         )
                     )
