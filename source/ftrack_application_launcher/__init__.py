@@ -62,6 +62,18 @@ def append_path(path, key, environment):
     return environment
 
 
+def pop_path(path, key, environment):
+    '''Remove *path* to *key* in *environment*.'''
+    if key in list(environment.keys()):
+        env_paths = os.pathsep(environment[key])
+        for i, env_path in enumerate(env_paths):
+            if env_path == path:
+                env_paths.pop(i)
+        environment[key] = (os.pathsep.join(env_paths))
+
+    return environment
+
+
 class ApplicationStore(object):
     '''Discover and store available applications on this host.'''
 
@@ -574,6 +586,12 @@ class ApplicationLauncher(object):
                         self.logger.info('Unsetting {}'.format(key))
                         if key in environments:
                             environments.pop(key)
+
+                    elif action == 'pop':
+                        self.logger.info(
+                            'removing {} with {}'.format(key, value))
+                        pop_path(str(value), key, environments)
+
                     else:
                         self.logger.error(
                             'Environment variable action {} not recognised for {}'.format(action, key)
