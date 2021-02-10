@@ -828,10 +828,11 @@ class ApplicationLaunchAction(BaseAction):
                     removed_integrations = application['integrations'][lost_integration_group]
                     self.logger.debug(
                         (
-                            'Application integration group {} for {} could not be loaded.\n'
+                            'Application integration group {} for {} {} could not be loaded.\n'
                             'Some of the integrations defined could not be found: {}'
                         ).format(
                             lost_integration_group,
+                            application['label'],
                             application['variant'],
                             removed_integrations
                         )
