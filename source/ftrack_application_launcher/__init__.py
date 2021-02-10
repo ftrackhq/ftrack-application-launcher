@@ -62,7 +62,7 @@ def append_path(path, key, environment):
     return environment
 
 
-def remove_path(path, key, environment):
+def pop_path(path, key, environment):
     '''Remove *path* to *key* in *environment*.'''
     if key in list(environment.keys()):
         env_paths = os.pathsep(environment[key])
@@ -551,10 +551,10 @@ class ApplicationLauncher(object):
                         if key in environments:
                             environments.pop(key)
 
-                    elif action == 'remove':
+                    elif action == 'pop':
                         self.logger.info(
                             'removing {} with {}'.format(key, value))
-                        remove_path(str(value), key, environments)
+                        pop_path(str(value), key, environments)
 
                     else:
                         self.logger.error(
