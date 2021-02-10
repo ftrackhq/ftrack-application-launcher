@@ -188,7 +188,6 @@ class ApplicationStore(object):
         else:
             versionExpression = re.compile(versionExpression)
 
-
         pieces = expression[:]
         start = pieces.pop(0)
 
@@ -240,9 +239,13 @@ class ApplicationStore(object):
                                         version, path
                                     )
                                 )
+
                         variant_str = variant.format(version=str(loose_version))
+
                         if integrations:
-                            variant_str = "{} [{}]".format(variant_str, ':'.join(list(integrations.keys())))
+                            variant_str = "{} [{}]".format(
+                                variant_str, ':'.join(list(integrations.keys()))
+                            )
 
                         application = {
                             'identifier': applicationIdentifier.format(
@@ -336,7 +339,6 @@ class ApplicationLauncher(object):
         # Construct command and environment.
         command = self._get_application_launch_command(application, context)
         environment = self._get_application_environment(application, context)
-        
 
         # Environment must contain only strings.
         self._conform_environment(environment)
@@ -582,54 +584,6 @@ class ApplicationLauncher(object):
 
         return command
 
-    def _find_latest_component(self, entityId, entityType, extension=''):
-        '''Return latest published component from *entityId* and *entityType*.
-
-        *extension* can be used to find suitable components by matching with
-        their file system path.
-
-        '''
-        if entityType == 'task':
-            versions = self.session.query(
-                'select components from AssetVersion where task.id is {}'.format(
-                    entityId
-                )
-            ).all()
-        elif entityType == 'assetversion':
-            versions = [
-                self.session.query(
-                    'select components from AssetVersion where id is {}'.format(
-                        entityId
-                    )
-                )
-            ]
-        else:
-            self.logger.debug(
-                (
-                    'Unable to find latest version from entityId={entityId} '
-                    'with entityType={entityType}.'
-                ).format(
-                    entityId=entityId,
-                    entityType=entityType
-                )
-            )
-            return None
-
-        lastDate = None
-        latestComponent = None
-        for version in versions:
-            for component in version['components']:
-                fileSystemPath = self.location.get_filesystem_path(component)
-                if fileSystemPath and fileSystemPath.endswith(extension):
-                    if (
-                        lastDate is None or
-                        version.getDate() > lastDate
-                    ):
-                        latestComponent = component
-                        lastDate = version.getDate()
-
-        return latestComponent
-
     def _get_application_environment(
         self, application, context=None
     ):
@@ -820,6 +774,14 @@ class ApplicationLaunchAction(BaseAction):
             application_identifier, context
         )
 
+    def get_version_information(self):
+        return [
+            dict(
+                name=self.applicationIdentifier,
+                version='-'
+            )
+        ]
+
     def register(self):
         '''Register discover actions on logged in user.'''
 
@@ -842,5 +804,11 @@ class ApplicationLaunchAction(BaseAction):
                 platform.node()
             ),
             self._launch,
+            priority=self.priority
+        )
+
+        self.session.event_hub.subscribe(
+            'topic=ftrack.connect.plugin.debug-information',
+            self.get_version_information,
             priority=self.priority
         )
