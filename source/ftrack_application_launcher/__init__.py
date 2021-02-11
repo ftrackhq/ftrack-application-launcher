@@ -62,6 +62,18 @@ def append_path(path, key, environment):
     return environment
 
 
+def pop_path(path, key, environment):
+    '''Remove *path* to *key* in *environment*.'''
+    if key in list(environment.keys()):
+        env_paths = os.pathsep(environment[key])
+        for i, env_path in enumerate(env_paths):
+            if env_path == path:
+                env_paths.pop(i)
+        environment[key] = (os.pathsep.join(env_paths))
+
+    return environment
+
+
 class ApplicationStore(object):
     '''Discover and store available applications on this host.'''
 
@@ -188,7 +200,6 @@ class ApplicationStore(object):
         else:
             versionExpression = re.compile(versionExpression)
 
-
         pieces = expression[:]
         start = pieces.pop(0)
 
@@ -240,9 +251,13 @@ class ApplicationStore(object):
                                         version, path
                                     )
                                 )
+
                         variant_str = variant.format(version=str(loose_version))
+
                         if integrations:
-                            variant_str = "{} [{}]".format(variant_str, ':'.join(list(integrations.keys())))
+                            variant_str = "{} [{}]".format(
+                                variant_str, ':'.join(list(integrations.keys()))
+                            )
 
                         application = {
                             'identifier': applicationIdentifier.format(
@@ -304,6 +319,42 @@ class ApplicationLauncher(object):
         self.applicationStore = applicationStore
         self._session = applicationStore.session
 
+    def discover_integrations(self, application, context):
+
+        requested_integrations = application['integrations']
+
+        results = self.session.event_hub.publish(
+            ftrack_api.event.base.Event(
+                topic='ftrack.connect.application.discover',
+                data=dict(
+                    application=application,
+                    context=context
+                )
+            ),
+            synchronous=True
+        )
+
+        discovered_integrations = set([
+            result.get('integration', {}).get('name') for result in results
+        ])
+
+        found_integrations = []
+        lost_integrations = []
+
+        for requested_integration_name, requested_integration_items in requested_integrations.items():
+            # Check if all the requested integration are present in the one available.
+            dependency_resolved = not bool(set(requested_integration_items).difference(discovered_integrations))
+            if dependency_resolved:
+                found_integrations.append(
+                    requested_integration_name
+                )
+            else:
+                lost_integrations.append(
+                    requested_integration_name
+                )
+
+        return found_integrations, lost_integrations
+
     def launch(self, applicationIdentifier, context=None):
         '''Launch application matching *applicationIdentifier*.
 
@@ -336,7 +387,6 @@ class ApplicationLauncher(object):
         # Construct command and environment.
         command = self._get_application_launch_command(application, context)
         environment = self._get_application_environment(application, context)
-        
 
         # Environment must contain only strings.
         self._conform_environment(environment)
@@ -383,7 +433,6 @@ class ApplicationLauncher(object):
                 ),
                 synchronous=True
             )
-            
 
             # recompose launch_arguments coming from integrations
             flatten = lambda t: [item for sublist in t for item in sublist]
@@ -404,6 +453,7 @@ class ApplicationLauncher(object):
                 self.logger.warning('No integrations provided for {}:{}'.format(
                     applicationIdentifier, context.get('variant'))
                 )
+
             # Reset variables passed through the hook since they might
             # have been replaced by a handler.
             command = launchData['command']
@@ -434,8 +484,6 @@ class ApplicationLauncher(object):
                     applicationIdentifier, process.pid
                 )
             )
-
-
 
         return {
             'success': success,
@@ -538,6 +586,12 @@ class ApplicationLauncher(object):
                         self.logger.info('Unsetting {}'.format(key))
                         if key in environments:
                             environments.pop(key)
+
+                    elif action == 'pop':
+                        self.logger.info(
+                            'removing {} with {}'.format(key, value))
+                        pop_path(str(value), key, environments)
+
                     else:
                         self.logger.error(
                             'Environment variable action {} not recognised for {}'.format(action, key)
@@ -581,54 +635,6 @@ class ApplicationLauncher(object):
             command.extend(CtxApplaunchArguments)
 
         return command
-
-    def _find_latest_component(self, entityId, entityType, extension=''):
-        '''Return latest published component from *entityId* and *entityType*.
-
-        *extension* can be used to find suitable components by matching with
-        their file system path.
-
-        '''
-        if entityType == 'task':
-            versions = self.session.query(
-                'select components from AssetVersion where task.id is {}'.format(
-                    entityId
-                )
-            ).all()
-        elif entityType == 'assetversion':
-            versions = [
-                self.session.query(
-                    'select components from AssetVersion where id is {}'.format(
-                        entityId
-                    )
-                )
-            ]
-        else:
-            self.logger.debug(
-                (
-                    'Unable to find latest version from entityId={entityId} '
-                    'with entityType={entityType}.'
-                ).format(
-                    entityId=entityId,
-                    entityType=entityType
-                )
-            )
-            return None
-
-        lastDate = None
-        latestComponent = None
-        for version in versions:
-            for component in version['components']:
-                fileSystemPath = self.location.get_filesystem_path(component)
-                if fileSystemPath and fileSystemPath.endswith(extension):
-                    if (
-                        lastDate is None or
-                        version.getDate() > lastDate
-                    ):
-                        latestComponent = component
-                        lastDate = version.getDate()
-
-        return latestComponent
 
     def _get_application_environment(
         self, application, context=None
@@ -801,6 +807,33 @@ class ApplicationLaunchAction(BaseAction):
         for application in applications:
             application_identifier = application['identifier']
             label = application['label']
+
+            context = event['data'].copy()
+            context['source'] = event['source']
+
+            if self.launcher and application.get('integrations'):
+
+                _, lost_integration_groups = self.launcher.discover_integrations(
+                    application, context
+                )
+
+                for lost_integration_group in lost_integration_groups:
+                    removed_integrations = application['integrations'][lost_integration_group]
+                    self.logger.debug(
+                        (
+                            'Application integration group {} for {} {} could not be loaded.\n'
+                            'Some of the integrations defined could not be found: {}'
+                        ).format(
+                            lost_integration_group,
+                            application['label'],
+                            application['variant'],
+                            removed_integrations
+                        )
+                    )
+
+                if lost_integration_groups:
+                    continue
+
             items.append({
                 'actionIdentifier': self.identifier,
                 'label': label,
@@ -844,6 +877,14 @@ class ApplicationLaunchAction(BaseAction):
             application_identifier, context
         )
 
+    def get_version_information(self):
+        return [
+            dict(
+                name=self.applicationIdentifier,
+                version='-'
+            )
+        ]
+
     def register(self):
         '''Register discover actions on logged in user.'''
 
@@ -866,5 +907,11 @@ class ApplicationLaunchAction(BaseAction):
                 platform.node()
             ),
             self._launch,
+            priority=self.priority
+        )
+
+        self.session.event_hub.subscribe(
+            'topic=ftrack.connect.plugin.debug-information',
+            self.get_version_information,
             priority=self.priority
         )
