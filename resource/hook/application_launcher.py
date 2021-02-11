@@ -2,14 +2,8 @@ import os
 import sys
 import logging
 
-cwd = os.path.dirname(__file__)
-sources = os.path.abspath(os.path.join(cwd, '..', 'dependencies'))
-sys.path.append(sources)
-
 import ftrack_api
 from ftrack_application_launcher.discover_applications import DiscoverApplications
-
-logging.basicConfig(level=logging.INFO)
 
 
 def register(api_object, **kw):
@@ -21,6 +15,7 @@ def register(api_object, **kw):
     if not isinstance(api_object, ftrack_api.Session):
         return
 
+    cwd = os.path.dirname(__file__)
     default_config_path = os.path.abspath(os.path.join(cwd, '..', 'config'))
 
     # Ensure the config path is in form of a list
