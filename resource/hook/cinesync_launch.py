@@ -1,6 +1,15 @@
 # :coding: utf-8
 # :copyright: Copyright (c) 2018 ftrack
 
+import os
+import sys
+import logging
+
+cwd = os.path.dirname(__file__)
+sources = os.path.abspath(os.path.join(cwd, '..', 'dependencies'))
+sys.path.append(sources)
+
+
 import subprocess
 import ftrack_api
 import ftrack_application_launcher

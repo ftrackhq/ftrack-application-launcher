@@ -1,10 +1,16 @@
 # :coding: utf-8
 # :copyright: Copyright (c) 2020 ftrack
 
+
+import os
 import sys
+
+cwd = os.path.dirname(__file__)
+sources = os.path.abspath(os.path.join(cwd, '..', 'dependencies'))
+sys.path.append(sources)
+
 import pprint
 import tempfile
-import os
 import shutil
 import re
 
