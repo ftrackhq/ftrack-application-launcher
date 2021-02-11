@@ -241,7 +241,7 @@ def register(session, **kw):
     if not isinstance(session, ftrack_api.session.Session):
         return
 
-    applicationStore = CinesyncApplicationStore(session)
+    application_store = CinesyncApplicationStore(session)
     # Create action and register to respond to discover and launch events.
-    action = CinesyncActionLauncher(applicationStore, session)
+    action = CinesyncActionLauncher(application_store, session)
     action.register()
