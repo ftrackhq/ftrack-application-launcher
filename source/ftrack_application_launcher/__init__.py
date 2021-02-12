@@ -90,7 +90,7 @@ class ApplicationStore(object):
         '''Instantiate store and discover applications.'''
         super(ApplicationStore, self).__init__()
         self.logger = logging.getLogger(
-            __name__ + '.' + self.__class__.__name__
+            'ftrack_application_launcher.' + self.__class__.__name__
         )
 
         self._session = session
@@ -314,7 +314,7 @@ class ApplicationLauncher(object):
         '''
         super(ApplicationLauncher, self).__init__()
         self.logger = logging.getLogger(
-            __name__ + '.' + self.__class__.__name__
+            'ftrack_application_launcher.' + self.__class__.__name__
         )
         self.applicationStore = applicationStore
         self._session = applicationStore.session
@@ -747,7 +747,7 @@ class ApplicationLaunchAction(BaseAction):
         super(ApplicationLaunchAction, self).__init__(session)
 
         self.logger = logging.getLogger(
-            __name__ + '.' + self.__class__.__name__
+            'ftrack_application_launcher.' + self.__class__.__name__
         )
 
         if not application_store:

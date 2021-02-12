@@ -18,22 +18,22 @@ import ftrack_application_launcher
 class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction):
     '''Cinesync launch action.'''
 
-    context = ['List', 'AssetVersion', 'ReviewSession']
+    context = ['AssetVersionList', 'AssetVersion', 'ReviewSession']
     identifier = 'ftrack-connect-cinesync-application'
     label = 'cineSync'
 
     def __init__(self, application_store, session):
 
-        self.allowed_entity_types_fn = {
-            'list': self._get_version_from_lists,
-            'assetversion': self._get_version,
-            'reviewsession': self._get_version_from_review
-        }
-
         super(CinesyncActionLauncher, self).__init__(
             session=session,
             application_store=application_store
         )
+
+        self.allowed_entity_types_fn = {
+            self.context[0]: self._get_version_from_lists,
+            self.context[1]: self._get_version,
+            self.context[2]: self._get_version_from_review
+        }
 
     def _get_version(self, entity_id):
         '''Return a single *entity_id* from version'''
@@ -66,28 +66,31 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
 
         return result
 
-    def is_valid_selection(self, selection):
-        '''Check whether the given *selection* is valid'''
-        results = []
-
-        self.logger.info(selection)
-        for selected_item in selection:
-            allowed_entity_types = self.allowed_entity_types_fn.keys()
-            if selected_item.get('entityType') in allowed_entity_types:
-                results.append(selected_item)
-
-        self.logger.info(results)
-
-        return results
+    # def is_valid_selection(self, selection):
+    #     '''Check whether the given *selection* is valid'''
+    #     results = []
+    #
+    #     for selected_item in selection:
+    #         entity_type = selected_item.get('entityType')
+    #         entity_id = selected_item.get('entityId')
+    #
+    #         allowed_entity_types = self.allowed_entity_types_fn.keys()
+    #         resolved_entity_type = self.session.get(entity_type, entity_id).entity_type
+    #
+    #         if resolved_entity_type in allowed_entity_types:
+    #             results.append(selected_item)
+    #
+    #     return results
 
     def get_versions(self, selection):
         '''Return versions given the *selection*'''
         results = []
 
         for selected_item in selection:
-            entity_type = selected_item.get('entityType')
+            entity_type = self._get_entity_type(selected_item)
             entity_id = selected_item.get('entityId')
-            version_id_fn = self.allowed_entity_types_fn[entity_type]
+            resolved_entity_type = self.session.get(entity_type, entity_id).entity_type
+            version_id_fn = self.allowed_entity_types_fn[resolved_entity_type]
             versions = version_id_fn(entity_id)
             results.extend(versions)
 
@@ -100,47 +103,49 @@ class CinesyncActionLauncher(ftrack_application_launcher.ApplicationLaunchAction
         selection = data.get('selection', [])
         return selection
 
-    def discover(self, session, entities, event):
-        '''Return true if we can handle the selected entities.
-
-        *session* is a `ftrack_api.Session` instance
-
-        *entities* is a list of tuples each containing the entity type and the
-        entity id. If the entity is a hierarchical you will always get the
-        entity type TypedContext, once retrieved through a get operation you
-        will have the "real" entity type ie. example Shot, Sequence
-        or Asset Build.
-
-        *event* the unmodified original event'''
-
-        applications = self.application_store.applications
-        if not applications:
-            self.logger.warning('No application found form {}'.format(self))
-            return False
-
-        selection = self.get_selection(event)
-        if not selection:
-            self.logger.debug(
-                'No entity selected.'
-            )
-            return False
-
-        selection = self.get_selection(event)
-        if not self.is_valid_selection(selection):
-            valid_types = self.allowed_entity_types_fn.keys()
-            self.logger.warning(
-                'No valid entity type selected. Valid types: {0}.'.format(
-                    ', '.join(valid_types)
-                )
-            )
-            return False
-
-        applications = sorted(
-            applications, key=lambda application: application['label']
-        )
-
-        self.variant = applications[0].get('variant', None)
-        return True
+    # def discover(self, session, entities, event):
+    #     '''Return true if we can handle the selected entities.
+    # 
+    #     *session* is a `ftrack_api.Session` instance
+    # 
+    #     *entities* is a list of tuples each containing the entity type and the
+    #     entity id. If the entity is a hierarchical you will always get the
+    #     entity type TypedContext, once retrieved through a get operation you
+    #     will have the "real" entity type ie. example Shot, Sequence
+    #     or Asset Build.
+    # 
+    #     *event* the unmodified original event'''
+    # 
+    #     self.logger.warning('DISCOVERIIIIIIIIIIIIIIIIIIING')
+    # 
+    #     applications = self.application_store.applications
+    #     if not applications:
+    #         self.logger.warning('No application found form {}'.format(self))
+    #         return False
+    # 
+    #     selection = self.get_selection(event)
+    #     if not selection:
+    #         self.logger.debug(
+    #             'No entity selected.'
+    #         )
+    #         return False
+    # 
+    #     selection = self.get_selection(event)
+    #     if not self.is_valid_selection(selection):
+    #         valid_types = self.allowed_entity_types_fn.keys()
+    #         self.logger.warning(
+    #             'No valid entity type selected. Valid types: {0}.'.format(
+    #                 ', '.join(valid_types)
+    #             )
+    #         )
+    #         return False
+    # 
+    #     applications = sorted(
+    #         applications, key=lambda application: application['label']
+    #     )
+    # 
+    #     self.variant = applications[0].get('variant', None)
+    #     return True
 
     def open_url(self, asset_version_list):
         ''' Open cinesync url with given *asset_version_list*'''
