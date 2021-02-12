@@ -293,9 +293,7 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
             ))
 
         self.logger.debug(
-            'Discovered applications:\n{0}'.format(
-                pprint.pformat(applications)
-            )
+            'Discovered applications:\n{0}'.format(applications)
         )
 
         return applications
