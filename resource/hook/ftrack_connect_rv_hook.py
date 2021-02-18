@@ -2,14 +2,11 @@
 # :copyright: Copyright (c) 2015 ftrack
 
 import os
-import getpass
 import sys
 import pprint
 import logging
 import json
 import re
-
-import ftrack
 
 import platform
 
@@ -72,11 +69,7 @@ class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
             priority=0
         )
 
-        self.logger = logging.getLogger(
-            __name__ + '.' + self.__class__.__name__
-        )
-
-    def _createPlaylistFromSelection(self, selection):
+    def _create_playlist_from_selection(self, selection):
         '''Return new selection with temporary playlist from *selection*.'''
 
         # If selection is only one entity we don't need to create
@@ -140,7 +133,7 @@ class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
         context = event['data'].copy()
 
         # Rewrite original selection to a playlist.
-        context['selection'] = self._createPlaylistFromSelection(
+        context['selection'] = self._create_playlist_from_selection(
             context['selection']
         )
 
@@ -176,10 +169,10 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
         '''
         applications = []
 
-        if sys.platform == 'darwin':
+        if self.current_os == 'darwin':
             prefix = ['/', 'Applications']
-            applications.extend(self._searchFilesystem(
-                expression=prefix + ['RV.\d+.app'],
+            applications.extend(self._search_filesystem(
+                expression=prefix + ['RV.\\d+.app'],
                 label='Review with RV',
                 variant='{version}',
                 applicationIdentifier='rv_{version}_with_review',
@@ -189,11 +182,11 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 ]
             ))
 
-        elif sys.platform == 'win32':
+        elif self.current_os == 'windows':
             prefix = ['C:\\', 'Program Files.*']
-            applications.extend(self._searchFilesystem(
+            applications.extend(self._search_filesystem(
                 expression=prefix + [
-                    '[Tweak|Shotgun]', 'RV.\d.+', 'bin', 'rv.exe'
+                    '[Tweak|Shotgun]', 'RV.\\d.+', 'bin', 'rv.exe'
                 ],
                 label='Review with RV',
                 variant='{version}',
@@ -207,7 +200,7 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 )
             ))
 
-        elif sys.platform == 'linux2':
+        elif self.current_os  == 'linux':
             separator = os.path.sep
             prefix = RV_INSTALLATION_PATH
             if not os.path.exists(RV_INSTALLATION_PATH):
@@ -230,7 +223,7 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                     # Add leading slash back
                     prefix.insert(0, separator)
 
-                applications.extend(self._searchFilesystem(
+                applications.extend(self._search_filesystem(
                     expression=prefix + [
                         'rv-Linux-x86-64-\d.+', 'bin', 'rv$'
                     ],
@@ -269,7 +262,7 @@ def register(session, **kw):
         return
 
     # Create store containing applications.
-    application_store = ApplicationStore(session=session)
+    application_store = ApplicationStore(session)
 
     # Create a launcher with the store containing applications.
     launcher = ApplicationLauncher(
