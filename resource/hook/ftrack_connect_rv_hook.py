@@ -18,7 +18,6 @@ sys.path.append(sources)
 
 import ftrack_api
 import ftrack_application_launcher
-import ftrack_connect_rv
 
 RV_INSTALLATION_PATH = os.getenv(
     'RV_INSTALLATION_PATH', '/usr/local/rv'
@@ -37,7 +36,7 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
             ApplicationLauncher, self
         )._get_application_environment(application, context)
 
-        environment = ftrack_application_launcher.appendPath(
+        environment = ftrack_application_launcher.append_path(
             sources,
             'PYTHONPATH',
             environment
@@ -49,8 +48,8 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
 class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
     '''Adobe plugins discover and launch action.'''
     context = ['Task', 'AssetVersion']
-
     identifier = 'ftrack-connect-launch-rv'
+    label = 'rv'
 
     def __init__(self, session,  application_store, launcher):
         '''Initialise action with *applicationStore* and *launcher*.
@@ -84,19 +83,26 @@ class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
                 'type': entity['entityType']
             })
 
-        playlist = ftrack.createTempData(json.dumps(playlist))
-
-        selection = [{
-            'entityType': 'tempdata',
-            'entityId': playlist.getId()
-        }]
+        # playlist = ftrack.createTempData(json.dumps(playlist))
+        #
+        # selection = [{
+        #     'entityType': 'tempdata',
+        #     'entityId': playlist.getId()
+        # }]
 
         return selection
 
     def _discover(self, event):
         '''Return discovered applications.'''
         items = []
-        applications = self.applicationStore.applications
+
+        entities, event = self._translate_event(self.session, event)
+        if not self.validate_selection(
+            entities
+        ):
+            return
+
+        applications = self.application_store.applications
         applications = sorted(
             applications, key=lambda application: application['label']
         )
@@ -141,13 +147,6 @@ class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
             applicationIdentifier, context
         )
 
-    def get_version_information(self, event):
-        '''Return version information.'''
-        return dict(
-            name='ftrack connect rv',
-            version=ftrack_connect_rv.__version__
-        )
-
 
 class ApplicationStore(ftrack_application_launcher.ApplicationStore):
 
@@ -172,10 +171,10 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
         if self.current_os == 'darwin':
             prefix = ['/', 'Applications']
             applications.extend(self._search_filesystem(
-                expression=prefix + ['RV.\\d+.app'],
+                expression=prefix + ['RV.\d+.app'],
                 label='Review with RV',
                 variant='{version}',
-                applicationIdentifier='rv_{version}_with_review',
+                applicationIdentifier='rv_{variant}_with_review',
                 icon='rv',
                 launchArguments=[
                     '--args', '-flags', 'ModeManagerPreload=ftrack'
@@ -186,11 +185,11 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
             prefix = ['C:\\', 'Program Files.*']
             applications.extend(self._search_filesystem(
                 expression=prefix + [
-                    '[Tweak|Shotgun]', 'RV.\\d.+', 'bin', 'rv.exe'
+                    '[Tweak|Shotgun]', 'RV.\d.+', 'bin', 'rv.exe'
                 ],
                 label='Review with RV',
                 variant='{version}',
-                applicationIdentifier='rv_{version}_with_review',
+                applicationIdentifier='rv_{variant}_with_review',
                 icon='rv',
                 launchArguments=[
                     '-flags', 'ModeManagerPreload=ftrack'
@@ -200,7 +199,7 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 )
             ))
 
-        elif self.current_os  == 'linux':
+        elif self.current_os == 'linux':
             separator = os.path.sep
             prefix = RV_INSTALLATION_PATH
             if not os.path.exists(RV_INSTALLATION_PATH):
@@ -229,13 +228,13 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                     ],
                     label='Review with RV',
                     variant='{version}',
-                    applicationIdentifier='rv_{version}_with_review',
+                    applicationIdentifier='rv_{variant}_with_review',
                     icon='rv',
                     launchArguments=[
                         '-flags', 'ModeManagerPreload=ftrack'
                     ],
                     versionExpression=re.compile(
-                        r'(?P<version>\d+(\.\d+)+)'
+                        r'(?P<version>\\d+(\\.\\d+)+)'
                     )
                 ))
 
