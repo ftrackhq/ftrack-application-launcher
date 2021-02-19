@@ -178,7 +178,8 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 icon='rv',
                 launchArguments=[
                     '--args', '-flags', 'ModeManagerPreload=ftrack'
-                ]
+                ],
+                integrations={'legacy':['ftrack-connect-rv']}
             ))
 
         elif self.current_os == 'windows':
@@ -196,7 +197,8 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 ],
                 versionExpression=re.compile(
                     r'(?P<version>\d+.\d+.\d+)'
-                )
+                ),
+                integrations={'legacy':['ftrack-connect-rv']}
             ))
 
         elif self.current_os == 'linux':
