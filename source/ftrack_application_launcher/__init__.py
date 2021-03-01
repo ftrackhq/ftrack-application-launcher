@@ -758,7 +758,10 @@ class ApplicationLaunchAction(BaseAction):
         if not self.context:
             raise ValueError('No valid context type set for discovery')
 
-        if not entities:
+        if not entities and None in self.context:
+            # handle non context discovery
+            return True
+        else:
             return False
 
         entity_type, entity_id = entities[0]
@@ -770,8 +773,8 @@ class ApplicationLaunchAction(BaseAction):
         return False
 
     def _discover(self, event):
-
         entities, event = self._translate_event(self.session, event)
+
         if not self.validate_selection(
             entities
         ):

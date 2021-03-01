@@ -29,7 +29,7 @@ ADOBE_VERSION_EXPRESSION = re.compile(
 
 class LaunchAdobeAction(ftrack_application_launcher.ApplicationLaunchAction):
     '''Adobe plugins discover and launch action.'''
-    context = ['Task', 'AssetVersion']
+    context = [None, 'Task', 'AssetVersion']
     identifier = 'ftrack-connect-launch-adobe'
     label = 'Adobe'
 
