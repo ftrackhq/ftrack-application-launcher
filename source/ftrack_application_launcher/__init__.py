@@ -761,7 +761,8 @@ class ApplicationLaunchAction(BaseAction):
         if not entities and None in self.context:
             # handle non context discovery
             return True
-        else:
+
+        if not entities:
             return False
 
         entity_type, entity_id = entities[0]
