@@ -123,27 +123,27 @@ class LaunchAdobeAction(ftrack_application_launcher.ApplicationLaunchAction):
         # If the selected entity is an asset version, change the selection
         # to parent task/shot instead since it is not possible to publish
         # to an asset version in ftrack connect.
+        if entities:
+            entity_type, entity_id = entities[0]
+            resolved_entity = self.session.get(entity_type, entity_id)
 
-        entity_type, entity_id = entities[0]
-        resolved_entity = self.session.get(entity_type, entity_id)
+            if (
+                selection and
+                resolved_entity.entity_type == 'AssetVersion'
+            ):
 
-        if (
-            selection and
-            resolved_entity.entity_type == 'AssetVersion'
-        ):
+                entityId = resolved_entity.get('task_id')
 
-            entityId = resolved_entity.get('task_id')
+                if not entityId:
+                    asset = resolved_entity['asset']
+                    entity = asset['parent']
 
-            if not entityId:
-                asset = resolved_entity['asset']
-                entity = asset['parent']
+                    entityId = entity['id']
 
-                entityId = entity['id']
-
-            context['selection'] = [{
-                'entityId': entityId,
-                'entityType': 'task'
-            }]
+                context['selection'] = [{
+                    'entityId': entityId,
+                    'entityType': 'task'
+                }]
 
         return self.launcher.launch(
             application_identifier, context
