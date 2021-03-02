@@ -1,5 +1,5 @@
 {
-    "context": ["Task"],
+    "context": [null, "Task"],
     "identifier": "ftrack-connect-launch-cinema-4d",
     "applicationIdentifier":"cinema-4d_{variant}",
     "label": "Cinema 4D",
