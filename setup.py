@@ -118,7 +118,7 @@ setup(
         'lowdown >= 0.1.0, < 2',
         'setuptools>=30.3.0',
         'setuptools_scm',
-        'sphinx >= 1.2.2, < 2',
+        'sphinx >= 2, < 3',
         'sphinx_rtd_theme >= 0.1.6, < 2',
     ],
     tests_require=['pytest >= 2.3.5, < 3'],
