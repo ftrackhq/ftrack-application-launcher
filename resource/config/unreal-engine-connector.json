@@ -4,7 +4,7 @@
     "identifier": "ftrack-connect-launch-unreal-engine",
     "applicationIdentifier":"unreal-engine{variant}",
     "integrations": {
-        "connector":["ftrack-connect-unreal-engine"]
+        "legacy":["ftrack-connect-unreal-engine"]
     },
     "label": "Unreal Engine",
     "icon": "unreal-engine",
