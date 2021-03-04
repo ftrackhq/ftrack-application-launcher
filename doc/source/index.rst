@@ -12,7 +12,8 @@ Quick start
 ===========
 
 **ftrack application launcher** is an ftrack-connect plugin,
-which provides an entry point to provide application integration for ftrack connect.
+which provides an entry point to provide application launch feature for ftrack connect.
+
 Application Launchers can be either configured through json files or manually coded to provide wider customizability options.
 
 
