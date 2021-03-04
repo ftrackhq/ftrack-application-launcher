@@ -1,10 +1,24 @@
-.. ftrack-application-launcher documentation master file, created by
-   sphinx-quickstart on Wed Mar  3 16:37:41 2021.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+..
+    :copyright: Copyright (c) 2021 ftrack
 
-Welcome to ftrack-application-launcher's documentation!
-=======================================================
+###########################
+ftrack application launcher
+###########################
+
+Welcome to ftrack-application-launcher's documentation.
+
+
+Quick start
+===========
+
+**ftrack application launcher** is an ftrack-connect plugin,
+which provides an entry point to provide application integration for ftrack connect.
+Application Launchers can be either configured through json files or manually coded to provide wider customizability options.
+
+
+
+Articles
+========
 
 .. toctree::
    :maxdepth: 2
