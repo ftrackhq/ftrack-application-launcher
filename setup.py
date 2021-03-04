@@ -9,7 +9,6 @@ from setuptools import Command
 
 from pip.__main__ import _main as pip_main
 
-from pkg_resources import DistributionNotFound, get_distribution
 from setuptools import find_packages, setup
 
 PLUGIN_NAME = 'ftrack-application-launcher-{0}'

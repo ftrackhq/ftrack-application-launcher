@@ -19,9 +19,7 @@ Articles
    installing
    using
    developing
-   faq
-   glossary
-   release
+   release/index
 
 
 
