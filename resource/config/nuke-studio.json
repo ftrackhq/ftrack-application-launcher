@@ -6,7 +6,7 @@
     "icon": "nuke_studio",
     "variant": "{version}",
     "integrations": {
-        "connector":["ftrack-connect-nuke-studio"]
+        "legacy":["ftrack-connect-nuke-studio"]
     },
     "search_path":{
         "linux": {
