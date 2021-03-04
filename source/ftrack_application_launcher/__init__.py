@@ -50,7 +50,7 @@ AVAILABLE_ICONS = {
     'indesign': '/application_icons/indesign.png',
     'illustrator': '/application_icons/illustrator.png',
     'houdini': '/application_icons/houdini.png',
-    'unreal': '/application_icons/unreal_engine.png',
+    'unreal-engine': '/application_icons/unreal_engine.png',
     'unity': '/application_icons/unity.png'
 }
 
@@ -168,11 +168,12 @@ class ApplicationStore(object):
         return applications
 
     def _get_icon_url(self, icon_name):
+        result = icon_name
         icon_url = AVAILABLE_ICONS.get(icon_name)
         if icon_url:
-            return '{}{}'.join(self.session.server_url, icon_url)
-        else:
-            return icon_name
+            result = '{}{}'.format(self.session.server_url, icon_url)
+
+        return result
 
     def _search_filesystem(self, expression, label, applicationIdentifier,
                            versionExpression=None, icon=None,
