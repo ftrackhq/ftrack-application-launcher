@@ -19,7 +19,7 @@ import re
 # Inject source onto path so that autodoc can find it by default, but in such a
 # way as to allow overriding location.
 sys.path.append(
-    os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'source'))
+    os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..','source'))
 )
 
 
@@ -108,6 +108,7 @@ def autodoc_skip(app, what, name, obj, skip, options):
 # -- Todos ---------------------------------------------------------------------
 
 todo_include_todos = True
+autodoc_mock_imports = ['ftrack_action_handler']
 
 # -- Setup --------------------------------------------------------------------
 
