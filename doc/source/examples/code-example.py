@@ -37,7 +37,8 @@ class LaunchAction(ftrack_application_launcher.ApplicationLaunchAction):
 
 '''
 
-Create application store, to let the system find the application versions for the various operating systems.
+Create application store, to let the system find the application 
+versions for the various operating systems.
 
 '''
 
@@ -99,7 +100,20 @@ Create application launcher, to let use the default launch action mechanism.
 '''
 
 class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
-    '''Passthrough launcher class'''
+    '''
+
+    This class is usually customised to provide a special launch mechanisms,
+    this could involve opening a url or something completely different different.
+
+    def launch(self, applicationIdentifier, context=None):
+        [....]
+
+        return {
+            'success': success,
+            'message': message
+        }
+
+    '''
 
 
 '''
@@ -118,6 +132,6 @@ def register(session, **kw):
     launcher = ApplicationLauncher(application_store)
 
     # Create action and register to respond to discover and launch events.
-    action = LaunchAction(session, application_store, launcher)
+    action = LaunchAction(session, application_store, launcher, priority=1000)
     action.register()
 

@@ -51,7 +51,7 @@ Then view in your browser::
     file:///path/to/ftrack-application-launcher/build/doc/html/index.html
 
 
-installing
+Installing
 ==========
 
 In order to install, you can either copy the plugin from the build folder or ensure your
@@ -60,8 +60,7 @@ In order to install, you can either copy the plugin from the build folder or ens
 
 
 
-
-reporting bugs
+Reporting bugs
 ==============
 
-If any bug is found please report to support[at]ftrack.com
+If any bug or issue is found please report to support[at]ftrack.com
