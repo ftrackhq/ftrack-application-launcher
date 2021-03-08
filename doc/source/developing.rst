@@ -17,22 +17,9 @@ where the code base is suggested in case of special application launch behaviour
 Configuration based
 -------------------
 
-Below a complete configuration for an application.
+Below a complete configuration for a generic application.
 
  .. literalinclude:: examples/config-example.json
-
-Let's break down the fields and what they are for:
-
-
-* **priority**::
-
-    Provide the ability to define a custom priority for the application.
-
-
-* **context**::
-
-    This list limit the discoverability of the application in the given contexts.
-    It can contain either **null**, or Named context such as **Project** , **Task**, or any other custom entity available in the project.
 
 
 
@@ -40,4 +27,9 @@ Code based
 ----------
 
 
+Below a complete code based launcher for a generic application.
+
+
+
+ .. literalinclude:: examples/code-example.py
 

@@ -1,12 +1,13 @@
 
-import sys
-import pprint
-import tempfile
-import os
-import shutil
-import re
 
-import platform
+'''
+
+Import base modules and ensure the dependencies are available in the path.
+
+'''
+
+import sys
+import os
 
 cwd = os.path.dirname(__file__)
 
@@ -20,7 +21,13 @@ import ftrack_application_launcher
 
 
 
-integrations = {'some': ['ftrack-connect-application']}
+'''
+
+Create launch action, to limit the context to be discovered.
+
+'''
+
+
 
 class LaunchAction(ftrack_application_launcher.ApplicationLaunchAction):
     context = ['Task', 'Project']
@@ -28,6 +35,11 @@ class LaunchAction(ftrack_application_launcher.ApplicationLaunchAction):
     label = 'An Application'
 
 
+'''
+
+Create application store, to let the system find the application versions for the various operating systems.
+
+'''
 
 
 class ApplicationStore(ftrack_application_launcher.ApplicationStore):
@@ -44,7 +56,9 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 variant='{version}',
                 applicationIdentifier='an-application_{variant}',
                 icon='an_application',
-                integrations=integrations
+                integrations={'some': ['ftrack-connect-application']},
+                launchArguments=["--arguments"],
+
             ))
 
         if self.current_os == 'windows':
@@ -57,8 +71,8 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 applicationIdentifier='an-application_{variant}',
                 versionExpression="(?P<version>[\\d.]+[vabc]+[\\dvabc.]*)",
                 icon='an_application',
-                integrations=integrations
-
+                integrations={'some': ['ftrack-connect-application']},
+                launchArguments=["--arguments"],
             ))
 
         if self.current_os == 'linux':
@@ -71,14 +85,26 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 applicationIdentifier='an-application_{variant}',
                 versionExpression="(?P<version>[\\d.]+[vabc]+[\\dvabc.]*)",
                 icon='an_application',
-                integrations=integrations
+                integrations={'some': ['ftrack-connect-application']},
+                launchArguments=["--arguments"],
             ))
 
         return applications
 
 
+'''
+
+Create application launcher, to let use the default launch action mechanism.
+
+'''
+
 class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
-    '''Passthrough class'''
+    '''Passthrough launcher class'''
+
+
+'''
+Register the new application launcher.
+'''
 
 
 def register(session, **kw):
