@@ -30,7 +30,7 @@ Create launch action, to limit the context to be discovered.
 
 
 class LaunchAction(ftrack_application_launcher.ApplicationLaunchAction):
-    context = ['Task', 'Project']
+    context = [None, 'Task', 'Project']
     identifier = 'ftrack-connect-launch-application'
     label = 'An Application'
 
