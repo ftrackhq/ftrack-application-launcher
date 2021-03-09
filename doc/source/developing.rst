@@ -110,9 +110,23 @@ Let's have a look at the common attributes you'll find in both, split by mandato
 
       **version_expression**
 
+            Defines a regular expression used to extract the version from the found application paths.
+
+            eg::
+
+            "version_expression": "Something(?P<version>.*)\\/.+$",
+
 
 
       **launch_arguments**
+
+
+            Allows to specify specific arguments to be passed when the application gets launched.
+
+
+            eg::
+
+            "launch_arguments": ["--arguments"]
 
 
 
@@ -124,8 +138,24 @@ Let's have a look at the common attributes you'll find in both, split by mandato
 
     Define the priority on which this event will be discovered.
 
+    .. note::
+
+        Negative priorities are higher than positive ones.
+
 
 **integrations** *(optional)*:
+
+
+    Provide a way to collect integrations into named groups.
+    If any of the integration requested is not discovered, the application itself won't be discovered.
+
+
+    eg::
+
+
+        "integrations": {
+            "example":["ftrack-example-integration"]
+        },
 
 
 Comparing launchers
