@@ -57,7 +57,7 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 variant='{version}',
                 applicationIdentifier='an-application_{variant}',
                 icon='an_application',
-                integrations={'some': ['ftrack-connect-application']},
+                integrations={'example': ['ftrack-example-integration']},
                 launchArguments=["--arguments"],
 
             ))
@@ -72,7 +72,7 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 applicationIdentifier='an-application_{variant}',
                 versionExpression="(?P<version>[\\d.]+[vabc]+[\\dvabc.]*)",
                 icon='an_application',
-                integrations={'some': ['ftrack-connect-application']},
+                integrations={'example': ['ftrack-example-integration']},
                 launchArguments=["--arguments"],
             ))
 
@@ -86,7 +86,7 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 applicationIdentifier='an-application_{variant}',
                 versionExpression="(?P<version>[\\d.]+[vabc]+[\\dvabc.]*)",
                 icon='an_application',
-                integrations={'some': ['ftrack-connect-application']},
+                integrations={'example': ['ftrack-example-integration']},
                 launchArguments=["--arguments"],
             ))
 

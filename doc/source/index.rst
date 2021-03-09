@@ -19,6 +19,7 @@ Articles
    installing
    using
    developing
+   integrating
    api/modules
    release/index
 

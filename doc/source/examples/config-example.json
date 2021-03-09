@@ -7,7 +7,7 @@
     "icon": "an_application",
     "variant": "{version}",
     "integrations": {
-        "some":["ftrack-connect-application"]
+        "example":["ftrack-example-integration"]
     },
     "search_path":{
         "linux": {
