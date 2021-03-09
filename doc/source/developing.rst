@@ -8,10 +8,12 @@ Creating a new launcher
 ***********************
 
 In order to be able to find and manage applications and integrations,
+an application launcher has to be provided.
+
 Launchers requires to be either configured or written from scratch using the base libraries included in this module.
 
 The configuration mode is suggested for all the base cases,
-where the code base is suggested in case of special application launch behaviour.
+where the code base approach is suggested in case of special application launch behaviours.
 
 
 Attributes
@@ -28,7 +30,7 @@ Let's have a look at the common attributes you'll find in both, split by mandato
 **Mandatory attributes**
 ------------------------
 
-* **context**:
+**context**:
 
     Provide a list to fill up with named contexts.
     The launcher will appear only when one of the given contexts is selected.
@@ -38,13 +40,11 @@ Let's have a look at the common attributes you'll find in both, split by mandato
         context can contain one or more entity type name such as **"Project"**, **"Task"**, etc...
         **None** in code or **null** in config, will allow to discover the application without any context selected.
 
-
-* **identifier**:
+**identifier**:
 
     Defines a unique string identifier for this launcher.
 
-
-* **applicationIdentifier**:
+**applicationIdentifier**:
 
     Defines a unique string identifier for the application to be launch,
     this also need to contain the potential **variant** available, so can be uniquely identified.
@@ -54,11 +54,11 @@ Let's have a look at the common attributes you'll find in both, split by mandato
         **applicationIdentifier** should always include the **{variant}** variable.
 
 
-* **label**:
+**label**:
 
     A descriptive label to identify the application.
 
-* **icon**:
+**icon**:
 
     An icon to represent the application to launch.
 
@@ -66,7 +66,7 @@ Let's have a look at the common attributes you'll find in both, split by mandato
 
         Icon can be either one of the application name mapped or a full url path to a given icon.
 
-* **variant**:
+**variant**:
 
     Defines the variant of the application to be launched.
 
@@ -75,13 +75,13 @@ Let's have a look at the common attributes you'll find in both, split by mandato
         **variant** should always include the **{version}** variable.
 
 
-* **search_path**:
+**search_path**:
 
     Provide an entry point for each operating system to define where from the application will searched.
 
     .. note::
 
-        The valid operating system names are:
+        The valid operating system are:
 
         * **linux**
         * **windows**
@@ -89,16 +89,30 @@ Let's have a look at the common attributes you'll find in both, split by mandato
 
     Each operating system will require to define :
 
-        * **prefix**
-        * **expression**
+        **prefix**
+
+            Provide the root search path for all the versions of the given application.
+
+            eg::
+
+                "prefix":["C:\\", "Program Files.*"],
+
+        **expression**
+
+            Provide a regular expression used to extract the versions available for the given application.
+
+            eg::
+
+                "expression":["Something.*", "Something\\d.+.exe"],
 
 
     and optionally :
 
-      * **version_expression**
-      * **launch_arguments**
+      **version_expression**
 
 
+
+      **launch_arguments**
 
 
 
@@ -106,12 +120,12 @@ Let's have a look at the common attributes you'll find in both, split by mandato
 -----------------------
 
 
-* **priority** *(optional)*:
+**priority** *(optional)*:
 
     Define the priority on which this event will be discovered.
 
 
-* **integrations** *(optional)*:
+**integrations** *(optional)*:
 
 
 Comparing launchers
@@ -123,13 +137,21 @@ Below we'll be looking at the same launch application expressed in configuration
 Configuration based launcher
 ----------------------------
 
- .. literalinclude:: examples/config-example.json
+.. note::
+
+    Configuration launchers are based on json language.
+
+.. literalinclude:: examples/config-example.json
 
 
 
 Code based launcher
 -------------------
 
+.. note::
 
- .. literalinclude:: examples/code-example.py
+    Code launchers are based on python 3.7 language.
+
+
+.. literalinclude:: examples/code-example.py
 
