@@ -885,7 +885,7 @@ class ApplicationLaunchAction(BaseAction):
             application_identifier, context
         )
 
-    def get_version_information(self):
+    def get_version_information(self, event):
         return [
             dict(
                 name=self.applicationIdentifier,
