@@ -751,6 +751,7 @@ class ApplicationLauncher(object):
 
 class ApplicationLaunchAction(BaseAction):
     context = []
+    project = []
 
     def __repr__(self):
         return "<label:{}|id:{}|variant:{}>".format(
@@ -795,8 +796,21 @@ class ApplicationLaunchAction(BaseAction):
 
         entity_type, entity_id = entities[0]
         resolved_entity_type = self.session.get(entity_type, entity_id).entity_type
+        entity_link = resolved_entity_type['link']
 
         if resolved_entity_type in self.context:
+            if self.project:
+                current_project_name =  entity_link[0]['name']
+                if current_project_name in self.project:
+                    return True
+                else:
+                    self.logger.warning(
+                        '{} is not part of :{}'.format(
+                            current_project_name, self.project
+                        )
+                    )
+                    return False
+
             return True
 
         return False
