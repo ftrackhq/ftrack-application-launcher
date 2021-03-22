@@ -124,6 +124,7 @@ setup(
     use_scm_version={
         'write_to': 'source/ftrack_application_launcher/_version.py',
         'write_to_template': version_template,
+        'version_scheme': 'post-release'
     },
     install_requires=[
         'ftrack-python-api >= 2, < 3',
