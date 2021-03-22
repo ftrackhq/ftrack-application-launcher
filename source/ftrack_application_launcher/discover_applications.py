@@ -110,7 +110,7 @@ class DiscoverApplications(object):
                     'label': config['label'],
                     'identifier': identifier,
                     'context': config['context'],
-                    'project': config['project'] or []
+                    'project': config.get('project', [])
                 }
             )
             priority = config.get('priority', sys.maxsize)

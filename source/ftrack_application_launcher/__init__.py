@@ -795,17 +795,19 @@ class ApplicationLaunchAction(BaseAction):
             return False
 
         entity_type, entity_id = entities[0]
-        resolved_entity_type = self.session.get(entity_type, entity_id).entity_type
-        entity_link = resolved_entity_type['link']
+        resolved_entity = self.session.get(entity_type, entity_id)
+        resolved_entity_type = resolved_entity.entity_type
+        entity_link = resolved_entity['link']
 
         if resolved_entity_type in self.context:
             if self.project:
-                current_project_name =  entity_link[0]['name']
+                current_project_name = entity_link[0]['name']
                 if current_project_name in self.project:
                     return True
                 else:
                     self.logger.warning(
-                        '{} is not part of :{}'.format(
+                        '{} is not a supported project.'
+                        'This launcher can be discovered only in :{}'.format(
                             current_project_name, self.project
                         )
                     )
