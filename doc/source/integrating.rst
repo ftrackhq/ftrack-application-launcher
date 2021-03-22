@@ -23,7 +23,7 @@ This discover is composed by 3 important pieces.
 Listeners
 ---------
 
-Each integration will have to provide two event listeners hooked to the same function
+Each integration will have to provide two event listeners hooked to the same function.
 
 Each of this will have to provide a filter for the application to be launched, optional, but suggested
 is to provide a lower/higher limit based on the application version for this integration.
@@ -95,6 +95,31 @@ where a fully formed integrations would provide also entry point for the environ
 Managing environment variables
 ------------------------------
 
-When defining environment variables is important to have clear w
+Each integration can express a set of environment variables and operations to be performed when handled by the application launcher.
+
+the formatting of envs is composed by : **<$ENVIRONMENT>** . **<OPERATION>**
+
+for example::
+
+    'PYTHONPATH.append': '<some file system path>'
+
+
+environment operations
+......................
+
+.. note::
+
+    If not provided, the default operation for environment will be *append*
+
+
+* **prepend** : The value of the environment will be prepended.
+* **append** : The value of the environment will be appended.
+* **set**: The given environment will be set with the given value.
+* **pop**: The value of the environment variable will be removed.
+* **unset**: The environment value will be unset.
+
+
+.. note::
+    In case of multiple integrations loaded, the priority provided in the integration will drive the order the environment variables will be manipulated.
 
 

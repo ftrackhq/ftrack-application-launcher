@@ -57,7 +57,9 @@ Installing
 In order to install, you can either copy the plugin from the build folder or ensure your
 **FTRACK_CONNECT_PLUGIN_PATH** includes the output *build* folder.
 
+.. note::
 
+    eg: export FTRACK_CONNECT_PLUGIN_PATH=<ftrack-application-launcher_path>/build
 
 
 Reporting bugs

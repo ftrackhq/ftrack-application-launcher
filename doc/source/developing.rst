@@ -1,3 +1,5 @@
+.. _developing:
+
 ##########
 Developing
 ##########
@@ -21,7 +23,7 @@ Attributes
 
 .. note::
 
-    For simplicity we'll be taking the config arguments as example as are easier to read.
+    For simplicity we'll be taking the config arguments as example as are easier to read.:*
 
 
 Let's have a look at the common attributes you'll find in both, split by mandatory and optional attributes.
