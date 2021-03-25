@@ -888,7 +888,7 @@ class ApplicationLaunchAction(BaseAction):
     def get_version_information(self, event):
         return [
             dict(
-                name=self.applicationIdentifier,
+                name= self.identifier,
                 version='-'
             )
         ]
