@@ -362,7 +362,7 @@ class ApplicationLauncher(object):
             synchronous=True
         )
 
-        discovered_integrations = set([
+        discovered_integration_names = set([
             result.get('integration', {}).get('name') for result in results
         ])
 
@@ -371,7 +371,8 @@ class ApplicationLauncher(object):
 
         for requested_integration_name, requested_integration_items in requested_integrations.items():
             # Check if all the requested integration are present in the one available.
-            dependency_resolved = not bool(set(requested_integration_items).difference(discovered_integrations))
+            dependency_resolved = not bool(set(requested_integration_items).difference(discovered_integration_names))
+
             if dependency_resolved:
                 found_integrations.append(
                     requested_integration_name
@@ -381,7 +382,7 @@ class ApplicationLauncher(object):
                     requested_integration_name
                 )
 
-        return found_integrations, lost_integrations
+        return results, lost_integrations
 
     def launch(self, applicationIdentifier, context=None):
         '''Launch application matching *applicationIdentifier*.
@@ -517,7 +518,6 @@ class ApplicationLauncher(object):
             'success': success,
             'message': message
         }
-
 
     def _notify_integration_usage(self, results, application):
         metadata = {
@@ -886,12 +886,28 @@ class ApplicationLaunchAction(BaseAction):
         )
 
     def get_version_information(self, event):
-        return [
-            dict(
-                name=self.applicationIdentifier,
-                version='-'
+        items = []
+        applications = self.application_store.applications
+
+        applications = sorted(
+            applications, key=lambda application: application['label']
+        )
+
+        fake_context = self.session.query('Task').first()
+        for application in applications:
+            integrations, _ = self.launcher.discover_integrations(
+                application, {'selection': [{'entityId': fake_context['id']}]}
             )
-        ]
+            for integration in integrations:
+                integration = integration['integration']
+                integration_data = {
+                    'name': str(integration.get('name', 'No-Name')),
+                    'version': str(integration.get('version', 'No-Version'))
+                }
+                if integration_data not in items:
+                    items.append(integration_data)
+
+        return items
 
     def register(self):
         '''Register discover actions on logged in user.'''
