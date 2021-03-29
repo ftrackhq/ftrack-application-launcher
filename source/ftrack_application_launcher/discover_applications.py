@@ -67,6 +67,21 @@ class DiscoverApplications(object):
 
         return result_dict
 
+    def validate_configuration(self, configuration):
+        assert configuration['context']
+        assert configuration['identifier']
+        assert configuration['applicationIdentifier']
+        assert configuration['label']
+        assert configuration['variant']
+        assert configuration['search_path']
+
+    def _validate_configurations(self, configurations):
+        assert len(list(set([config['context'] for config in configurations]))) == 1
+        assert len(list(set([config['project'] for config in configurations]))) == 1
+
+        for configuration in configurations:
+            self._validate_configurations(configuration)
+
     def _build_launchers(self, configurations):
         grouped_configurations = self._group_configurations(configurations)
         for identifier, identified_configuration in grouped_configurations.items():
