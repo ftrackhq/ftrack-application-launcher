@@ -2,6 +2,7 @@
 # :copyright: Copyright (c) 2015 ftrack
 
 import os
+import re
 import shutil
 
 from setuptools import Command
@@ -29,14 +30,14 @@ HOOK_PATH = os.path.join(RESOURCE_PATH, 'hook')
 CONFIG_PATH = os.path.join(RESOURCE_PATH, 'config')
 
 
-try:
-    release = get_distribution('ftrack-application-launcher').version
-    # take major/minor/patch
-    VERSION = '.'.join(release.split('.')[:3])
+# Parse package version
+with open(os.path.join(
+    SOURCE_PATH, 'ftrack_application_launcher', '_version.py')
+) as _version_file:
+    VERSION = re.match(
+        r'.*__version__ = \'(.*?)\'', _version_file.read(), re.DOTALL
+    ).group(1)
 
-except DistributionNotFound:
-    # package is not installed
-    VERSION = 'unknown-version'
 
 STAGING_PATH = STAGING_PATH.format(VERSION)
 
@@ -101,7 +102,6 @@ __version__ = {version!r}
 # Configuration.
 setup(
     name='ftrack-application-launcher',
-    version=VERSION,
     description='Base Class for handling application startup.',
     long_description=open(README_PATH).read(),
     keywords='ftrack',
@@ -125,6 +125,7 @@ setup(
     use_scm_version={
         'write_to': 'source/ftrack_application_launcher/_version.py',
         'write_to_template': version_template,
+        'version_scheme': 'post-release'
     },
     install_requires=[
         'ftrack-python-api >= 2, < 3',

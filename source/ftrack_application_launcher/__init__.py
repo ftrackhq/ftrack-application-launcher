@@ -33,6 +33,26 @@ DEFAULT_VERSION_EXPRESSION = re.compile(
     r'(?P<version>\d[\d.vabc]*?)[^\d]*$'
 )
 
+AVAILABLE_ICONS = {
+    'hiero': '/application_icons/hiero.png',
+    'hieroplayer': '/application_icons/hieroplayer.png',
+    'nukex': '/application_icons/nukex.png',
+    'nuke': '/application_icons/nuke.png',
+    'nuke_studio': '/application_icons/nuke_studio.png',
+    'premiere': '/application_icons/premiere.png',
+    'maya': '/application_icons/maya.png',
+    'cinesync': '/application_icons/cinesync.png',
+    'photoshop': '/application_icons/photoshop.png',
+    'prelude': '/application_icons/prelude.png',
+    'after_effects': '/application_icons/after_effects.png',
+    '3ds_max': '/application_icons/3ds_max.png',
+    'cinema_4d': '/application_icons/cinema_4d.png',
+    'indesign': '/application_icons/indesign.png',
+    'illustrator': '/application_icons/illustrator.png',
+    'houdini': '/application_icons/houdini.png',
+    'unreal-engine': '/application_icons/unreal_engine.png',
+    'unity': '/application_icons/unity.png'
+}
 
 def prepend_path(path, key, environment):
     '''Prepend *path* to *key* in *environment*.'''
@@ -146,6 +166,14 @@ class ApplicationStore(object):
             prefix = ['C:\\', 'Program Files.*']
 
         return applications
+
+    def _get_icon_url(self, icon_name):
+        result = icon_name
+        icon_url = AVAILABLE_ICONS.get(icon_name)
+        if icon_url:
+            result = '{}{}'.format(self.session.server_url, icon_url)
+
+        return result
 
     def _search_filesystem(self, expression, label, applicationIdentifier,
                            versionExpression=None, icon=None,
@@ -267,7 +295,7 @@ class ApplicationStore(object):
                             'launchArguments': launchArguments,
                             'version': loose_version,
                             'label': label.format(version=str(loose_version)),
-                            'icon': icon,
+                            'icon': self._get_icon_url(icon),
                             'variant': variant_str,
                             'description': description,
                             'integrations': integrations or {},
@@ -792,6 +820,10 @@ class ApplicationLaunchAction(BaseAction):
         if not self.context:
             raise ValueError('No valid context type set for discovery')
 
+        if not entities and None in self.context:
+            # handle non context discovery
+            return True
+
         if not entities:
             return False
 
@@ -804,8 +836,8 @@ class ApplicationLaunchAction(BaseAction):
         return False
 
     def _discover(self, event):
-
         entities, event = self._translate_event(self.session, event)
+
         if not self.validate_selection(
                 entities
         ):
@@ -888,10 +920,10 @@ class ApplicationLaunchAction(BaseAction):
             application_identifier, context
         )
 
-    def get_version_information(self):
+    def get_version_information(self, event):
         return [
             dict(
-                name=self.applicationIdentifier,
+                name= self.identifier,
                 version='-'
             )
         ]
