@@ -893,11 +893,11 @@ class ApplicationLaunchAction(BaseAction):
             applications, key=lambda application: application['label']
         )
 
-        fake_context = self.session.query('Task').first()
         for application in applications:
             integrations, _ = self.launcher.discover_integrations(
-                application, {'selection': [{'entityId': fake_context['id']}]}
+                application, {'selection': []}
             )
+
             for integration in integrations:
                 integration = integration['integration']
                 integration_data = {
