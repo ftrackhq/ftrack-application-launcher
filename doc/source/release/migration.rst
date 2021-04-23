@@ -36,7 +36,7 @@ environment variables management
 --------------------------------
 
 * Environment variable management is now handled from within the integration and not the launcher itself.
-  hence all the imports from ftrack_connect in this regard are not available anymore:
+  All the imports from ftrack_connect in this regard will not be vailable anymore:
 
   * ftrack_connect.application.appendPath
   * ftrack_connect.application.prependPath
