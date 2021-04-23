@@ -389,7 +389,7 @@ class ApplicationLauncher(object):
         *context* should provide information that can guide how to launch the
         application.
 
-        Return a dictionary of information containing:
+        Return a dictionary of information containing::
 
             success - A boolean value indicating whether application launched
                       successfully or not.
