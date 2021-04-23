@@ -91,13 +91,6 @@ class BuildPlugin(Command):
         )
 
 
-version_template = '''
-# :coding: utf-8
-# :copyright: Copyright (c) 2017-2020 ftrack
-
-__version__ = {version!r}
-'''
-
 # Configuration.
 setup(
     name='ftrack-application-launcher',
