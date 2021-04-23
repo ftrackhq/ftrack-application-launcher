@@ -129,7 +129,6 @@ setup(
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         'Intended Audience :: Developers',
-        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3'
     ],
     cmdclass={'build_plugin': BuildPlugin},
