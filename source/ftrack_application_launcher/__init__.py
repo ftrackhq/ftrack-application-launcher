@@ -554,8 +554,8 @@ class ApplicationLauncher(object):
         # parse integration returned from listeners.
         returned_integrations_names = set([result.get('integration', {}).get('name') for result in results if result])
         
-        self.logger.info('Discovered integrations {}'.format(returned_integrations_names))
-        self.logger.info('Requested integrations {}'.format(list(context.get('integrations', {}).items())))
+        self.logger.debug('Discovered integrations {}'.format(returned_integrations_names))
+        self.logger.debug('Requested integrations {}'.format(list(context.get('integrations', {}).items())))
 
         for integration_group, requested_integration_names in list(context.get('integrations', {}).items()):
 
@@ -599,24 +599,24 @@ class ApplicationLauncher(object):
                         key, action = action_results
 
                     if action == 'append':
-                        self.logger.info('Appending {} with {}'.format(key, value))
+                        self.logger.debug('Appending {} with {}'.format(key, value))
                         append_path(str(value), key, environments)
 
                     elif action == 'prepend':
-                        self.logger.info('Prepending {} with {}'.format(key, value))
+                        self.logger.debug('Prepending {} with {}'.format(key, value))
                         prepend_path(str(value), key, environments)    
 
                     elif action == 'set':
-                        self.logger.info('Setting {} to {}'.format(key, value))
+                        self.logger.debug('Setting {} to {}'.format(key, value))
                         environments[key] = str(value)
 
                     elif action == 'unset':   
-                        self.logger.info('Unsetting {}'.format(key))
+                        self.logger.debug('Unsetting {}'.format(key))
                         if key in environments:
                             environments.pop(key)
 
                     elif action == 'pop':
-                        self.logger.info(
+                        self.logger.debug(
                             'removing {} with {}'.format(key, value))
                         pop_path(str(value), key, environments)
 
