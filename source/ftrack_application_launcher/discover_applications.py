@@ -5,7 +5,7 @@ import platform
 from collections import defaultdict
 import logging
 from ftrack_application_launcher import ApplicationStore, ApplicationLaunchAction, ApplicationLauncher
-
+import threading
 
 class DiscoverApplications(object):
 
@@ -67,42 +67,50 @@ class DiscoverApplications(object):
 
         return result_dict
 
+    def _build_applications(self, application_store, config):
+        self.logger.warning('building app from config {}'.format(config))
+        search_path = config['search_path'].get(self.current_os)
+        if not search_path:
+            self.logger.warning(
+                'No entry found for os: {} in config {}'.format(
+                    self.current_os, config['label']
+                )
+            )
+            return
+
+        launch_arguments = search_path.get('launch_arguments')
+        prefix = search_path['prefix']
+        expression = search_path['expression']
+        version_expression = search_path.get('version_expression')
+
+        applications = application_store._search_filesystem(
+            versionExpression=version_expression,
+            expression=prefix + expression,
+            label=config['label'],
+            applicationIdentifier=config['applicationIdentifier'],
+            icon=config['icon'],
+            variant=config['variant'],
+            launchArguments=launch_arguments,
+            integrations=config.get('integrations')
+        )
+        application_store.applications.extend(applications)
+
     def _build_launchers(self, configurations):
         grouped_configurations = self._group_configurations(configurations)
         for identifier, identified_configuration in grouped_configurations.items():
             self.logger.debug('building config store for {}'.format(identifier))
             store = ApplicationStore(self._session)
 
+            threads = []
             for config in identified_configuration:
+                x = threading.Thread(target=self._build_applications, args=(store, config,))
+                threads.append(x)
 
-                # extract data from app config
-                search_path = config['search_path'].get(self.current_os)
-                if not search_path:
-                    self.logger.warning(
-                        'No entry found for os: {} in config {}'.format(
-                            self.current_os, config['label']
-                        )
-                    )
-                    continue
+            [t.start() for t in threads]
 
-                launch_arguments = search_path.get('launch_arguments')
-                prefix = search_path['prefix']
-                expression = search_path['expression']
-                version_expression = search_path.get('version_expression')
-
-                applications = store._search_filesystem(
-                    versionExpression=version_expression,
-                    expression=prefix + expression,
-                    label=config['label'],
-                    applicationIdentifier=config['applicationIdentifier'],
-                    icon=config['icon'],
-                    variant=config['variant'],
-                    launchArguments=launch_arguments,
-                    integrations=config.get('integrations')
-                )
-                store.applications.extend(applications)
 
             launcher = ApplicationLauncher(store)
+
             NewAction = type(
                 'ApplicationLauncherAction-{}'.format(config['label']),
                 (ApplicationLaunchAction,),
