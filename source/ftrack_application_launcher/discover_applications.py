@@ -68,7 +68,7 @@ class DiscoverApplications(object):
         return result_dict
 
     def _build_applications(self, application_store, config):
-        self.logger.warning('building app from config {}'.format(config))
+
         search_path = config['search_path'].get(self.current_os)
         if not search_path:
             self.logger.warning(
