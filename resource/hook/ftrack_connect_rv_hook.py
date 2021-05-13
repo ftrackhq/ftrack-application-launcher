@@ -92,38 +92,6 @@ class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
 
         return selection
 
-    def _discover(self, event):
-        '''Return discovered applications.'''
-        items = []
-
-        entities, event = self._translate_event(self.session, event)
-        if not self.validate_selection(
-            entities
-        ):
-            return
-
-        applications = self.application_store.applications
-        applications = sorted(
-            applications, key=lambda application: application['label']
-        )
-
-        for application in applications:
-            applicationIdentifier = application['identifier']
-            label = application['label']
-            items.append({
-                'actionIdentifier': self.identifier,
-                'label': label,
-                'variant': application.get('variant', None),
-                'description': application.get('description', None),
-                'icon': application.get('icon', 'default'),
-                'applicationIdentifier': applicationIdentifier,
-                'host': platform.node()
-            })
-
-        return {
-            'items': items
-        }
-
     def _launch(self, event):
         '''Handle *event*.
 
