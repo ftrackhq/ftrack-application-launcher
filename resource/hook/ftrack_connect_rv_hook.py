@@ -237,7 +237,8 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                     ],
                     versionExpression=re.compile(
                         r'(?P<version>\\d+(\\.\\d+)+)'
-                    )
+                    ),
+                    integrations={'legacy':['ftrack-connect-rv']}
                 ))
 
         self.logger.debug(
