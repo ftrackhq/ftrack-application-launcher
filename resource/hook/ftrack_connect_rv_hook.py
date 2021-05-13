@@ -47,7 +47,7 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
 
 class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
     '''Adobe plugins discover and launch action.'''
-    context = ['Task', 'AssetVersion']
+    context = [None, 'Task', 'AssetVersion']
     identifier = 'ftrack-connect-launch-rv'
     label = 'rv'
 
