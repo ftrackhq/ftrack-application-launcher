@@ -6,7 +6,7 @@
     "icon": "nukex",
     "variant": "{version}",
     "integrations": {
-        "connector":["ftrack-connect-nuke"]
+        "legacy":["ftrack-connect-nuke"]
     },
     "search_path":{
         "linux": {

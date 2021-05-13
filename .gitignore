@@ -20,5 +20,4 @@ test-reports/*
 .pytest_cache/*
 
 # SCM VERSION
-source/ftrack_application_launcher/_version.py
 *.egg-info

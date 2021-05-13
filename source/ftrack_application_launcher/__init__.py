@@ -33,6 +33,26 @@ DEFAULT_VERSION_EXPRESSION = re.compile(
     r'(?P<version>\d[\d.vabc]*?)[^\d]*$'
 )
 
+AVAILABLE_ICONS = {
+    'hiero': '/application_icons/hiero.png',
+    'hieroplayer': '/application_icons/hieroplayer.png',
+    'nukex': '/application_icons/nukex.png',
+    'nuke': '/application_icons/nuke.png',
+    'nuke_studio': '/application_icons/nuke_studio.png',
+    'premiere': '/application_icons/premiere.png',
+    'maya': '/application_icons/maya.png',
+    'cinesync': '/application_icons/cinesync.png',
+    'photoshop': '/application_icons/photoshop.png',
+    'prelude': '/application_icons/prelude.png',
+    'after_effects': '/application_icons/after_effects.png',
+    '3ds_max': '/application_icons/3ds_max.png',
+    'cinema_4d': '/application_icons/cinema_4d.png',
+    'indesign': '/application_icons/indesign.png',
+    'illustrator': '/application_icons/illustrator.png',
+    'houdini': '/application_icons/houdini.png',
+    'unreal-engine': '/application_icons/unreal_engine.png',
+    'unity': '/application_icons/unity.png'
+}
 
 def prepend_path(path, key, environment):
     '''Prepend *path* to *key* in *environment*.'''
@@ -146,6 +166,14 @@ class ApplicationStore(object):
             prefix = ['C:\\', 'Program Files.*']
 
         return applications
+
+    def _get_icon_url(self, icon_name):
+        result = icon_name
+        icon_url = AVAILABLE_ICONS.get(icon_name)
+        if icon_url:
+            result = '{}{}'.format(self.session.server_url, icon_url)
+
+        return result
 
     def _search_filesystem(self, expression, label, applicationIdentifier,
                            versionExpression=None, icon=None,
@@ -267,7 +295,7 @@ class ApplicationStore(object):
                             'launchArguments': launchArguments,
                             'version': loose_version,
                             'label': label.format(version=str(loose_version)),
-                            'icon': icon,
+                            'icon': self._get_icon_url(icon),
                             'variant': variant_str,
                             'description': description,
                             'integrations': integrations or {}
@@ -361,7 +389,7 @@ class ApplicationLauncher(object):
         *context* should provide information that can guide how to launch the
         application.
 
-        Return a dictionary of information containing:
+        Return a dictionary of information containing::
 
             success - A boolean value indicating whether application launched
                       successfully or not.
@@ -526,8 +554,8 @@ class ApplicationLauncher(object):
         # parse integration returned from listeners.
         returned_integrations_names = set([result.get('integration', {}).get('name') for result in results if result])
         
-        self.logger.info('Discovered integrations {}'.format(returned_integrations_names))
-        self.logger.info('Requested integrations {}'.format(list(context.get('integrations', {}).items())))
+        self.logger.debug('Discovered integrations {}'.format(returned_integrations_names))
+        self.logger.debug('Requested integrations {}'.format(list(context.get('integrations', {}).items())))
 
         for integration_group, requested_integration_names in list(context.get('integrations', {}).items()):
 
@@ -571,24 +599,24 @@ class ApplicationLauncher(object):
                         key, action = action_results
 
                     if action == 'append':
-                        self.logger.info('Appending {} with {}'.format(key, value))
+                        self.logger.debug('Appending {} with {}'.format(key, value))
                         append_path(str(value), key, environments)
 
                     elif action == 'prepend':
-                        self.logger.info('Prepending {} with {}'.format(key, value))
+                        self.logger.debug('Prepending {} with {}'.format(key, value))
                         prepend_path(str(value), key, environments)    
 
                     elif action == 'set':
-                        self.logger.info('Setting {} to {}'.format(key, value))
+                        self.logger.debug('Setting {} to {}'.format(key, value))
                         environments[key] = str(value)
 
                     elif action == 'unset':   
-                        self.logger.info('Unsetting {}'.format(key))
+                        self.logger.debug('Unsetting {}'.format(key))
                         if key in environments:
                             environments.pop(key)
 
                     elif action == 'pop':
-                        self.logger.info(
+                        self.logger.debug(
                             'removing {} with {}'.format(key, value))
                         pop_path(str(value), key, environments)
 
@@ -758,6 +786,10 @@ class ApplicationLaunchAction(BaseAction):
         if not self.context:
             raise ValueError('No valid context type set for discovery')
 
+        if not entities and None in self.context:
+            # handle non context discovery
+            return True
+
         if not entities:
             return False
 
@@ -770,8 +802,8 @@ class ApplicationLaunchAction(BaseAction):
         return False
 
     def _discover(self, event):
-
         entities, event = self._translate_event(self.session, event)
+
         if not self.validate_selection(
             entities
         ):
@@ -853,10 +885,10 @@ class ApplicationLaunchAction(BaseAction):
             application_identifier, context
         )
 
-    def get_version_information(self):
+    def get_version_information(self, event):
         return [
             dict(
-                name=self.applicationIdentifier,
+                name= self.identifier,
                 version='-'
             )
         ]

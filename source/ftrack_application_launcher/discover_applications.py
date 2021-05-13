@@ -115,7 +115,7 @@ class DiscoverApplications(object):
             priority = config.get('priority', sys.maxsize)
             action = NewAction(self._session, store, launcher, priority=priority)
 
-            self.logger.info('Creating App launcher {} with priority {}'.format(action, priority))
+            self.logger.debug('Creating App launcher {} with priority {}'.format(action, priority))
 
             self._actions.append(action)
 

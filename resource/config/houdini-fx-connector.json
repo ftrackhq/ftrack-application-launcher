@@ -4,7 +4,7 @@
     "identifier": "ftrack-connect-launch-houdini",
     "applicationIdentifier":"houdini_{variant}",
     "integrations": {
-        "connector":["ftrack-connect-houdini"]
+        "legacy":["ftrack-connect-houdini"]
     },
     "label": "Houdini",
     "icon": "houdini",
