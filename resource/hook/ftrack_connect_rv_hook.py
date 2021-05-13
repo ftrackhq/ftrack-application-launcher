@@ -68,6 +68,20 @@ class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
             priority=0
         )
 
+
+    def _create_temp_data(self, data, expiry):
+        if not expiry:
+            expiry = datetime.datetime.now() + datetime.timedelta(hours=1)
+
+         action = {
+            'action': 'create',
+            'type': 'tempdata',
+            'data': data,
+            'expiry': expiry
+        }   
+
+        return self.session.call(action)
+
     def _create_playlist_from_selection(self, selection):
         '''Return new selection with temporary playlist from *selection*.'''
 
@@ -82,13 +96,13 @@ class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
                 'id': entity['entityId'],
                 'type': entity['entityType']
             })
-
-        # playlist = ftrack.createTempData(json.dumps(playlist))
-        #
-        # selection = [{
-        #     'entityType': 'tempdata',
-        #     'entityId': playlist.getId()
-        # }]
+    
+        playlist = self._create_temp_data(json.dumps(playlist))
+        
+        selection = [{
+            'entityType': 'tempdata',
+            'entityId': playlist.getId()
+        }]
 
         return selection
 
