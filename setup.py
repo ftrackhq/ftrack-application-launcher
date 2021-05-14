@@ -9,7 +9,6 @@ from setuptools import Command
 
 from pip.__main__ import _main as pip_main
 
-from pkg_resources import DistributionNotFound, get_distribution
 from setuptools import find_packages, setup
 
 PLUGIN_NAME = 'ftrack-application-launcher-{0}'
@@ -92,13 +91,6 @@ class BuildPlugin(Command):
         )
 
 
-version_template = '''
-# :coding: utf-8
-# :copyright: Copyright (c) 2017-2020 ftrack
-
-__version__ = {version!r}
-'''
-
 # Configuration.
 setup(
     name='ftrack-application-launcher',
@@ -116,17 +108,11 @@ setup(
     },
     setup_requires=[
         'lowdown >= 0.1.0, < 2',
-        'setuptools>=30.3.0',
-        'setuptools_scm',
-        'sphinx >= 1.2.2, < 2',
+        'sphinx >= 2, < 3',
         'sphinx_rtd_theme >= 0.1.6, < 2',
     ],
     tests_require=['pytest >= 2.3.5, < 3'],
-    use_scm_version={
-        'write_to': 'source/ftrack_application_launcher/_version.py',
-        'write_to_template': version_template,
-        'version_scheme': 'post-release'
-    },
+    version=VERSION,
     install_requires=[
         'ftrack-python-api >= 2, < 3',
         'ftrack-action-handler',
@@ -136,7 +122,6 @@ setup(
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         'Intended Audience :: Developers',
-        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3'
     ],
     cmdclass={'build_plugin': BuildPlugin},

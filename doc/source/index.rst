@@ -1,29 +1,42 @@
+..
+    :copyright: Copyright (c) 2021 ftrack
+
 ###########################
-ftrack-application-launcher
+ftrack application launcher
 ###########################
 
-*A configurable launcher for integrations.*
+Welcome to ftrack-application-launcher's documentation.
 
 
-.. warning::
+Articles
+========
 
-    This code is work in progress and aimed to work on an upcoming version of ftrack-connect.
-    This code is not officially released and should not be used in production.
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   about
+   installing
+   using
+   developing
+   integrating
+   api/modules
+   release/index
 
 
-*************
-Documentation
-*************
 
-Full documentation, including installation and setup guides, can be found at
-https://ftrack-application-launcher.readthedocs.io/en/latest/
+Indices and tables
+==================
 
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
 
 *********************
 Copyright and license
 *********************
 
-Copyright (c) 2014 ftrack
+Copyright (c) 2021 ftrack
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this work except in compliance with the License. You may obtain a copy of the
@@ -35,4 +48,3 @@ Unless required by applicable law or agreed to in writing, software distributed
 under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
-

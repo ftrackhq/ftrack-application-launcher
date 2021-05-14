@@ -112,7 +112,7 @@ class LaunchAdobeAction(ftrack_application_launcher.ApplicationLaunchAction):
         if not self.validate_selection(
             entities
         ):
-            self.logger.info('No valid selection')
+            self.logger.warning('No valid selection')
             return
 
         application_identifier = event['data']['applicationIdentifier']
@@ -333,7 +333,7 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
         their file system path.
 
         '''
-        self.logger.info('Looking for latest version of {} {} {}'.format(
+        self.logger.debug('Looking for latest version of {} {} {}'.format(
             entityId, entityType, extension
         ))
         if entityType == 'task':
