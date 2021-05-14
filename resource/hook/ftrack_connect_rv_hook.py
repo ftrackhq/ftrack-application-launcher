@@ -7,6 +7,7 @@ import pprint
 import logging
 import json
 import re
+import datetime
 
 import platform
 
@@ -69,11 +70,12 @@ class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
         )
 
 
-    def _create_temp_data(self, data, expiry):
+    def _create_temp_data(self, data, expiry=None):
+
         if not expiry:
             expiry = datetime.datetime.now() + datetime.timedelta(hours=1)
 
-         action = {
+        action = {
             'action': 'create',
             'type': 'tempdata',
             'data': data,
@@ -90,19 +92,19 @@ class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
         if len(selection) == 1:
             return selection
 
-        playlist = []
-        for entity in selection:
-            playlist.append({
-                'id': entity['entityId'],
-                'type': entity['entityType']
-            })
+        # playlist = []
+        # for entity in selection:
+        #     playlist.append({
+        #         'id': entity['entityId'],
+        #         'type': entity['entityType']
+        #     })
     
-        playlist = self._create_temp_data(json.dumps(playlist))
+        # playlist = self._create_temp_data(json.dumps(playlist))
         
-        selection = [{
-            'entityType': 'tempdata',
-            'entityId': playlist.getId()
-        }]
+        # selection = [{
+        #     'entityType': 'tempdata',
+        #     'entityId': playlist.getId()
+        # }]
 
         return selection
 
