@@ -155,7 +155,7 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
         if self.current_os == 'darwin':
             prefix = ['/', 'Applications']
             applications.extend(self._search_filesystem(
-                expression=prefix + ['RV.\d+.app'],
+                expression=prefix + ['RV.*\.app'],
                 label='Review with RV',
                 variant='{version}',
                 applicationIdentifier='rv_{variant}_with_review',

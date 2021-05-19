@@ -717,7 +717,7 @@ class ApplicationLauncher(object):
                     json.dumps(
                         context
                     ).encode("utf-8")
-                )
+                ).decode('utf-8')
             except (TypeError, ValueError):
                 self.logger.exception(
                     'The eventData could not be converted correctly. {0}'
