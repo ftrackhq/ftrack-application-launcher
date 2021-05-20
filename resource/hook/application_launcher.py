@@ -29,7 +29,7 @@ def register(api_object, **kw):
         default_config_path
     ).split(os.path.pathsep)
 
-    logging.info('using config path: {}'.format(config_paths))
+    logging.warning('using config path: {}'.format(config_paths))
     # Create store containing applications.
     applications = DiscoverApplications(api_object, config_paths)
     applications.register()
