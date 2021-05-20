@@ -540,7 +540,7 @@ class ApplicationLauncher(object):
 
             topic = 'USED-{}'.format(integration['name'].upper())
 
-            self.logger.info(
+            self.logger.debug(
                 'Sending topic: {}, metadata {}'.format(topic, metadata)
             )
 
