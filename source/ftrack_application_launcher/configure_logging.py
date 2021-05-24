@@ -41,8 +41,8 @@ def configure_logging(logger_name, level=None, format=None, extra_modules=None):
     '''
 
     # Provide default values for level and format.
-    format = format or '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    level = level or logging.INFO
+    format = format or '%(levelname)s - %(threadName)s - %(asctime)s - %(name)s - %(message)s'
+    level = level or logging.WARNING
 
     log_directory = get_log_directory()
     logfile = os.path.join(
@@ -113,4 +113,4 @@ def configure_logging(logger_name, level=None, format=None, extra_modules=None):
     logging.captureWarnings(True)
 
     # Log out the file output.
-    logging.info('Saving log file to: {0}'.format(logfile))
+    logging.warning('Saving log file to: {0}'.format(logfile))
