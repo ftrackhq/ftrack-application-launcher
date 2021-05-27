@@ -84,30 +84,6 @@ class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
 
         return self.session.call(action)
 
-    def _create_playlist_from_selection(self, selection):
-        '''Return new selection with temporary playlist from *selection*.'''
-
-        # If selection is only one entity we don't need to create
-        # a playlist.
-        if len(selection) == 1:
-            return selection
-
-        # playlist = []
-        # for entity in selection:
-        #     playlist.append({
-        #         'id': entity['entityId'],
-        #         'type': entity['entityType']
-        #     })
-    
-        # playlist = self._create_temp_data(json.dumps(playlist))
-        
-        # selection = [{
-        #     'entityType': 'tempdata',
-        #     'entityId': playlist.getId()
-        # }]
-
-        return selection
-
     def _launch(self, event):
         '''Handle *event*.
 
@@ -121,11 +97,6 @@ class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
         )
 
         context = event['data'].copy()
-
-        # Rewrite original selection to a playlist.
-        context['selection'] = self._create_playlist_from_selection(
-            context['selection']
-        )
 
         return self.launcher.launch(
             applicationIdentifier, context
