@@ -51,7 +51,8 @@ AVAILABLE_ICONS = {
     'illustrator': '/application_icons/illustrator.png',
     'houdini': '/application_icons/houdini.png',
     'unreal-engine': '/application_icons/unreal_engine.png',
-    'unity': '/application_icons/unity.png'
+    'unity': '/application_icons/unity.png',
+    'rv': '/application_icons/unity.png'
 }
 
 def prepend_path(path, key, environment):
