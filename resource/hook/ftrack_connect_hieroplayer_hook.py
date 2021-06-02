@@ -46,7 +46,7 @@ class LaunchHieroPlayerAction(ftrack_application_launcher.ApplicationLaunchActio
     '''Adobe plugins discover and launch action.'''
     context = [None, 'Task', 'AssetVersion']
     identifier = 'ftrack-connect-launch-hieroplayer'
-    label = 'rv'
+    label = 'hieroplayer'
 
     def __init__(self, session,  application_store, launcher):
         '''Initialise action with *applicationStore* and *launcher*.
@@ -93,80 +93,43 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
         if self.current_os == 'darwin':
             prefix = ['/', 'Applications']
 
-            applications.extend(self._searchFilesystem(
-                expression=prefix + ['HieroPlayer.*', 'HieroPlayer\d[\w.]+.app'],
-                label='Review with HieroPlayer',
-                variant='{version}',
-                applicationIdentifier='hieroplayer_{version}_with_review',
-                icon='hieroplayer'
-            ))
-
-            applications.extend(self._searchFilesystem(
+            applications.extend(self._search_filesystem(
                 expression=prefix + ['Nuke.*', 'HieroPlayer\d[\w.]+.app'],
                 label='Review with HieroPlayer',
                 variant='{version}',
-                applicationIdentifier='hieroplayer_{version}_with_review',
-                icon='hieroplayer'
+                applicationIdentifier='hieroplayer_{variant}_with_review',
+                icon='hieroplayer',
+                integrations={'legacy':['ftrack-connect-hieroplayer']}
             ))
 
         elif self.current_os == 'windows':
             prefix = ['C:\\', 'Program Files.*']
 
-            applications.extend(self._searchFilesystem(
-                expression=prefix + [
-                    'HieroPlayer\d.+', 'hieroplayer.exe'
-                ],
-                label='Review with HieroPlayer',
-                variant='{version}',
-                applicationIdentifier='hieroplayer_{version}_with_review',
-                icon='hieroplayer'
-            ))
-
-            applications.extend(self._searchFilesystem(
-                expression=prefix + [
-                    'The Foundry', 'HieroPlayer\d.+', 'hieroplayer.exe'
-                ],
-                label='Review with HieroPlayer',
-                variant='{version}',
-                applicationIdentifier='hieroplayer_{version}_with_review',
-                icon='hieroplayer'
-            ))
-
             version_expression = re.compile(
                 r'Nuke(?P<version>[\d.]+[\w\d.]*)'
             )
 
-            applications.extend(self._searchFilesystem(
+            applications.extend(self._search_filesystem(
                 expression=prefix + ['Nuke.*', 'Nuke\d.+.exe'],
                 versionExpression=version_expression,
                 label='Review with HieroPlayer',
                 variant='{version}',
-                applicationIdentifier='hieroplayer_{version}_with_review',
+                applicationIdentifier='hieroplayer_{variant}_with_review',
                 icon='hieroplayer',
-                launchArguments=['--player']
+                launchArguments=['--player'],
+                integrations={'legacy':['ftrack-connect-hieroplayer']}
             ))
 
         elif self.current_os == 'linux':
 
-            applications.extend(self._searchFilesystem(
-                versionExpression=r'HieroPlayer(?P<version>.*)\/.+$',
-                expression=[
-                    '/', 'usr', 'local', 'HieroPlayer.*',
-                    'bin', 'HieroPlayer\d.+'
-                ],
-                label='Review with HieroPlayer',
-                variant='{version}',
-                applicationIdentifier='hieroplayer_{version}_with_review',
-                icon='hieroplayer'
-            ))
-
-            applications.extend(self._searchFilesystem(
+            applications.extend(self._search_filesystem(
                 expression=['/', 'usr', 'local', 'Nuke.*', 'Nuke\d.+'],
                 label='Review with HieroPlayer',
                 variant='{version}',
-                applicationIdentifier='hieroplayer_{version}_with_review',
+                applicationIdentifier='hieroplayer_{variant}_with_review',
                 icon='hieroplayer',
-                launchArguments=['--player']
+                launchArguments=['--player'],
+                integrations={'legacy':['ftrack-connect-hieroplayer']}
             ))
 
         self.logger.debug(

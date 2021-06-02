@@ -69,21 +69,6 @@ class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
             priority=0
         )
 
-
-    def _create_temp_data(self, data, expiry=None):
-
-        if not expiry:
-            expiry = datetime.datetime.now() + datetime.timedelta(hours=1)
-
-        action = {
-            'action': 'create',
-            'type': 'tempdata',
-            'data': data,
-            'expiry': expiry
-        }   
-
-        return self.session.call(action)
-
     def _launch(self, event):
         '''Handle *event*.
 
