@@ -78,7 +78,7 @@ class DiscoverApplications(object):
                 # extract data from app config
                 search_path = config['search_path'].get(self.current_os)
                 if not search_path:
-                    self.logger.warning(
+                    self.logger.info(
                         'No entry found for os: {} in config {}'.format(
                             self.current_os, config['label']
                         )

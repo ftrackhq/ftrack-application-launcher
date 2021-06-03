@@ -43,7 +43,7 @@ def _send_event(event_name, metadata=None):
             }
         }])
     except Exception:
-        logger.exception('Failed to send event.')
+        logger.exception('Failed to send event : {}'.format(event_name))
 
 
 @asynchronous.asynchronous

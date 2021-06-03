@@ -51,7 +51,8 @@ AVAILABLE_ICONS = {
     'illustrator': '/application_icons/illustrator.png',
     'houdini': '/application_icons/houdini.png',
     'unreal-engine': '/application_icons/unreal_engine.png',
-    'unity': '/application_icons/unity.png'
+    'unity': '/application_icons/unity.png',
+    'rv': '/application_icons/rv.png'
 }
 
 def prepend_path(path, key, environment):
@@ -571,7 +572,7 @@ class ApplicationLauncher(object):
 
             topic = 'USED-{}'.format(integration['name'].upper())
 
-            self.logger.info(
+            self.logger.debug(
                 'Sending topic: {}, metadata {}'.format(topic, metadata)
             )
 
@@ -751,7 +752,7 @@ class ApplicationLauncher(object):
                     json.dumps(
                         context
                     ).encode("utf-8")
-                )
+                ).decode('utf-8')
             except (TypeError, ValueError):
                 self.logger.exception(
                     'The eventData could not be converted correctly. {0}'
