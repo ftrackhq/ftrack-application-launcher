@@ -1,6 +1,6 @@
 {
     "priority":100,
-    "context": ["Task"],
+    "context":  [null, "Task"],
     "identifier": "ftrack-connect-launch-unreal-engine",
     "applicationIdentifier":"unreal-engine_{variant}",
     "integrations": {

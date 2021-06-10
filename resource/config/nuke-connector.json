@@ -1,5 +1,5 @@
 {
-    "context": ["Task"],
+    "context":  [null, "Task"],
     "identifier": "ftrack-connect-launch-nuke",
     "applicationIdentifier":"nuke_{variant}",
     "label": "Nuke",
