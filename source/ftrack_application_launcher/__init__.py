@@ -349,9 +349,8 @@ class ApplicationLauncher(object):
         self._session = applicationStore.session
 
     def discover_integrations(self, application, context):
-
-        requested_integrations = application['integrations']
-
+        
+        context = context or {}
         results = self.session.event_hub.publish(
             ftrack_api.event.base.Event(
                 topic='ftrack.connect.application.discover',
@@ -362,25 +361,26 @@ class ApplicationLauncher(object):
             ),
             synchronous=True
         )
+        
+        requested_integrations = application['integrations']
 
-        discovered_integrations = set([
-            result.get('integration', {}).get('name') for result in results
+        discovered_integrations = [
+            result.get('integration', {}) for result in results
+        ]
+
+        discovered_integrations_names = set([
+            discovered_integration['name'] for discovered_integration in discovered_integrations
         ])
 
-        found_integrations = []
+        found_integrations = discovered_integrations
         lost_integrations = []
 
         for requested_integration_name, requested_integration_items in requested_integrations.items():
             # Check if all the requested integration are present in the one available.
-            dependency_resolved = not bool(set(requested_integration_items).difference(discovered_integrations))
-            if dependency_resolved:
-                found_integrations.append(
-                    requested_integration_name
-                )
-            else:
-                lost_integrations.append(
-                    requested_integration_name
-                )
+            dependency_resolved = not bool(set(requested_integration_items).difference(discovered_integrations_names))
+            lost_integrations.append(
+                requested_integration_name
+            )
 
         return found_integrations, lost_integrations
 
@@ -887,12 +887,11 @@ class ApplicationLaunchAction(BaseAction):
         )
 
     def get_version_information(self, event):
-        return [
-            dict(
-                name= self.identifier,
-                version='-'
-            )
-        ]
+        founds = []
+        for application in self.application_store.applications:
+            founds , _ = self.launcher.discover_integrations(application, None)
+
+        return founds
 
     def register(self):
         '''Register discover actions on logged in user.'''
