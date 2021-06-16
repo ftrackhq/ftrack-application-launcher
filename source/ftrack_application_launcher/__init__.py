@@ -378,9 +378,10 @@ class ApplicationLauncher(object):
         for requested_integration_name, requested_integration_items in requested_integrations.items():
             # Check if all the requested integration are present in the one available.
             dependency_resolved = not bool(set(requested_integration_items).difference(discovered_integrations_names))
-            lost_integrations.append(
-                requested_integration_name
-            )
+            if not dependency_resolved:
+                lost_integrations.append(
+                    requested_integration_name
+                )
 
         return found_integrations, lost_integrations
 
