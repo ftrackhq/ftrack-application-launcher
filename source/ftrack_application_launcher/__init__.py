@@ -890,8 +890,11 @@ class ApplicationLaunchAction(BaseAction):
     def get_version_information(self, event):
         founds = []
         for application in self.application_store.applications:
-            founds , _ = self.launcher.discover_integrations(application, None)
-
+            all_discovered , _ = self.launcher.discover_integrations(application, None)
+            for discovered in all_discovered:
+                if discovered not in founds:
+                    founds.append(discovered)
+        self.logger.info(founds)
         return founds
 
     def register(self):
