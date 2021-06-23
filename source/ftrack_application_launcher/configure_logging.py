@@ -71,7 +71,7 @@ def configure_logging(logger_name, level=None, format=None, extra_modules=None):
         'handlers': {
             'console': {
                 'class': 'logging.StreamHandler',
-                'level': level,
+                'level': logging.getLevelName(level),
                 'formatter': 'file',
                 'stream': 'ext://sys.stdout',
             },
@@ -94,8 +94,12 @@ def configure_logging(logger_name, level=None, format=None, extra_modules=None):
         },
         'loggers': {
             '': {
-                'level': 'DEBUG',
+                'level':'DEBUG',
                 'handlers': ['console', 'file']
+            },
+            logger_name: {
+                'level': 'DEBUG',
+                'handlers': ['file']               
             }
         }
     }
