@@ -86,7 +86,7 @@ def configure_logging(logger_name, level=None, format=None, extra_modules=None):
             },
 
         },
-        'filters': {'application_launcher_only': {'name': logger_name}},
+        # 'filters': {'application_launcher_only': {'name': logger_name}},
         'formatters': {
             'file': {
                 'format': format
