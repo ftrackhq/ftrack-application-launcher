@@ -99,7 +99,7 @@ def configure_logging(logger_name, level=None, format=None, extra_modules=None):
             },
             logger_name: {
                 'level': 'DEBUG',
-                'handlers': ['file']               
+                'handlers': ['console','file']               
             }
         }
     }
