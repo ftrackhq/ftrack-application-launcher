@@ -32,9 +32,10 @@ CONFIG_PATH = os.path.join(RESOURCE_PATH, 'config')
 
 
 # Read version from source.
-VERSION = get_version(
+release = get_version(
     version_scheme='post-release'
 )
+VERSION = '.'.join(release.split('.')[:3])
 
 STAGING_PATH = STAGING_PATH.format(VERSION)
 
