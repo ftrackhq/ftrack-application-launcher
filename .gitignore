@@ -21,3 +21,4 @@ test-reports/*
 
 # SCM VERSION
 *.egg-info
+source/ftrack_application_launcher/_version.py
