@@ -10,7 +10,6 @@ from setuptools import Command
 import subprocess
 
 from setuptools import find_packages, setup
-from setuptools_scm import get_version
 
 PLUGIN_NAME = 'ftrack-application-launcher-{0}'
 
@@ -28,17 +27,6 @@ STAGING_PATH = os.path.join(BUILD_PATH, PLUGIN_NAME)
 
 HOOK_PATH = os.path.join(RESOURCE_PATH, 'hook')
 CONFIG_PATH = os.path.join(RESOURCE_PATH, 'config')
-
-
-
-# Read version from source.
-release = get_version(
-    version_scheme='post-release'
-)
-VERSION = '.'.join(release.split('.')[:3])
-
-STAGING_PATH = STAGING_PATH.format(VERSION)
-
 
 version_template = '''
 # :coding: utf-8
@@ -63,6 +51,13 @@ class BuildPlugin(Command):
         pass
 
     def run(self):
+        '''Run the build step.'''
+        import setuptools_scm
+        release = setuptools_scm.get_version(version_scheme='post-release')
+        VERSION = '.'.join(release.split('.')[:3])
+        global STAGING_PATH
+        STAGING_PATH = STAGING_PATH.format(VERSION)
+
         '''Run the build step.'''
         # Clean staging path
         shutil.rmtree(STAGING_PATH, ignore_errors=True)
