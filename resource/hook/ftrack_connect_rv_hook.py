@@ -181,7 +181,7 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
 
                 applications.extend(self._search_filesystem(
                     expression=prefix + [
-                        'rv-Linux-x86-64-\d.+', 'bin', 'rv$'
+                        'rv-centos7-x86-64-\d.+', 'bin', 'rv$'
                     ],
                     label='Review with RV',
                     variant='{version}',
@@ -190,9 +190,6 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                     launchArguments=[
                         '-flags', 'ModeManagerPreload=ftrack'
                     ],
-                    versionExpression=re.compile(
-                        r'(?P<version>\\d+(\\.\\d+)+)'
-                    ),
                     integrations={'legacy':['ftrack-connect-rv']}
                 ))
 
