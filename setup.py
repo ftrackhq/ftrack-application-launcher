@@ -105,9 +105,6 @@ setup(
     license='Apache License (2.0)',
     packages=find_packages(SOURCE_PATH),
     package_dir={'': 'source'},
-    project_urls={
-        'Source Code': 'https://bitbucket.org/ftrack/ftrack-application-launcher/src/{}'.format(VERSION),
-    },
     setup_requires=[
         'lowdown >= 0.1.0, < 2',
         'sphinx >= 2, < 3',
