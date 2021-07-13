@@ -13,6 +13,7 @@
 import os
 import sys
 import re
+from pkg_resources import get_distribution, DistributionNotFound
 
 # -- General ------------------------------------------------------------------
 
@@ -23,20 +24,16 @@ sys.path.append(
 )
 
 
+try:
+    release = get_distribution('ftrack-application-launcher').version
+    # take major/minor/patch
+    VERSION = '.'.join(release.split('.')[:3])
+except DistributionNotFound:
+     # package is not installed
+    VERSION = 'Unknown version'
 
-# Version
-with open(
-    os.path.join(
-        os.path.dirname(__file__), '..', '..','source',
-        'ftrack_application_launcher', '_version.py'
-    )
-) as _version_file:
-    _version = re.match(
-        r'.*__version__ = \'(.*?)\'', _version_file.read(), re.DOTALL
-    ).group(1)
-
-version = _version
-release = _version
+version = VERSION
+release = VERSION
 
 
 # -- Project information -----------------------------------------------------
