@@ -8,8 +8,9 @@
 Release Notes
 *************
 
-.. release:: Upcoming
+.. release:: 1.0.0
+    :date: 2021-09-07
 
-    .. change:: New
+    .. change:: new
 
        First release version.
