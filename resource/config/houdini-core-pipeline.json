@@ -28,7 +28,6 @@
             "prefix":["/", "Applications"],
             "expression": ["Houdini",  "Houdini*", "Houdini Core.*\\.app"]
         }
-    },
-    "rules":[{"type":"link-targets","path":"../Frameworks/Python.framework/Versions/Current","value":"3.7"}]
+    }
  }
  
