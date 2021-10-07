@@ -23,6 +23,7 @@
             "prefix":["/", "Applications"],
             "expression": ["Houdini",  "Houdini*", "Houdini FX.*\\.app"]
         }
-    }
+    },
+    "rules":[{"type":"link-targets","path":"../Frameworks/Python.framework/Versions/Current","value":"2.7"}]
  }
  

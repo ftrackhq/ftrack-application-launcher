@@ -4,7 +4,12 @@
     "identifier": "ftrack-connect-launch-houdini",
     "applicationIdentifier":"houdini_{variant}",
     "integrations": {
-        "legacy":["ftrack-connect-houdini"]
+        "pipeline":[
+            "ftrack-connect-pipeline", 
+            "ftrack-connect-pipeline-qt", 
+            "ftrack-connect-pipeline-definition", 
+            "ftrack-connect-pipeline-houdini"
+        ]
     },
     "label": "Houdini",
     "icon": "houdini",
@@ -24,6 +29,6 @@
             "expression": ["Houdini",  "Houdini*", "Houdini Core.*\\.app"]
         }
     },
-    "rules":[{"type":"link-targets","path":"../Frameworks/Python.framework/Versions/Current","value":"2.7"}]
+    "rules":[{"type":"link-targets","path":"../Frameworks/Python.framework/Versions/Current","value":"3.7"}]
  }
  

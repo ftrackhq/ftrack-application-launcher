@@ -179,7 +179,7 @@ class ApplicationStore(object):
     def _search_filesystem(self, expression, label, applicationIdentifier,
                            versionExpression=None, icon=None,
                            launchArguments=None, variant='',
-                           description=None, integrations=None):
+                           description=None, integrations=None, rules=None):
         '''
         Return list of applications found in filesystem matching *expression*.
 
@@ -280,6 +280,29 @@ class ApplicationStore(object):
                                         version, path
                                     )
                                 )
+
+                        if rules is not None:
+                            rulesMatch = True
+                            for rule in rules:
+                                if rule['type'].lower() == "link-targets":
+                                    # Check if a link points to a certain target
+                                    link_path = os.path.join(location, entry, 
+                                        rule['path'].replace('\\',os.sep).replace('/',os.sep))
+                                    value = os.readlink(link_path)
+                                    if value != rule['value']:
+                                        self.logger.debug('Link "{0}" does not '
+                                            'point to "{1}".'.format(
+                                                link_path, value))
+                                        rulesMatch = False
+                                        break
+                                else:
+                                    self.logger.warning(
+                                        'Unknown rule {o}'.format(
+                                            rule['type']
+                                        )
+                                    )
+                            if not rulesMatch:
+                                continue
 
                         variant_str = variant.format(version=str(loose_version))
 

@@ -4,16 +4,21 @@
     "identifier": "ftrack-connect-launch-houdini",
     "applicationIdentifier":"houdini_{variant}",
     "integrations": {
-        "legacy":["ftrack-connect-houdini"]
+        "pipeline":[
+            "ftrack-connect-pipeline", 
+            "ftrack-connect-pipeline-qt", 
+            "ftrack-connect-pipeline-definition", 
+            "ftrack-connect-pipeline-houdini"
+        ]
     },
     "label": "Houdini",
     "icon": "houdini",
-    "variant": "core {version}",
+    "variant": "indie {version}",
     "search_path":{
         "linux": {
             "prefix":["/", "opt"],
             "version_expression": "(?P<version>[\\d.+]{4})",
-            "expression":["hfs*", "bin", "houdinicore-bin$"]
+            "expression":["hfs*", "bin", "hindie-bin$"]
         },
         "windows": {
             "prefix":["C:\\", "Program Files.*"],
@@ -21,9 +26,9 @@
         },
         "darwin": {
             "prefix":["/", "Applications"],
-            "expression": ["Houdini",  "Houdini*", "Houdini Core.*\\.app"]
+            "expression": ["Houdini",  "Houdini*", "Houdini Indie.*\\.app"]
         }
     },
-    "rules":[{"type":"link-targets","path":"../Frameworks/Python.framework/Versions/Current","value":"2.7"}]
+    "rules":[{"type":"link-targets","path":"../Frameworks/Python.framework/Versions/Current","value":"3.7"}]
  }
  
