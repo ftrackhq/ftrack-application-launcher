@@ -356,7 +356,8 @@ class ApplicationLauncher(object):
                 topic='ftrack.connect.application.discover',
                 data=dict(
                     application=application,
-                    context=context
+                    context=context,
+                    platform=self.current_os
                 )
             ),
             synchronous=True
@@ -454,7 +455,8 @@ class ApplicationLauncher(object):
                     'version': None,
                     'env':{},
                     'launch_arguments': []
-                }
+                },
+                platform=self.current_os
             )
 
             results = self.session.event_hub.publish(
