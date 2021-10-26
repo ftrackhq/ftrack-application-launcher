@@ -106,9 +106,6 @@ setup(
     packages=find_packages(SOURCE_PATH),
     package_dir={'': 'source'},
     setup_requires=[
-        'lowdown >= 0.1.0, < 2',
-        'sphinx >= 2, < 3',
-        'sphinx_rtd_theme >= 0.1.6, < 2',
         'setuptools>=45.0.0',
         'setuptools_scm'
     ],
