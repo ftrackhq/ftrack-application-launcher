@@ -9,6 +9,10 @@
         "windows": {
             "prefix":["C:\\", "Program Files.*"],
             "expression":["cineSync Play", "cineSyncPlayBeta.exe"]
+        },
+        "darwin": {
+            "prefix":["/", "Applications"],
+            "expression": ["cineSyncPlayBeta.app"]
         }
     }
  }
