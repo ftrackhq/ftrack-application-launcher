@@ -357,7 +357,8 @@ class ApplicationLauncher(object):
                 topic='ftrack.connect.application.discover',
                 data=dict(
                     application=application,
-                    context=context
+                    context=context,
+                    platform=self.current_os
                 )
             ),
             synchronous=True
@@ -366,7 +367,8 @@ class ApplicationLauncher(object):
         requested_integrations = application['integrations']
 
         discovered_integrations = [
-            result.get('integration', {}) for result in results
+            result.get('integration', {}) for result in results if not \
+                result.get('integration', {}).get('disable') is True
         ]
 
         discovered_integrations_names = set([
@@ -454,7 +456,8 @@ class ApplicationLauncher(object):
                     'version': None,
                     'env': {},
                     'launch_arguments': []
-                }
+                },
+                platform=self.current_os
             )
 
             results = self.session.event_hub.publish(
