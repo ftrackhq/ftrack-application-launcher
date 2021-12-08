@@ -514,7 +514,13 @@ class ApplicationLauncher(object):
                         for key, value in options['env'].items():
                             f.write('export {}="{}"\n'.format(key, value))
 
-                        f.write(' '.join('"{}"'.format(c) for c in command))
+                        commandline = ' '.join('"{}"'.format(c) for c in command)
+                        if -1<commandline.find('.app ') or  commandline.endswith('.app'):
+                            # TODO: Find Info.plist and extract name of commandline executable
+                            pass
+                        f.write('{}\n'.format(commandline))
+
+                        f.write('sleep 10\n')
 
                     os.system('chmod 755 {}'.format(script_path))
 
