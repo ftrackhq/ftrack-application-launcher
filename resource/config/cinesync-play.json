@@ -1,0 +1,18 @@
+{
+    "context": [null, "AssetVersion"],
+    "identifier": "ftrack-connect-launch-cinesync-play",
+    "applicationIdentifier":"cinesync-play_{variant}",
+    "label": "CineSync Play",
+    "icon": "CineSync Play",
+    "variant": "{version}",
+    "search_path":{
+        "windows": {
+            "prefix":["C:\\", "Program Files.*"],
+            "expression":["cineSync Play", "cineSyncPlayBeta.exe"]
+        },
+        "darwin": {
+            "prefix":["/", "Applications"],
+            "expression": ["cineSyncPlayBeta.app"]
+        }
+    }
+ }
