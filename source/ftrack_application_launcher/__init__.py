@@ -478,9 +478,10 @@ class ApplicationLauncher(object):
             ])
 
             launchData['command'].extend(launch_arguments)
-    
+            
+            self._notify_application_launch(results, application)
+
             if context.get('integrations'):
-                self._notify_integration_usage(results, application)
                 environment = self._get_integrations_environments(results, context, environment)
             else:
                 self.logger.warning('No integrations provided for {}:{}'.format(
@@ -523,13 +524,15 @@ class ApplicationLauncher(object):
             'message': message
         }
 
+    def _notify_application_launch(self, results, application):
+        topic = 'LAUNCHED-APPLICATION'
 
-    def _notify_integration_usage(self, results, application):
         metadata = {
-            'operating_system': platform.platform(),
-            '{}_version'.format(
-                    application['label'].lower()
-                    ): str(application['version']),
+            'os': platform.platform(),
+            'name': application['label'].lower(),
+            'version': str(application['version']),
+            'integrations': []
+
         }
 
         for result in results: 
@@ -538,16 +541,13 @@ class ApplicationLauncher(object):
 
             integration = result.get('integration')
 
-            metadata.setdefault('{}_version'.format(
-                    integration['name'].lower()), 
-                    str(integration.get('version', 'Unknown'))
+            metadata['integrations'].append(
+                {
+                    'name': integration['name'].lower(),
+                    'version': str(integration.get('version', 'Unknown'))
+                }
             )
 
-            topic = 'USED-{}'.format(integration['name'].upper())
-
-            self.logger.debug(
-                'Sending topic: {}, metadata {}'.format(topic, metadata)
-            )
 
             send_event(
                 topic,
@@ -896,7 +896,6 @@ class ApplicationLaunchAction(BaseAction):
             for discovered in all_discovered:
                 if discovered not in founds:
                     founds.append(discovered)
-        self.logger.info(founds)
         return founds
 
     def register(self):

@@ -11,6 +11,11 @@ Release Notes
 .. release:: Upcoming
 
     .. change:: changed
+        :tags: Core
+
+        Consolidate application and integration usage information.
+
+    .. change:: changed
         :tags: Setup
 
         Remove documentation dependencies from setup.py as already present in doc/requirements.txt
