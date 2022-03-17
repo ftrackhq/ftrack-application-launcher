@@ -20,7 +20,7 @@ from distutils.version import LooseVersion
 import ftrack_api
 from ftrack_action_handler.action import BaseAction
 from ftrack_application_launcher.configure_logging import configure_logging
-from ftrack_application_launcher.usage import send_event
+import ftrack_connect
 
 configure_logging(__name__)
 
@@ -479,7 +479,7 @@ class ApplicationLauncher(object):
 
             launchData['command'].extend(launch_arguments)
             
-            self._notify_application_launch(results, application)
+            self._notify_integration_use(results)
 
             if context.get('integrations'):
                 environment = self._get_integrations_environments(results, context, environment)
@@ -524,35 +524,26 @@ class ApplicationLauncher(object):
             'message': message
         }
 
-    def _notify_application_launch(self, results, application):
-        topic = 'LAUNCHED-APPLICATION'
-
-        metadata = {
-            'os': platform.platform(),
-            'name': application['label'].lower(),
-            'version': str(application['version']),
-            'integrations': []
-
-        }
-
+    def _notify_integration_use(self, results):
+                
+        metadata = []
         for result in results: 
             if result is None:
                 continue
 
             integration = result.get('integration')
+            integration_data = {
+                'name':  integration['name'].lower(),
+                'version': str(integration.get('version', 'Unknown')),
+                'os': str(str(platform.platform()))    
+            }
+            metadata.append(integration_data)
 
-            metadata['integrations'].append(
-                {
-                    'name': integration['name'].lower(),
-                    'version': str(integration.get('version', 'Unknown'))
-                }
-            )
 
-
-            send_event(
-                topic,
-                metadata
-            )
+        ftrack_connect.usage.send_event(
+            'USED-CONNECT-INTEGRATION',
+            metadata
+        )
 
     def _get_integrations_environments(self, results, context, environments):
 
