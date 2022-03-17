@@ -13,6 +13,13 @@ Release Notes
     .. change:: changed
         :tags: Core
 
+        Rework event for better tracking.
+        Use :ref:`ftrack_connect.usage.send_event`.
+
+
+    .. change:: changed
+        :tags: Core
+
         Consolidate application and integration usage information.
 
     .. change:: changed
