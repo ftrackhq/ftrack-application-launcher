@@ -546,7 +546,8 @@ class ApplicationLauncher(object):
         send_event(
             self.session,
             'USED-CONNECT-INTEGRATION',
-            metadata
+            metadata,
+            asynchronous=True
         )
 
     def _get_integrations_environments(self, results, context, environments):
