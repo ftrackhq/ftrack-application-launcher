@@ -479,12 +479,12 @@ class ApplicationLauncher(object):
 
             launchData['command'].extend(launch_arguments)
             
-            self._notify_application_launch(results, application)
+            self._notify_integration_use(results, application)
 
             if context.get('integrations'):
                 environment = self._get_integrations_environments(results, context, environment)
             else:
-                self.logger.warning('No integrations provided for {}:{}'.format(
+                self.logger.info('No integrations provided for {}:{}'.format(
                     applicationIdentifier, context.get('variant'))
                 )
 
@@ -524,35 +524,31 @@ class ApplicationLauncher(object):
             'message': message
         }
 
-    def _notify_application_launch(self, results, application):
-        topic = 'LAUNCHED-APPLICATION'
-
-        metadata = {
-            'os': platform.platform(),
-            'name': application['label'].lower(),
-            'version': str(application['version']),
-            'integrations': []
-
-        }
-
+    def _notify_integration_use(self, results, application):
+                
+        metadata = []
         for result in results: 
             if result is None:
                 continue
 
             integration = result.get('integration')
+            integration_data = {
+                'application': "{}_{}".format(
+                    application['label'].lower(),
+                    str(application['version']))
+                ,
+                'name':  integration['name'].lower(),
+                'version': str(integration.get('version', 'Unknown')),
+                'os': str(str(platform.platform()))    
+            }
+            metadata.append(integration_data)
 
-            metadata['integrations'].append(
-                {
-                    'name': integration['name'].lower(),
-                    'version': str(integration.get('version', 'Unknown'))
-                }
-            )
-
-
-            send_event(
-                topic,
-                metadata
-            )
+        send_event(
+            self.session,
+            'USED-CONNECT-INTEGRATION',
+            metadata,
+            asynchronous=True
+        )
 
     def _get_integrations_environments(self, results, context, environments):
 
