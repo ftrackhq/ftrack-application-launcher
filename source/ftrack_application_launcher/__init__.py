@@ -524,7 +524,7 @@ class ApplicationLauncher(object):
             'message': message
         }
 
-    def _notify_integration_use(self, results):
+    def _notify_integration_use(self, results, application):
                 
         metadata = []
         for result in results: 
@@ -533,6 +533,10 @@ class ApplicationLauncher(object):
 
             integration = result.get('integration')
             integration_data = {
+                'application': "{}_{}".format(
+                    application['label'].lower(),
+                    str(application['version']))
+                ,
                 'name':  integration['name'].lower(),
                 'version': str(integration.get('version', 'Unknown')),
                 'os': str(str(platform.platform()))    
