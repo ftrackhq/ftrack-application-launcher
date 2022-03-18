@@ -20,7 +20,7 @@ from distutils.version import LooseVersion
 import ftrack_api
 from ftrack_action_handler.action import BaseAction
 from ftrack_application_launcher.configure_logging import configure_logging
-import ftrack_connect
+from ftrack_application_launcher.usage import send_event
 
 configure_logging(__name__)
 
@@ -539,8 +539,8 @@ class ApplicationLauncher(object):
             }
             metadata.append(integration_data)
 
-
-        ftrack_connect.usage.send_event(
+        send_event(
+            self.session,
             'USED-CONNECT-INTEGRATION',
             metadata
         )
