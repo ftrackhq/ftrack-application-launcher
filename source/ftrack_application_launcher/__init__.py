@@ -479,12 +479,12 @@ class ApplicationLauncher(object):
 
             launchData['command'].extend(launch_arguments)
             
-            self._notify_integration_use(results)
+            self._notify_integration_use(results, application)
 
             if context.get('integrations'):
                 environment = self._get_integrations_environments(results, context, environment)
             else:
-                self.logger.warning('No integrations provided for {}:{}'.format(
+                self.logger.info('No integrations provided for {}:{}'.format(
                     applicationIdentifier, context.get('variant'))
                 )
 
