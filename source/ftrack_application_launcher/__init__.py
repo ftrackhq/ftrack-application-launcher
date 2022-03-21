@@ -85,14 +85,15 @@ def append_path(path, key, environment):
 
 def pop_path(path, key, environment):
     '''Remove *path* to *key* in *environment*.'''
-    if key in list(environment.keys()):
-        env_paths = os.pathsep(environment[key])
-        for i, env_path in enumerate(env_paths):
-            if env_path == path:
-                env_paths.pop(i)
-        environment[key] = (os.pathsep.join(env_paths))
-
-    return environment
+    env_paths = environment.get(key)
+    if env_paths:
+        environment[key] = os.pathsep.join(
+            [
+                existing_path
+                for existing_path in env_paths.split(os.pathsep)
+                if existing_path.replace('\\', '/') != path.replace('\\', '/')
+            ]
+        )
 
 
 class ApplicationStore(object):

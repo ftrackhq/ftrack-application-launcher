@@ -10,12 +10,16 @@ Release Notes
 
 .. release:: Upcoming
 
+    .. change:: fixed
+        :tag: Core
+
+        os.pathsep is not a function, eliminate list modification while iterating
+
     .. change:: changed
         :tags: Core
 
         Rework event for better tracking.
         Use :ref:`ftrack_connect.usage.send_event`.
-
 
     .. change:: changed
         :tags: Core
