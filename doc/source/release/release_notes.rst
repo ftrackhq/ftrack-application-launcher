@@ -8,13 +8,8 @@
 Release Notes
 *************
 
-.. release:: 1.0.2
-    :date: 2022-15-01
-
-    .. change:: new
-        :tags: Launcher
-
-        Add CineSyncPlay Beta launcher.
+.. release:: 1.0.3
+    :date: 2022-03-21
 
     .. change:: fixed
         :tag: Core
@@ -31,6 +26,15 @@ Release Notes
         :tags: Core
 
         Consolidate application and integration usage information.
+
+
+.. release:: 1.0.2
+    :date: 2022-01-15
+
+    .. change:: new
+        :tags: Launcher
+
+        Add CineSyncPlay Beta launcher.
 
     .. change:: changed
         :tags: Setup
