@@ -8,7 +8,13 @@
 Release Notes
 *************
 
-.. release:: Upcoming
+.. release:: 1.0.2
+    :date: 2022-15-01
+
+    .. change:: new
+        :tags: Launcher
+
+        Add CineSyncPlay Beta launcher.
 
     .. change:: fixed
         :tag: Core
@@ -35,7 +41,6 @@ Release Notes
         :tags: Core
 
         Provide current "platform" as new event data.
-
 
     .. change:: new
         :tags: Core
