@@ -25,6 +25,7 @@
             "expression": ["UE_.+", "Engine", "Binaries", "Mac", "UE4Editor.app"],
             "version_expression": "(?P<version>[\\d.]+[\\d.]+[\\d.])"
         }
-    }
+    },
+    "console": true
  }
  

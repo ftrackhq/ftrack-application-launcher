@@ -28,6 +28,7 @@
             "prefix":["/", "Applications"],
             "expression": ["Autodesk", "maya.+", "Maya.app"]
         }
-    }
+    },
+    "console": true
  }
  

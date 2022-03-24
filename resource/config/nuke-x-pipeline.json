@@ -31,5 +31,6 @@
             "prefix":["/", "Applications"],
             "expression": ["Nuke.*", "NukeX\\d[\\w.]+.app"]
         }
-    }
+    },
+    "console": true
  }

@@ -514,10 +514,24 @@ class ApplicationLauncher(object):
                         for key, value in options['env'].items():
                             f.write('export {}="{}"\n'.format(key, value))
 
+                        app_package = command[0]
+                        if app_package.find('.app') > -1:
+                            fetch_next_string = False
+                            executable_filename = None
+                            with open(os.path.join(app_package, 'Contents', 'Info.plist'), 'r') as plist:
+                                for line in plist.read().split('\n'):
+                                    #f.write('# DEBUG {}'.format(line))
+                                    if line.find('CFBundleExecutable') > -1:
+                                        fetch_next_string = True
+                                    elif fetch_next_string:
+                                        # <string>Nuke13.0</string>
+                                        executable_filename = line[line.find('>')+1:line.rfind('<')]
+                                        break
+                            if executable_filename:
+                                command[0] = os.path.join(app_package, 'Contents', 'MacOS', executable_filename)
+
                         commandline = ' '.join('"{}"'.format(c) for c in command)
-                        if -1<commandline.find('.app ') or  commandline.endswith('.app'):
-                            # TODO: Find Info.plist and extract name of commandline executable
-                            pass
+
                         f.write('{}\n'.format(commandline))
 
                         f.write('sleep 10\n')

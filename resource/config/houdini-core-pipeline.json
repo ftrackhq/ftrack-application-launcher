@@ -28,6 +28,7 @@
             "prefix":["/", "Applications"],
             "expression": ["Houdini",  "Houdini*", "Houdini Core.*\\.app"]
         }
-    }
+    },
+    "console": true
  }
  

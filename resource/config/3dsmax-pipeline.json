@@ -19,6 +19,7 @@
             "version_expression": "3ds Max (?P<version>[\\d.]+)",
             "expression":["Autodesk", "3ds Max.+", "^3dsmax.exe$"]
         }
-    }
+    },
+    "console": true
  }
  
