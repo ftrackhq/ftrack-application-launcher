@@ -8,7 +8,33 @@
 Release Notes
 *************
 
-.. release:: Upcoming
+.. release:: 1.0.3
+    :date: 2022-03-21
+
+    .. change:: fixed
+        :tag: Core
+
+        os.pathsep is not a function, eliminate list modification while iterating
+
+    .. change:: changed
+        :tags: Core
+
+        Rework event for better tracking.
+        Use :ref:`ftrack_connect.usage.send_event`.
+
+    .. change:: changed
+        :tags: Core
+
+        Consolidate application and integration usage information.
+
+
+.. release:: 1.0.2
+    :date: 2022-01-15
+
+    .. change:: new
+        :tags: Launcher
+
+        Add CineSyncPlay Beta launcher.
 
     .. change:: changed
         :tags: Setup
@@ -19,7 +45,6 @@ Release Notes
         :tags: Core
 
         Provide current "platform" as new event data.
-
 
     .. change:: new
         :tags: Core

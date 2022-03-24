@@ -85,14 +85,15 @@ def append_path(path, key, environment):
 
 def pop_path(path, key, environment):
     '''Remove *path* to *key* in *environment*.'''
-    if key in list(environment.keys()):
-        env_paths = os.pathsep(environment[key])
-        for i, env_path in enumerate(env_paths):
-            if env_path == path:
-                env_paths.pop(i)
-        environment[key] = (os.pathsep.join(env_paths))
-
-    return environment
+    env_paths = environment.get(key)
+    if env_paths:
+        environment[key] = os.pathsep.join(
+            [
+                existing_path
+                for existing_path in env_paths.split(os.pathsep)
+                if existing_path.replace('\\', '/') != path.replace('\\', '/')
+            ]
+        )
 
 
 class ApplicationStore(object):
@@ -479,12 +480,13 @@ class ApplicationLauncher(object):
             ])
 
             launchData['command'].extend(launch_arguments)
+            
+            self._notify_integration_use(results, application)
 
             if context.get('integrations'):
-                self._notify_integration_usage(results, application)
                 environment = self._get_integrations_environments(results, context, environment)
             else:
-                self.logger.warning('No integrations provided for {}:{}'.format(
+                self.logger.info('No integrations provided for {}:{}'.format(
                     applicationIdentifier, context.get('variant'))
                 )
 
@@ -575,35 +577,32 @@ class ApplicationLauncher(object):
             'message': message
         }
 
-    def _notify_integration_usage(self, results, application):
-        metadata = {
-            'operating_system': platform.platform(),
-            '{}_version'.format(
-                application['label'].lower()
-            ): str(application['version']),
-        }
+    def _notify_integration_use(self, results, application):
 
+        metadata = []
         for result in results:
+
             if result is None:
                 continue
 
             integration = result.get('integration')
+            integration_data = {
+                'application': "{}_{}".format(
+                    application['label'].lower(),
+                    str(application['version']))
+                ,
+                'name':  integration['name'].lower(),
+                'version': str(integration.get('version', 'Unknown')),
+                'os': str(str(platform.platform()))    
+            }
+            metadata.append(integration_data)
 
-            metadata.setdefault('{}_version'.format(
-                integration['name'].lower()),
-                str(integration.get('version', 'Unknown'))
-            )
-
-            topic = 'USED-{}'.format(integration['name'].upper())
-
-            self.logger.debug(
-                'Sending topic: {}, metadata {}'.format(topic, metadata)
-            )
-
-            send_event(
-                topic,
-                metadata
-            )
+        send_event(
+            self.session,
+            'USED-CONNECT-INTEGRATION',
+            metadata,
+            asynchronous=True
+        )
 
     def _get_integrations_environments(self, results, context, environments):
 
@@ -753,8 +752,8 @@ class ApplicationLauncher(object):
         )
 
         # add legacy_environments
-        environment['LOGNAME'] = self.session.api_user
-        environment['FTRACK_APIKEY'] = self.session.api_key
+
+        environment['FTRACK_APIKEY']=self.session.api_key
 
         laucher_dependencies = os.path.normpath(
             os.path.join(
@@ -952,7 +951,6 @@ class ApplicationLaunchAction(BaseAction):
             for discovered in all_discovered:
                 if discovered not in founds:
                     founds.append(discovered)
-        self.logger.info(founds)
         return founds
 
     def register(self):

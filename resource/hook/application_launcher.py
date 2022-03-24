@@ -30,10 +30,11 @@ def register(api_object, **kw):
         default_config_path
     ).split(os.path.pathsep)
 
-    logging.warning('Application launcher {} using config path: {} '
-        '(FTRACK_CONNECT_PLUGIN_PATH: {})'.format(__version__, config_paths,
-        os.getenv('FTRACK_CONNECT_PLUGIN_PATH')))
-
+    logging.debug(
+        'Application launcher {} using config path: {} '.format(
+            __version__, config_paths
+        )
+    )
     # Create store containing applications.
     applications = DiscoverApplications(api_object, config_paths)
     applications.register()
