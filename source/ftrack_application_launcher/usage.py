@@ -12,20 +12,6 @@ logger = logging.getLogger('ftrack_application_launcher:usage')
 _log_usage_session = None
 
 
-def get_session():
-    '''Return new ftrack_api session configure without plugins or events.'''
-    # Create API session using credentials as stored by the application
-    # when logging in.
-    # TODO: Once API is thread-safe, consider switching to a shared session.
-    return ftrack_api.Session(
-        server_url=os.environ['FTRACK_SERVER'],
-        api_key=os.environ['FTRACK_API_KEY'],
-        api_user=os.environ['FTRACK_API_USER'],
-        auto_connect_event_hub=False,
-        plugin_paths=[]
-    )
-
-
 def _send_event(session, event_name, metadata=None):
     '''Send usage event with *event_name* and *metadata*.'''
 

@@ -3,8 +3,8 @@
     "identifier": "ftrack-connect-launch-cinesync-play",
     "applicationIdentifier":"cinesync-play_{variant}",
     "label": "CineSync Play",
-    "icon": "CineSync Play",
-    "variant": "{version}",
+    "icon": "cinesync",
+    "variant": "beta",
     "search_path":{
         "windows": {
             "prefix":["C:\\", "Program Files.*"],
