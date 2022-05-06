@@ -8,6 +8,13 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: changed
+        :tags: Config
+
+        Remove discovery of cinesync play Beta and target stable release.
+
 .. release:: 1.0.3
     :date: 2022-03-21
 
