@@ -8,7 +8,8 @@
 Release Notes
 *************
 
-.. release:: Upcoming
+.. release:: 1.0.4
+    :date: 2022-05-18
 
     .. change:: changed
         :tags: Config
