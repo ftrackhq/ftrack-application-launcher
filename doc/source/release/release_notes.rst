@@ -8,6 +8,13 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: fixed
+        :tag: Hiero
+
+        Hiero does not discover under linux.
+
 .. release:: 1.0.4
     :date: 2022-05-18
 
