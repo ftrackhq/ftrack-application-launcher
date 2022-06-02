@@ -10,9 +10,9 @@
     },
     "search_path":{
         "linux": {
-            "prefix":["/", "usr","local"],
-            "expression":["Nuke.*", "'Nuke\\d.+'"],
-            "version_expression": "(?P<version>[\\d.]+[vabc]+[\\dvabc.]*)",
+            "prefix":["/", "usr","local","Nuke.*"],
+            "expression":["Nuke\\d.+"],
+            "version_expression": "Nuke(?P<version>.*)\\/.+$",
             "launch_arguments": ["--hiero"]
         },
         "windows": {
