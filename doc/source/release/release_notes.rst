@@ -11,9 +11,20 @@ Release Notes
 .. release:: Upcoming
 
     .. change:: fixed
-        :tag: Hiero
+        :tag: Config
 
         Hiero does not discover under linux.
+
+    .. change:: fixed
+        :tag: Config
+
+        NukeX does not get discovered correctly.
+
+    .. change:: fixed
+        :tag: Config
+
+        cineSync Play is wrongly named CineSync Play.
+        
 
 .. release:: 1.0.4
     :date: 2022-05-18
