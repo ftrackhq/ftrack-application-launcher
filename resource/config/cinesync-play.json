@@ -2,7 +2,7 @@
     "context": [null, "AssetVersion"],
     "identifier": "ftrack-connect-launch-cinesync-play",
     "applicationIdentifier":"cinesync-play_{variant}",
-    "label": "CineSync Play",
+    "label": "cineSync Play",
     "icon": "cinesync",
     "variant": "",
     "search_path":{
