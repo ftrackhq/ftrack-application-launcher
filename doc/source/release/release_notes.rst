@@ -12,17 +12,17 @@ Release Notes
     :date: 2022-06-20
 
     .. change:: fixed
-        :tag: Config
+        :tags: Config
 
         Hiero does not discover under linux.
 
     .. change:: fixed
-        :tag: Config
+        :tags: Config
 
         NukeX does not get discovered correctly.
 
     .. change:: fixed
-        :tag: Config
+        :tags: Config
 
         cineSync Play is wrongly named CineSync Play.
         
@@ -39,7 +39,7 @@ Release Notes
     :date: 2022-03-21
 
     .. change:: fixed
-        :tag: Core
+        :tags: Core
 
         os.pathsep is not a function, eliminate list modification while iterating
 
