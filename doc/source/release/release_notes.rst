@@ -8,11 +8,38 @@
 Release Notes
 *************
 
+.. release:: 1.0.5
+    :date: 2022-06-20
+
+    .. change:: fixed
+        :tags: Config
+
+        Hiero does not discover under linux.
+
+    .. change:: fixed
+        :tags: Config
+
+        NukeX does not get discovered correctly.
+
+    .. change:: fixed
+        :tags: Config
+
+        cineSync Play is wrongly named CineSync Play.
+        
+
+.. release:: 1.0.4
+    :date: 2022-05-18
+
+    .. change:: changed
+        :tags: Config
+
+        Remove discovery of cinesync play Beta and target stable release.
+
 .. release:: 1.0.3
     :date: 2022-03-21
 
     .. change:: fixed
-        :tag: Core
+        :tags: Core
 
         os.pathsep is not a function, eliminate list modification while iterating
 

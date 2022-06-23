@@ -1,15 +1,15 @@
 {
     "context": ["Task"],
-    "identifier": "ftrack-connect-launch-nukex",
-    "applicationIdentifier":"nukex_{variant}",
-    "label": "NukeX",
+    "identifier": "ftrack-connect-launch-nuke-x",
+    "applicationIdentifier":"nuke_x_{variant}",
+    "label": "Nuke_X",
     "icon": "nukex",
     "variant": "{version}",
     "integrations": {
         "pipeline":[
-            "ftrack-connect-pipeline-definition",
-            "ftrack-connect-pipeline",
-            "ftrack-connect-pipeline-qt",
+            "ftrack-connect-pipeline", 
+            "ftrack-connect-pipeline-qt", 
+            "ftrack-connect-pipeline-definition", 
             "ftrack-connect-pipeline-nuke"
         ]
     },
