@@ -8,6 +8,13 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: changed
+        :tags: Adobe Hook
+
+        Hide adobe after efects and premier pro from being discovered.
+
 .. release:: 1.0.5
     :date: 2022-06-20
 
