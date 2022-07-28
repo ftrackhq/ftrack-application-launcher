@@ -187,3 +187,11 @@ Code based launcher
 
 .. literalinclude:: examples/code-example.py
 
+
+Customising configuration path
+------------------------------
+
+If you want to provide alternative configurations it is possible to override the search path setting the following environment variable to a new folder path.
+
+**FTRACK_APPLICATION_LAUNCHER_CONFIG_PATHS**
+
