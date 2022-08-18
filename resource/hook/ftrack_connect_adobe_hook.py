@@ -158,13 +158,16 @@ class LaunchAdobeAction(ftrack_application_launcher.ApplicationLaunchAction):
             dict(
                 name='ftrack connect photoshop',
                 version='-'
-            ), dict(
-                name='ftrack connect premiere',
-                version='-'
-            ), dict(
-                name='ftrack connect after effects',
-                version='-'
-            ), dict(
+            ), 
+            # dict(
+            #     name='ftrack connect premiere',
+            #     version='-'
+            # ), 
+            # dict(
+            #     name='ftrack connect after effects',
+            #     version='-'
+            # ), 
+            dict(
                 name='ftrack connect illustrator',
                 version='-'
             )
@@ -205,27 +208,27 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 icon='photoshop'
             ))
 
-            applications.extend(self._search_filesystem(
-                expression=prefix + [
-                    r'Adobe Premiere Pro ((?:CC )?\d+)', r'Adobe Premiere Pro ((?:CC )?\d+)\.app'
-                ],
-                label='Premiere Pro',
-                variant='CC {version}',
-                applicationIdentifier='premiere_pro_{variant}',
-                versionExpression=ADOBE_VERSION_EXPRESSION,
-                icon='premiere'
-            ))
+            # applications.extend(self._search_filesystem(
+            #     expression=prefix + [
+            #         r'Adobe Premiere Pro ((?:CC )?\d+)', r'Adobe Premiere Pro ((?:CC )?\d+)\.app'
+            #     ],
+            #     label='Premiere Pro',
+            #     variant='CC {version}',
+            #     applicationIdentifier='premiere_pro_{variant}',
+            #     versionExpression=ADOBE_VERSION_EXPRESSION,
+            #     icon='premiere'
+            # ))
 
-            applications.extend(self._search_filesystem(
-                expression=prefix + [
-                    r'Adobe After Effects ((?:CC )?\d+)', r'Adobe After Effects ((?:CC )?\d+)\.app'
-                ],
-                label='After Effects',
-                variant='CC {version}',
-                applicationIdentifier='after_effects_{variant}',
-                versionExpression=ADOBE_VERSION_EXPRESSION,
-                icon='after_effects'
-            ))
+            # applications.extend(self._search_filesystem(
+            #     expression=prefix + [
+            #         r'Adobe After Effects ((?:CC )?\d+)', r'Adobe After Effects ((?:CC )?\d+)\.app'
+            #     ],
+            #     label='After Effects',
+            #     variant='CC {version}',
+            #     applicationIdentifier='after_effects_{variant}',
+            #     versionExpression=ADOBE_VERSION_EXPRESSION,
+            #     icon='after_effects'
+            # ))
 
             applications.extend(self._search_filesystem(
                 expression=prefix + [
@@ -254,31 +257,31 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                 icon='photoshop'
             ))
 
-            applications.extend(self._search_filesystem(
-                expression=(
-                    prefix +
-                    ['Adobe', r'Adobe Premiere Pro ((?:CC )?\d+)',
-                     'Adobe Premiere Pro.exe']
-                ),
-                label='Premiere Pro',
-                variant='CC {version}',
-                applicationIdentifier='premiere_pro_{variant}',
-                versionExpression=ADOBE_VERSION_EXPRESSION,
-                icon='premiere'
-            ))
+            # applications.extend(self._search_filesystem(
+            #     expression=(
+            #         prefix +
+            #         ['Adobe', r'Adobe Premiere Pro ((?:CC )?\d+)',
+            #          'Adobe Premiere Pro.exe']
+            #     ),
+            #     label='Premiere Pro',
+            #     variant='CC {version}',
+            #     applicationIdentifier='premiere_pro_{variant}',
+            #     versionExpression=ADOBE_VERSION_EXPRESSION,
+            #     icon='premiere'
+            # ))
 
-            applications.extend(self._search_filesystem(
-                expression=(
-                    prefix +
-                    ['Adobe', r'Adobe After Effects ((?:CC )?\d+)', 'Support Files',
-                     'AfterFX.exe']
-                ),
-                label='After Effects',
-                variant='CC {version}',
-                applicationIdentifier='after_effects_{variant}',
-                versionExpression=ADOBE_VERSION_EXPRESSION,
-                icon='after_effects'
-            ))
+            # applications.extend(self._search_filesystem(
+            #     expression=(
+            #         prefix +
+            #         ['Adobe', r'Adobe After Effects ((?:CC )?\d+)', 'Support Files',
+            #          'AfterFX.exe']
+            #     ),
+            #     label='After Effects',
+            #     variant='CC {version}',
+            #     applicationIdentifier='after_effects_{variant}',
+            #     versionExpression=ADOBE_VERSION_EXPRESSION,
+            #     icon='after_effects'
+            # ))
 
             applications.extend(self._search_filesystem(
                 expression=(
@@ -306,8 +309,8 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
 
     application_extensions = {
         'photoshop': 'psd',
-        'premiere_pro': 'prproj',
-        'after_effects': 'aep',
+        # 'premiere_pro': 'prproj',
+        # 'after_effects': 'aep',
         'illustrator': 'ai',
     }
 
