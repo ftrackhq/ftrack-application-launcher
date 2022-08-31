@@ -1,8 +1,8 @@
 {
     "context": ["Project"],
-    "identifier": "ftrack-connect-launch-hiero",
-    "applicationIdentifier":"hiero_{variant}",
-    "label": "Hiero",
+    "identifier": "ftrack-connect-launch-hiero-player",
+    "applicationIdentifier":"hiero_player_{variant}",
+    "label": "Hiero Player",
     "icon": "hieroplayer",
     "variant": "{version}",
     "integrations": {
