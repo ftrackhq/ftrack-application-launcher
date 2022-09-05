@@ -8,7 +8,8 @@
 Release Notes
 *************
 
-.. release:: Upcoming
+.. release:: 1.0.6
+    :date: 2022-09-05
 
     .. change:: changed
         :tags: Adobe Hook
