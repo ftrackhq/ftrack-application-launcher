@@ -11,6 +11,11 @@ Release Notes
 .. release:: 1.0.6
     :date: 2022-09-05
 
+    .. change:: fixed
+        :tags: documentation
+
+        FTRACK_APPLICATION_LAUNCHER_CONFIG_PATHS is not documented.
+
     .. change:: changed
         :tags: Adobe Hook
 
