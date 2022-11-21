@@ -1,14 +1,14 @@
 {
     "priority":100,
     "context": ["Task"],
-    "identifier": "ftrack-connect-launch-unreal-engine",
+    "identifier": "ftrack-connect-launch-unreal",
     "applicationIdentifier":"unreal-engine_{variant}",
     "integrations": {
         "pipeline":[
             "ftrack-connect-pipeline", 
             "ftrack-connect-pipeline-qt", 
             "ftrack-connect-pipeline-definition", 
-            "ftrack-connect-pipeline-unreal-engine"
+            "ftrack-connect-pipeline-unreal"
         ]
     },
     "label": "Unreal Engine",
