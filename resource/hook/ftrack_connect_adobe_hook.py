@@ -23,17 +23,17 @@ import ftrack_application_launcher
 
 #: Custom version expression to match versions `2015.5` and `2015`
 #  as distinct versions.
-ADOBE_VERSION_EXPRESSION = re.compile(
-    r'(?P<version>\d[\d.]*)[^\w\d]'
-)
+ADOBE_VERSION_EXPRESSION = re.compile(r'(?P<version>\d[\d.]*)[^\w\d]')
+
 
 class LaunchAdobeAction(ftrack_application_launcher.ApplicationLaunchAction):
     '''Adobe plugins discover and launch action.'''
+
     context = [None, 'Task', 'AssetVersion']
     identifier = 'ftrack-connect-launch-adobe'
     label = 'Adobe'
 
-    def __init__(self, session,  application_store, launcher):
+    def __init__(self, session, application_store, launcher):
         '''Initialise action with *applicationStore* and *launcher*.
 
         *applicationStore* should be an instance of
@@ -47,16 +47,14 @@ class LaunchAdobeAction(ftrack_application_launcher.ApplicationLaunchAction):
             session=session,
             application_store=application_store,
             launcher=launcher,
-            priority=0
+            priority=0,
         )
 
     def _discover(self, event):
         '''Return discovered applications.'''
 
         entities, event = self._translate_event(self.session, event)
-        if not self.validate_selection(
-            entities
-        ):
+        if not self.validate_selection(entities):
             return
 
         selection = event['data'].get('selection', [])
@@ -69,33 +67,35 @@ class LaunchAdobeAction(ftrack_application_launcher.ApplicationLaunchAction):
         for application in applications:
             applicationIdentifier = application['identifier']
             label = application['label']
-            items.append({
-                'actionIdentifier': self.identifier,
-                'label': label,
-                'variant': application.get('variant', None),
-                'description': application.get('description', None),
-                'icon': application.get('icon', 'default'),
-                'applicationIdentifier': applicationIdentifier,
-                'host': platform.node()
-            })
-
-            if selection:
-                items.append({
+            items.append(
+                {
                     'actionIdentifier': self.identifier,
                     'label': label,
-                    'variant': '{variant} with latest version'.format(
-                        variant=application.get('variant', '')
-                    ),
+                    'variant': application.get('variant', None),
                     'description': application.get('description', None),
                     'icon': application.get('icon', 'default'),
-                    'launchWithLatest': True,
                     'applicationIdentifier': applicationIdentifier,
-                    'host': platform.node()
-                })
+                    'host': platform.node(),
+                }
+            )
 
-        return {
-            'items': items
-        }
+            if selection:
+                items.append(
+                    {
+                        'actionIdentifier': self.identifier,
+                        'label': label,
+                        'variant': '{variant} with latest version'.format(
+                            variant=application.get('variant', '')
+                        ),
+                        'description': application.get('description', None),
+                        'icon': application.get('icon', 'default'),
+                        'launchWithLatest': True,
+                        'applicationIdentifier': applicationIdentifier,
+                        'host': platform.node(),
+                    }
+                )
+
+        return {'items': items}
 
     def _launch(self, event):
         '''Handle *event*.
@@ -109,9 +109,7 @@ class LaunchAdobeAction(ftrack_application_launcher.ApplicationLaunchAction):
         event.stop()
         entities, event = self._translate_event(self.session, event)
 
-        if not self.validate_selection(
-            entities
-        ):
+        if not self.validate_selection(entities):
             self.logger.warning('No valid selection')
             return
 
@@ -127,10 +125,7 @@ class LaunchAdobeAction(ftrack_application_launcher.ApplicationLaunchAction):
             entity_type, entity_id = entities[0]
             resolved_entity = self.session.get(entity_type, entity_id)
 
-            if (
-                selection and
-                resolved_entity.entity_type == 'AssetVersion'
-            ):
+            if selection and resolved_entity.entity_type == 'AssetVersion':
 
                 entityId = resolved_entity.get('task_id')
 
@@ -140,14 +135,11 @@ class LaunchAdobeAction(ftrack_application_launcher.ApplicationLaunchAction):
 
                     entityId = entity['id']
 
-                context['selection'] = [{
-                    'entityId': entityId,
-                    'entityType': 'task'
-                }]
+                context['selection'] = [
+                    {'entityId': entityId, 'entityType': 'task'}
+                ]
 
-        return self.launcher.launch(
-            application_identifier, context
-        )
+        return self.launcher.launch(application_identifier, context)
 
     def get_version_information(self, event):
         '''Return version information.'''
@@ -155,27 +147,20 @@ class LaunchAdobeAction(ftrack_application_launcher.ApplicationLaunchAction):
         # of the plugins at the moment. Once ExManCMD is bundled with Connect
         # we can update this to return information about installed extensions.
         return [
-            dict(
-                name='ftrack connect photoshop',
-                version='-'
-            ), 
+            dict(name='ftrack connect photoshop', version='-'),
             # dict(
             #     name='ftrack connect premiere',
             #     version='-'
-            # ), 
+            # ),
             # dict(
             #     name='ftrack connect after effects',
             #     version='-'
-            # ), 
-            dict(
-                name='ftrack connect illustrator',
-                version='-'
-            )
+            # ),
+            dict(name='ftrack connect illustrator', version='-'),
         ]
 
 
 class ApplicationStore(ftrack_application_launcher.ApplicationStore):
-
     def _discover_applications(self):
         '''Return a list of applications that can be launched from this host.
 
@@ -197,16 +182,20 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
         if sys.platform == 'darwin':
             prefix = ['/', 'Applications']
 
-            applications.extend(self._search_filesystem(
-                expression=prefix + [
-                    r'Adobe Photoshop ((?:CC )?\d+)', r'Adobe Photoshop ((?:CC )?\d+)\.app'
-                ],
-                label='Photoshop',
-                variant='CC {version}',
-                applicationIdentifier='photoshop_{variant}',
-                versionExpression=ADOBE_VERSION_EXPRESSION,
-                icon='photoshop'
-            ))
+            applications.extend(
+                self._search_filesystem(
+                    expression=prefix
+                    + [
+                        r'Adobe Photoshop ((?:CC )?\d+)',
+                        r'Adobe Photoshop ((?:CC )?\d+)\.app',
+                    ],
+                    label='Photoshop',
+                    variant='CC {version}',
+                    applicationIdentifier='photoshop_{variant}',
+                    versionExpression=ADOBE_VERSION_EXPRESSION,
+                    icon='photoshop',
+                )
+            )
 
             # applications.extend(self._search_filesystem(
             #     expression=prefix + [
@@ -230,32 +219,41 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
             #     icon='after_effects'
             # ))
 
-            applications.extend(self._search_filesystem(
-                expression=prefix + [
-                    r'Adobe Illustrator ((?:CC )?\d+)', r'Adobe Illustrator ?((?:CC )?\d+)?\.app'
-                ],
-                label='Illustrator',
-                variant='CC {version}',
-                applicationIdentifier='illustrator_{variant}',
-                versionExpression=ADOBE_VERSION_EXPRESSION,
-                icon='illustrator'
-            ))
+            applications.extend(
+                self._search_filesystem(
+                    expression=prefix
+                    + [
+                        r'Adobe Illustrator ((?:CC )?\d+)',
+                        r'Adobe Illustrator ?((?:CC )?\d+)?\.app',
+                    ],
+                    label='Illustrator',
+                    variant='CC {version}',
+                    applicationIdentifier='illustrator_{variant}',
+                    versionExpression=ADOBE_VERSION_EXPRESSION,
+                    icon='illustrator',
+                )
+            )
 
         elif sys.platform == 'win32':
             prefix = ['C:\\', 'Program Files.*']
 
-            applications.extend(self._search_filesystem(
-                expression=(
-                    prefix +
-                    ['Adobe', r'Adobe Photoshop ((?:CC )?\d+)',
-                     'Photoshop.exe']
-                ),
-                label='Photoshop',
-                variant='CC {version}',
-                applicationIdentifier='photoshop_{variant}',
-                versionExpression=ADOBE_VERSION_EXPRESSION,
-                icon='photoshop'
-            ))
+            applications.extend(
+                self._search_filesystem(
+                    expression=(
+                        prefix
+                        + [
+                            'Adobe',
+                            r'Adobe Photoshop ((?:CC )?\d+)',
+                            'Photoshop.exe',
+                        ]
+                    ),
+                    label='Photoshop',
+                    variant='CC {version}',
+                    applicationIdentifier='photoshop_{variant}',
+                    versionExpression=ADOBE_VERSION_EXPRESSION,
+                    icon='photoshop',
+                )
+            )
 
             # applications.extend(self._search_filesystem(
             #     expression=(
@@ -283,18 +281,26 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
             #     icon='after_effects'
             # ))
 
-            applications.extend(self._search_filesystem(
-                expression=(
-                    prefix +
-                    ['Adobe', r'Adobe Illustrator ((?:CC )?\d+)', 'Support Files',
-                     'Contents', 'Windows', 'Illustrator.exe']
-                ),
-                label='Illustrator',
-                variant='CC {version}',
-                applicationIdentifier='illustrator_{variant}',
-                versionExpression=ADOBE_VERSION_EXPRESSION,
-                icon='illustrator'
-            ))
+            applications.extend(
+                self._search_filesystem(
+                    expression=(
+                        prefix
+                        + [
+                            'Adobe',
+                            r'Adobe Illustrator ((?:CC )?\d+)',
+                            'Support Files',
+                            'Contents',
+                            'Windows',
+                            'Illustrator.exe',
+                        ]
+                    ),
+                    label='Illustrator',
+                    variant='CC {version}',
+                    applicationIdentifier='illustrator_{variant}',
+                    versionExpression=ADOBE_VERSION_EXPRESSION,
+                    icon='illustrator',
+                )
+            )
 
         self.logger.debug(
             'Discovered applications:\n{0}'.format(
@@ -336,9 +342,11 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
         their file system path.
 
         '''
-        self.logger.debug('Looking for latest version of {} {} {}'.format(
-            entityId, entityType, extension
-        ))
+        self.logger.debug(
+            'Looking for latest version of {} {} {}'.format(
+                entityId, entityType, extension
+            )
+        )
         if entityType == 'task':
             versions = self.session.query(
                 'select components from AssetVersion where task.id is {}'.format(
@@ -359,10 +367,7 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
                 (
                     'Unable to find latest version from entityId={entityId} '
                     'with entityType={entityType}.'
-                ).format(
-                    entityId=entityId,
-                    entityType=entityType
-                )
+                ).format(entityId=entityId, entityType=entityType)
             )
             return None
 
@@ -378,10 +383,7 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
 
                 file_system_path = self.location.get_filesystem_path(component)
                 if file_system_path and file_system_path.endswith(extension):
-                    if (
-                            last_date is None or
-                            version['date'] > last_date
-                    ):
+                    if last_date is None or version['date'] > last_date:
                         latest_component = component
                         last_date = version['date']
 
@@ -401,9 +403,7 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
 
         command = super(
             ApplicationLauncher, self
-        )._get_application_launch_command(
-            application, context
-        )
+        )._get_application_launch_command(application, context)
 
         if command is not None and context is not None:
             self.logger.debug(
@@ -419,20 +419,22 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
                 component = None
                 file_system_path = None
 
-                for identifier, extension in self.application_extensions.items():
+                for (
+                    identifier,
+                    extension,
+                ) in self.application_extensions.items():
                     if application['identifier'].startswith(identifier):
-                        component , file_system_path = self._find_latest_component(
-                            entity['entityId'],
-                            entity['entityType'],
-                            extension
+                        (
+                            component,
+                            file_system_path,
+                        ) = self._find_latest_component(
+                            entity['entityId'], entity['entityType'], extension
                         )
                         break
 
                 if component is not None and file_system_path is not None:
 
-                    file_path = self._get_temporary_copy(
-                        file_system_path
-                    )
+                    file_path = self._get_temporary_copy(file_system_path)
                     self.logger.info(
                         u'Launching application with file {0!r}'.format(
                             file_path

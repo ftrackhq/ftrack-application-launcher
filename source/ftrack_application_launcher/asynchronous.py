@@ -25,9 +25,7 @@ def asynchronous(method):
                 sys.excepthook(*sys.exc_info())
 
         thread = threading.Thread(
-            target=exceptHookWrapper,
-            args=args,
-            kwargs=kwargs
+            target=exceptHookWrapper, args=args, kwargs=kwargs
         )
         thread.start()
 

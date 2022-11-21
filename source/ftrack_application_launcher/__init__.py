@@ -29,9 +29,7 @@ configure_logging(__name__)
 #: Will match last set of numbers in string where numbers may contain a digit
 #: followed by zero or more digits, periods, or the letters 'a', 'b', 'c' or 'v'
 #: E.g. /path/to/x86/some/application/folder/v1.8v2b1/app.exe -> 1.8v2b1
-DEFAULT_VERSION_EXPRESSION = re.compile(
-    r'(?P<version>\d[\d.vabc]*?)[^\d]*$'
-)
+DEFAULT_VERSION_EXPRESSION = re.compile(r'(?P<version>\d[\d.vabc]*?)[^\d]*$')
 
 AVAILABLE_ICONS = {
     'hiero': '/application_icons/hiero.png',
@@ -52,17 +50,14 @@ AVAILABLE_ICONS = {
     'houdini': '/application_icons/houdini.png',
     'unreal-engine': '/application_icons/unreal_engine.png',
     'unity': '/application_icons/unity.png',
-    'rv': '/application_icons/rv.png'
+    'rv': '/application_icons/rv.png',
 }
+
 
 def prepend_path(path, key, environment):
     '''Prepend *path* to *key* in *environment*.'''
     try:
-        environment[key] = (
-            os.pathsep.join([
-                path, environment[key]
-            ])
-        )
+        environment[key] = os.pathsep.join([path, environment[key]])
     except KeyError:
         environment[key] = path
 
@@ -72,11 +67,7 @@ def prepend_path(path, key, environment):
 def append_path(path, key, environment):
     '''Append *path* to *key* in *environment*.'''
     try:
-        environment[key] = (
-            os.pathsep.join([
-                environment[key], path
-            ])
-        )
+        environment[key] = os.pathsep.join([environment[key], path])
     except KeyError:
         environment[key] = path
 
@@ -177,10 +168,18 @@ class ApplicationStore(object):
 
         return result
 
-    def _search_filesystem(self, expression, label, applicationIdentifier,
-                           versionExpression=None, icon=None,
-                           launchArguments=None, variant='',
-                           description=None, integrations=None):
+    def _search_filesystem(
+        self,
+        expression,
+        label,
+        applicationIdentifier,
+        versionExpression=None,
+        icon=None,
+        launchArguments=None,
+        variant='',
+        description=None,
+        integrations=None,
+    ):
         '''
         Return list of applications found in filesystem matching *expression*.
 
@@ -242,21 +241,23 @@ class ApplicationStore(object):
         if not os.path.exists(start):
             raise ValueError(
                 'First part "{0}" of expression "{1}" must match exactly to an '
-                'existing entry on the filesystem.'
-                .format(start, expression)
+                'existing entry on the filesystem.'.format(start, expression)
             )
 
         expressions = list(map(re.compile, pieces))
         expressionsCount = len(expressions)
 
-        for location, folders, files in os.walk(start, topdown=True, followlinks=True):
+        for location, folders, files in os.walk(
+            start, topdown=True, followlinks=True
+        ):
             level = location.rstrip(os.path.sep).count(os.path.sep)
             expression = expressions[level]
 
             if level < (expressionsCount - 1):
                 # If not yet at final piece then just prune directories.
-                folders[:] = [folder for folder in folders
-                              if expression.match(folder)]
+                folders[:] = [
+                    folder for folder in folders if expression.match(folder)
+                ]
             else:
                 # Match executable. Note that on OSX executable might equate to
                 # a folder (.app).
@@ -271,22 +272,23 @@ class ApplicationStore(object):
 
                         if versionMatch:
                             version = versionMatch.group('version')
-                            
+
                             try:
                                 loose_version = LooseVersion(version)
                             except AttributeError:
                                 self.logger.warning(
                                     'Could not parse version'
-                                    ' {0} from {1}'.format(
-                                        version, path
-                                    )
+                                    ' {0} from {1}'.format(version, path)
                                 )
 
-                        variant_str = variant.format(version=str(loose_version))
+                        variant_str = variant.format(
+                            version=str(loose_version)
+                        )
 
                         if integrations:
                             variant_str = "{} [{}]".format(
-                                variant_str, ':'.join(list(integrations.keys()))
+                                variant_str,
+                                ':'.join(list(integrations.keys())),
                             )
 
                         application = {
@@ -300,9 +302,9 @@ class ApplicationStore(object):
                             'icon': self._get_icon_url(icon),
                             'variant': variant_str,
                             'description': description,
-                            'integrations': integrations or {}
+                            'integrations': integrations or {},
                         }
-        
+
                         applications.append(application)
 
                 # Don't descend any further as out of patterns to match.
@@ -350,7 +352,7 @@ class ApplicationLauncher(object):
         self._session = applicationStore.session
 
     def discover_integrations(self, application, context):
-        
+
         context = context or {}
         results = self.session.event_hub.publish(
             ftrack_api.event.base.Event(
@@ -358,33 +360,42 @@ class ApplicationLauncher(object):
                 data=dict(
                     application=application,
                     context=context,
-                    platform=self.current_os
-                )
+                    platform=self.current_os,
+                ),
             ),
-            synchronous=True
+            synchronous=True,
         )
-        
+
         requested_integrations = application['integrations']
 
         discovered_integrations = [
-            result.get('integration', {}) for result in results if not \
-                result.get('integration', {}).get('disable') is True
+            result.get('integration', {})
+            for result in results
+            if not result.get('integration', {}).get('disable') is True
         ]
 
-        discovered_integrations_names = set([
-            discovered_integration['name'] for discovered_integration in discovered_integrations
-        ])
+        discovered_integrations_names = set(
+            [
+                discovered_integration['name']
+                for discovered_integration in discovered_integrations
+            ]
+        )
 
         found_integrations = discovered_integrations
         lost_integrations = []
 
-        for requested_integration_name, requested_integration_items in requested_integrations.items():
+        for (
+            requested_integration_name,
+            requested_integration_items,
+        ) in requested_integrations.items():
             # Check if all the requested integration are present in the one available.
-            dependency_resolved = not bool(set(requested_integration_items).difference(discovered_integrations_names))
-            if not dependency_resolved:
-                lost_integrations.append(
-                    requested_integration_name
+            dependency_resolved = not bool(
+                set(requested_integration_items).difference(
+                    discovered_integrations_names
                 )
+            )
+            if not dependency_resolved:
+                lost_integrations.append(requested_integration_name)
 
         return found_integrations, lost_integrations
 
@@ -412,9 +423,8 @@ class ApplicationLauncher(object):
             return {
                 'success': False,
                 'message': (
-                    '{0} application not found.'
-                    .format(applicationIdentifier)
-                )
+                    '{0} application not found.'.format(applicationIdentifier)
+                ),
             }
 
         # Construct command and environment.
@@ -428,10 +438,7 @@ class ApplicationLauncher(object):
         message = '{0} application started.'.format(application['label'])
 
         try:
-            options = dict(
-                env=environment,
-                close_fds=True
-            )
+            options = dict(env=environment, close_fds=True)
 
             # Ensure that current working directory is set to the root of the
             # application being launched to avoid issues with applications
@@ -454,39 +461,46 @@ class ApplicationLauncher(object):
                 integration={
                     'name': None,
                     'version': None,
-                    'env':{},
-                    'launch_arguments': []
+                    'env': {},
+                    'launch_arguments': [],
                 },
-                platform=self.current_os
+                platform=self.current_os,
             )
 
             results = self.session.event_hub.publish(
                 ftrack_api.event.base.Event(
-                    topic='ftrack.connect.application.launch',
-                    data=launchData
+                    topic='ftrack.connect.application.launch', data=launchData
                 ),
-                synchronous=True
+                synchronous=True,
             )
 
             # recompose launch_arguments coming from integrations
             flatten = lambda t: [item for sublist in t for item in sublist]
-            launch_arguments = flatten([
-                r['integration']['launch_arguments'] 
-                for r in results if
-                (not r is None and 'integration' in r
-                 and 'launch_arguments' in r['integration']
-                ) 
-            ])
+            launch_arguments = flatten(
+                [
+                    r['integration']['launch_arguments']
+                    for r in results
+                    if (
+                        not r is None
+                        and 'integration' in r
+                        and 'launch_arguments' in r['integration']
+                    )
+                ]
+            )
 
             launchData['command'].extend(launch_arguments)
-            
+
             self._notify_integration_use(results, application)
 
             if context.get('integrations'):
-                environment = self._get_integrations_environments(results, context, environment)
+                environment = self._get_integrations_environments(
+                    results, context, environment
+                )
             else:
-                self.logger.info('No integrations provided for {}:{}'.format(
-                    applicationIdentifier, context.get('variant'))
+                self.logger.info(
+                    'No integrations provided for {}:{}'.format(
+                        applicationIdentifier, context.get('variant')
+                    )
                 )
 
             # Reset variables passed through the hook since they might
@@ -504,8 +518,9 @@ class ApplicationLauncher(object):
 
         except (OSError, TypeError):
             self.logger.exception(
-                '{0} application could not be started with command "{1}".'
-                .format(applicationIdentifier, command)
+                '{0} application could not be started with command "{1}".'.format(
+                    applicationIdentifier, command
+                )
             )
 
             success = False
@@ -520,27 +535,23 @@ class ApplicationLauncher(object):
                 )
             )
 
-        return {
-            'success': success,
-            'message': message
-        }
+        return {'success': success, 'message': message}
 
     def _notify_integration_use(self, results, application):
-                
+
         metadata = []
-        for result in results: 
+        for result in results:
             if result is None:
                 continue
 
             integration = result.get('integration')
             integration_data = {
                 'application': "{}_{}".format(
-                    application['label'].lower(),
-                    str(application['version']))
-                ,
-                'name':  integration['name'].lower(),
+                    application['label'].lower(), str(application['version'])
+                ),
+                'name': integration['name'].lower(),
                 'version': str(integration.get('version', 'Unknown')),
-                'os': str(str(platform.platform()))    
+                'os': str(str(platform.platform())),
             }
             metadata.append(integration_data)
 
@@ -548,20 +559,36 @@ class ApplicationLauncher(object):
             self.session,
             'USED-CONNECT-INTEGRATION',
             metadata,
-            asynchronous=True
+            asynchronous=True,
         )
 
     def _get_integrations_environments(self, results, context, environments):
 
         # parse integration returned from listeners.
-        returned_integrations_names = set([result.get('integration', {}).get('name') for result in results if result])
-        
-        self.logger.debug('Discovered integrations {}'.format(returned_integrations_names))
-        self.logger.debug('Requested integrations {}'.format(list(context.get('integrations', {}).items())))
+        returned_integrations_names = set(
+            [
+                result.get('integration', {}).get('name')
+                for result in results
+                if result
+            ]
+        )
 
-        for integration_group, requested_integration_names in list(context.get('integrations', {}).items()):
+        self.logger.debug(
+            'Discovered integrations {}'.format(returned_integrations_names)
+        )
+        self.logger.debug(
+            'Requested integrations {}'.format(
+                list(context.get('integrations', {}).items())
+            )
+        )
 
-            difference = set(requested_integration_names).difference(returned_integrations_names)
+        for integration_group, requested_integration_names in list(
+            context.get('integrations', {}).items()
+        ):
+
+            difference = set(requested_integration_names).difference(
+                returned_integrations_names
+            )
 
             if difference:
                 self.logger.warning(
@@ -574,10 +601,13 @@ class ApplicationLauncher(object):
             for requested_integration_name in requested_integration_names:
 
                 result = [
-                    result for result in results
-                    if result and result['integration']['name'] == requested_integration_name
+                    result
+                    for result in results
+                    if result
+                    and result['integration']['name']
+                    == requested_integration_name
                 ][0]
-                
+
                 envs = result['integration'].get('env', {})
 
                 if not envs:
@@ -590,7 +620,8 @@ class ApplicationLauncher(object):
 
                 self.logger.debug(
                     'Merging environment variables for integration {} for group {}'.format(
-                        requested_integration_name, integration_group)
+                        requested_integration_name, integration_group
+                    )
                 )
 
                 for key, value in list(envs.items()):
@@ -601,33 +632,42 @@ class ApplicationLauncher(object):
                         key, action = action_results
 
                     if action == 'append':
-                        self.logger.debug('Appending {} with {}'.format(key, value))
+                        self.logger.debug(
+                            'Appending {} with {}'.format(key, value)
+                        )
                         append_path(str(value), key, environments)
 
                     elif action == 'prepend':
-                        self.logger.debug('Prepending {} with {}'.format(key, value))
-                        prepend_path(str(value), key, environments)    
+                        self.logger.debug(
+                            'Prepending {} with {}'.format(key, value)
+                        )
+                        prepend_path(str(value), key, environments)
 
                     elif action == 'set':
-                        self.logger.debug('Setting {} to {}'.format(key, value))
+                        self.logger.debug(
+                            'Setting {} to {}'.format(key, value)
+                        )
                         environments[key] = str(value)
 
-                    elif action == 'unset':   
+                    elif action == 'unset':
                         self.logger.debug('Unsetting {}'.format(key))
                         if key in environments:
                             environments.pop(key)
 
                     elif action == 'pop':
                         self.logger.debug(
-                            'removing {} with {}'.format(key, value))
+                            'removing {} with {}'.format(key, value)
+                        )
                         pop_path(str(value), key, environments)
 
                     else:
                         self.logger.error(
-                            'Environment variable action {} not recognised for {}'.format(action, key)
+                            'Environment variable action {} not recognised for {}'.format(
+                                action, key
+                            )
                         )
                         continue
-                        
+
         return environments
 
     def _get_application_launch_command(self, application, context=None):
@@ -651,8 +691,9 @@ class ApplicationLauncher(object):
 
         else:
             self.logger.warning(
-                'Unable to find launch command for {0} on this platform.'
-                .format(application['identifier'])
+                'Unable to find launch command for {0} on this platform.'.format(
+                    application['identifier']
+                )
             )
 
         # Add any extra launch arguments if specified.
@@ -666,9 +707,7 @@ class ApplicationLauncher(object):
 
         return command
 
-    def _get_application_environment(
-        self, application, context=None
-    ):
+    def _get_application_environment(self, application, context=None):
         '''Return mapping of environment for *application* using *context*.
 
         *application* should be a mapping describing the application, as in the
@@ -687,24 +726,22 @@ class ApplicationLauncher(object):
 
         # Ensure SSL_CERT_FILE points to the default cert.
         if 'win32' not in sys.platform:
-            environment['SSL_CERT_FILE'] = ssl.get_default_verify_paths().cafile        
+            environment[
+                'SSL_CERT_FILE'
+            ] = ssl.get_default_verify_paths().cafile
 
         # Add FTRACK_EVENT_SERVER variable.
         environment = prepend_path(
             self.session.event_hub.get_server_url(),
-            'FTRACK_EVENT_SERVER', environment
+            'FTRACK_EVENT_SERVER',
+            environment,
         )
 
         # add legacy_environments
-        environment['FTRACK_APIKEY']=self.session.api_key
+        environment['FTRACK_APIKEY'] = self.session.api_key
 
         laucher_dependencies = os.path.normpath(
-            os.path.join(
-                os.path.abspath(
-                    os.path.dirname(__file__)
-                ),
-                '..'
-            )
+            os.path.join(os.path.abspath(os.path.dirname(__file__)), '..')
         )
 
         environment = prepend_path(
@@ -715,14 +752,13 @@ class ApplicationLauncher(object):
         if context is not None:
             try:
                 applicationContext = base64.b64encode(
-                    json.dumps(
-                        context
-                    ).encode("utf-8")
+                    json.dumps(context).encode("utf-8")
                 ).decode('utf-8')
             except (TypeError, ValueError):
                 self.logger.exception(
-                    'The eventData could not be converted correctly. {0}'
-                    .format(context)
+                    'The eventData could not be converted correctly. {0}'.format(
+                        context
+                    )
                 )
             else:
                 environment['FTRACK_CONNECT_EVENT'] = applicationContext
@@ -755,9 +791,7 @@ class ApplicationLaunchAction(BaseAction):
 
     def __repr__(self):
         return "<label:{}|id:{}|variant:{}>".format(
-            self.label,
-            self.identifier,
-            self.variant
+            self.label, self.identifier, self.variant
         )
 
     @property
@@ -766,7 +800,7 @@ class ApplicationLaunchAction(BaseAction):
         return self._session
 
     def __init__(
-            self, session, application_store, launcher, priority=sys.maxsize
+        self, session, application_store, launcher, priority=sys.maxsize
     ):
         super(ApplicationLaunchAction, self).__init__(session)
 
@@ -795,7 +829,9 @@ class ApplicationLaunchAction(BaseAction):
             return False
 
         entity_type, entity_id = entities[0]
-        resolved_entity_type = self.session.get(entity_type, entity_id).entity_type
+        resolved_entity_type = self.session.get(
+            entity_type, entity_id
+        ).entity_type
 
         if resolved_entity_type in self.context:
             return True
@@ -805,9 +841,7 @@ class ApplicationLaunchAction(BaseAction):
     def _discover(self, event):
         entities, event = self._translate_event(self.session, event)
 
-        if not self.validate_selection(
-            entities
-        ):
+        if not self.validate_selection(entities):
             return
 
         items = []
@@ -826,12 +860,15 @@ class ApplicationLaunchAction(BaseAction):
 
             if self.launcher and application.get('integrations'):
 
-                _, lost_integration_groups = self.launcher.discover_integrations(
-                    application, context
-                )
+                (
+                    _,
+                    lost_integration_groups,
+                ) = self.launcher.discover_integrations(application, context)
 
                 for lost_integration_group in lost_integration_groups:
-                    removed_integrations = application['integrations'][lost_integration_group]
+                    removed_integrations = application['integrations'][
+                        lost_integration_group
+                    ]
                     self.logger.debug(
                         (
                             'Application integration group {} for {} {} could not be loaded.\n'
@@ -840,26 +877,26 @@ class ApplicationLaunchAction(BaseAction):
                             lost_integration_group,
                             application['label'],
                             application['variant'],
-                            removed_integrations
+                            removed_integrations,
                         )
                     )
 
                 if lost_integration_groups:
                     continue
 
-            items.append({
-                'actionIdentifier': self.identifier,
-                'label': label,
-                'icon': application.get('icon', 'default'),
-                'variant': application.get('variant', None),
-                'applicationIdentifier': application_identifier,
-                'integrations': application.get('integrations', {}),
-                'host': platform.node()
-            })
+            items.append(
+                {
+                    'actionIdentifier': self.identifier,
+                    'label': label,
+                    'icon': application.get('icon', 'default'),
+                    'variant': application.get('variant', None),
+                    'applicationIdentifier': application_identifier,
+                    'integrations': application.get('integrations', {}),
+                    'host': platform.node(),
+                }
+            )
 
-        return {
-            'items': items
-        }
+        return {'items': items}
 
     def _launch(self, event):
         '''Handle *event*.
@@ -873,23 +910,21 @@ class ApplicationLaunchAction(BaseAction):
 
         entities, event = self._translate_event(self.session, event)
 
-        if not self.validate_selection(
-            entities
-        ):
+        if not self.validate_selection(entities):
             return
 
         application_identifier = event['data']['applicationIdentifier']
         context = event['data'].copy()
         context['source'] = event['source']
 
-        return self.launcher.launch(
-            application_identifier, context
-        )
+        return self.launcher.launch(application_identifier, context)
 
     def get_version_information(self, event):
         founds = []
         for application in self.application_store.applications:
-            all_discovered , _ = self.launcher.discover_integrations(application, None)
+            all_discovered, _ = self.launcher.discover_integrations(
+                application, None
+            )
             for discovered in all_discovered:
                 if discovered not in founds:
                     founds.append(discovered)
@@ -900,11 +935,9 @@ class ApplicationLaunchAction(BaseAction):
 
         self.session.event_hub.subscribe(
             'topic=ftrack.action.discover '
-            'and source.user.username={0}'.format(
-                self.session.api_user
-            ),
+            'and source.user.username={0}'.format(self.session.api_user),
             self._discover,
-            priority=self.priority
+            priority=self.priority,
         )
 
         self.session.event_hub.subscribe(
@@ -912,16 +945,14 @@ class ApplicationLaunchAction(BaseAction):
             'and source.user.username={0} '
             'and data.actionIdentifier={1} '
             'and data.host={2}'.format(
-                self.session.api_user,
-                self.identifier,
-                platform.node()
+                self.session.api_user, self.identifier, platform.node()
             ),
             self._launch,
-            priority=self.priority
+            priority=self.priority,
         )
 
         self.session.event_hub.subscribe(
             'topic=ftrack.connect.plugin.debug-information',
             self.get_version_information,
-            priority=self.priority
+            priority=self.priority,
         )

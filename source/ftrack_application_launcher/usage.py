@@ -26,8 +26,8 @@ def _send_event(session, event_name, metadata=None):
                 'data': {
                     'type': 'event',
                     'name': event_name,
-                    'metadata': data
-                }
+                    'metadata': data,
+                },
             }
         )
 

@@ -8,6 +8,13 @@
 Release Notes
 *************
 
+.. release:: upcoming
+
+    .. change:: fixed
+        :tags: houdini
+
+        Houdini Indie executable fix.
+
 .. release:: 1.0.6
     :date: 2022-09-05
 
