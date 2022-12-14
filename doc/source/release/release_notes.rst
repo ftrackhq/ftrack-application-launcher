@@ -8,7 +8,8 @@
 Release Notes
 *************
 
-.. release:: upcoming
+.. release:: 1.0.8
+    :date: 2022-12-14
 
     .. change:: fixed
         :tags: houdini
