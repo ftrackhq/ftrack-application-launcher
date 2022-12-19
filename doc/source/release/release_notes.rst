@@ -8,6 +8,14 @@
 Release Notes
 *************
 
+.. release:: 1.0.8
+    :date: 2022-12-14
+
+    .. change:: fixed
+        :tags: houdini
+
+        Houdini Core, FX and Apprentice Windows executable alignment.
+
 .. release:: 1.0.7
     :date: 2022-11-21
 
