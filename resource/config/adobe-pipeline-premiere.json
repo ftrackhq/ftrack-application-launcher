@@ -1,0 +1,32 @@
+{
+    "priority":100,
+    "context": ["Task"],
+    "identifier": "ftrack-connect-launch-adobe-pipeline-premiere",
+    "applicationIdentifier":"adobe-premiere_{variant}",
+    "integrations": {
+        "pipeline":[
+            "ftrack-connect-pipeline-definition",
+            "ftrack-connect-pipeline",
+            "ftrack-connect-pipeline-qt",
+            "ftrack-connect-pipeline-adobe"
+        ]
+    },
+    "label": "Adobe Premiere",
+    "icon": "premiere",
+    "variant": "{version}",
+    "search_path":{
+        "linux": {
+            "prefix":["/", "usr","autodesk","maya.+"],
+            "expression":["bin","maya$"],
+            "version_expression": "maya(?P<version>\\d{4})"
+        },
+        "windows": {
+            "prefix":["C:\\", "Program Files.*"],
+            "expression":["Autodesk", "Maya.+", "bin", "maya.exe"]
+        },
+        "darwin": {
+            "prefix":["/", "Users", "henriknorin", "Documents", "ftrack", "dev", "ftrack-connect-pipeline-adobe"],
+            "expression": ["test", "Adobe Premiere Pro Wrapper.*\\.app"]
+        }
+    }
+ }
