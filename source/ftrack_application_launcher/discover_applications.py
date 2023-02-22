@@ -4,11 +4,14 @@ import json
 import platform
 from collections import defaultdict
 import logging
-from ftrack_application_launcher import ApplicationStore, ApplicationLaunchAction, ApplicationLauncher
+from ftrack_application_launcher import (
+    ApplicationStore,
+    ApplicationLaunchAction,
+    ApplicationLauncher,
+)
 
 
 class DiscoverApplications(object):
-
     @property
     def current_os(self):
         return platform.system().lower()
@@ -33,7 +36,9 @@ class DiscoverApplications(object):
 
         loaded_filtered_files = []
         for config_path in config_paths:
-            if not os.path.exists(config_path) or not os.path.isdir(config_path):
+            if not os.path.exists(config_path) or not os.path.isdir(
+                config_path
+            ):
                 self.logger.warning(
                     '{} directory cannot be found.'.format(config_path)
                 )
@@ -55,7 +60,7 @@ class DiscoverApplications(object):
                             config, error
                         )
                     )
-        
+
         return loaded_filtered_files
 
     def _group_configurations(self, configurations):
@@ -63,14 +68,21 @@ class DiscoverApplications(object):
         result_dict = defaultdict(list)
 
         for configuration in configurations:
-            result_dict.setdefault(configuration['identifier'], []).append(configuration)
+            result_dict.setdefault(configuration['identifier'], []).append(
+                configuration
+            )
 
         return result_dict
 
     def _build_launchers(self, configurations):
         grouped_configurations = self._group_configurations(configurations)
-        for identifier, identified_configuration in grouped_configurations.items():
-            self.logger.debug('building config store for {}'.format(identifier))
+        for (
+            identifier,
+            identified_configuration,
+        ) in grouped_configurations.items():
+            self.logger.debug(
+                'building config store for {}'.format(identifier)
+            )
             store = ApplicationStore(self._session)
 
             for config in identified_configuration:
@@ -110,19 +122,22 @@ class DiscoverApplications(object):
                 {
                     'label': config['label'],
                     'identifier': identifier,
-                    'context': config['context']
-                }
+                    'context': config['context'],
+                },
             )
             priority = config.get('priority', sys.maxsize)
-            action = NewAction(self._session, store, launcher, priority=priority)
+            action = NewAction(
+                self._session, store, launcher, priority=priority
+            )
 
-            self.logger.debug('Creating App launcher {} with priority {}'.format(action, priority))
+            self.logger.debug(
+                'Creating App launcher {} with priority {}'.format(
+                    action, priority
+                )
+            )
 
             self._actions.append(action)
 
     def register(self):
         for action in self._actions:
             action.register()
-
-
-
