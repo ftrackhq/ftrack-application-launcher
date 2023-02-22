@@ -6,8 +6,7 @@
     "integrations": {
         "pipeline":[
             "ftrack-connect-pipeline", 
-            "ftrack-connect-pipeline-qt", 
-            "ftrack-connect-pipeline-definition", 
+            "ftrack-connect-pipeline-qt",
             "ftrack-connect-pipeline-unreal-engine"
         ]
     },
