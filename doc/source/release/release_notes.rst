@@ -10,6 +10,11 @@ Release Notes
 
 .. release:: upcoming
 
+    .. change:: changed
+        :tags: pipeline
+
+        Definitions repository removed from all pipeline configs.
+
     .. change:: fixed
         :tags: houdini
 
