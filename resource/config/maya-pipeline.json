@@ -5,7 +5,6 @@
     "applicationIdentifier":"maya_{variant}",
     "integrations": {
         "pipeline":[
-            "ftrack-connect-pipeline-definition",
             "ftrack-connect-pipeline",
             "ftrack-connect-pipeline-qt",
             "ftrack-connect-pipeline-maya"

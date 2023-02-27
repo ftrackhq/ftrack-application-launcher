@@ -11,6 +11,11 @@ Release Notes
 .. release:: 1.0.8
     :date: 2022-12-14
 
+    .. change:: changed
+        :tags: pipeline
+
+        Definitions repository removed from all pipeline configs.
+
     .. change:: fixed
         :tags: houdini
 
