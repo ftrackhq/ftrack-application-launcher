@@ -437,7 +437,10 @@ class ApplicationLauncher(object):
         self._conform_environment(environment)
 
         success = True
-        message = '{0} application started.'.format(application['label'])
+        message = '{0}{1} application started.'.format(
+            application['label'],
+            ' ' + application['variant'] if application.get('variant') else '',
+        )
 
         try:
             options = dict(env=environment, close_fds=True)
