@@ -773,11 +773,11 @@ class ApplicationLauncher(object):
             The *mapping* is modified in place.
 
         '''
-        if not isinstance(mapping, collections.MutableMapping):
+        if not isinstance(mapping, collections.abc.MutableMapping):
             return
 
         for key, value in mapping.copy().items():
-            if isinstance(value, collections.Mapping):
+            if isinstance(value, collections.abc.Mapping):
                 self._conform_environment(value)
             else:
                 value = str(value)
