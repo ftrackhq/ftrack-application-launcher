@@ -67,7 +67,6 @@ class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
         )
 
     def _create_temp_data(self, data, expiry=None):
-
         if not expiry:
             expiry = datetime.datetime.now() + datetime.timedelta(hours=1)
 
