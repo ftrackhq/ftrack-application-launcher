@@ -8,7 +8,6 @@ import os
 import ssl
 
 import subprocess
-import collections
 import base64
 import getpass
 import json
@@ -21,6 +20,13 @@ import ftrack_api
 from ftrack_action_handler.action import BaseAction
 from ftrack_application_launcher.configure_logging import configure_logging
 from ftrack_application_launcher.usage import send_event
+
+try:
+    from collections.abc import Mapping, MutableMapping
+except ImportError:
+    # fallback for py2, do not use `six` as Maya 2022.2 have old `six` that
+    # have no `six.moves.collections_abc`
+    from collections import Mapping, MutableMapping
 
 configure_logging(__name__)
 
@@ -773,11 +779,11 @@ class ApplicationLauncher(object):
             The *mapping* is modified in place.
 
         '''
-        if not isinstance(mapping, collections.abc.MutableMapping):
+        if not isinstance(mapping, MutableMapping):
             return
 
         for key, value in mapping.copy().items():
-            if isinstance(value, collections.abc.Mapping):
+            if isinstance(value, Mapping):
                 self._conform_environment(value)
             else:
                 value = str(value)
