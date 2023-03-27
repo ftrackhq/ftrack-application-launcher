@@ -33,7 +33,6 @@ class DiscoverApplications(object):
         self._build_launchers(configurations)
 
     def _parse_configurations(self, config_paths):
-
         loaded_filtered_files = []
         for config_path in config_paths:
             if not os.path.exists(config_path) or not os.path.isdir(
@@ -86,7 +85,6 @@ class DiscoverApplications(object):
             store = ApplicationStore(self._session)
 
             for config in identified_configuration:
-
                 # extract data from app config
                 search_path = config['search_path'].get(self.current_os)
                 if not search_path:

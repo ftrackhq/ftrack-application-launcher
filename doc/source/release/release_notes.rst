@@ -11,6 +11,11 @@ Release Notes
 .. release:: upcoming
 
     .. change:: changed
+        :tags: launchers
+
+        Re-activate After Effects and Premiere launchers.
+
+    .. change:: changed
         :tags: pipeline
 
         Definitions repository removed from all pipeline configs.
