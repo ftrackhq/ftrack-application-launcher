@@ -17,7 +17,7 @@
         },
         "windows": {
             "prefix":["C:\\", "Program Files.*"],
-            "expression":["Side Effects Software", "Houdini*", "bin", "houdini.exe"]
+            "expression":["Side Effects Software", "Houdini*", "bin", "hindie.exe"]
         },
         "darwin": {
             "prefix":["/", "Applications"],

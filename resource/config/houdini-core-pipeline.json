@@ -6,8 +6,7 @@
     "integrations": {
         "pipeline":[
             "ftrack-connect-pipeline", 
-            "ftrack-connect-pipeline-qt", 
-            "ftrack-connect-pipeline-definition", 
+            "ftrack-connect-pipeline-qt",
             "ftrack-connect-pipeline-houdini"
         ]
     },
@@ -22,7 +21,7 @@
         },
         "windows": {
             "prefix":["C:\\", "Program Files.*"],
-            "expression":["Side Effects Software", "Houdini*", "bin", "houdini.exe"]
+            "expression":["Side Effects Software", "Houdini*", "bin", "houdinicore.exe"]
         },
         "darwin": {
             "prefix":["/", "Applications"],

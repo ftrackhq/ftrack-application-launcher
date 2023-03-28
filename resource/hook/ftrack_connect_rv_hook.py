@@ -20,9 +20,7 @@ sys.path.append(sources)
 import ftrack_api
 import ftrack_application_launcher
 
-RV_INSTALLATION_PATH = os.getenv(
-    'RV_INSTALLATION_PATH', '/usr/local/rv'
-)
+RV_INSTALLATION_PATH = os.getenv('RV_INSTALLATION_PATH', '/usr/local/rv')
 
 
 class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
@@ -38,9 +36,7 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
         )._get_application_environment(application, context)
 
         environment = ftrack_application_launcher.append_path(
-            sources,
-            'PYTHONPATH',
-            environment
+            sources, 'PYTHONPATH', environment
         )
 
         return environment
@@ -48,11 +44,12 @@ class ApplicationLauncher(ftrack_application_launcher.ApplicationLauncher):
 
 class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
     '''Adobe plugins discover and launch action.'''
+
     context = [None, 'Task', 'AssetVersion']
     identifier = 'ftrack-connect-launch-rv'
     label = 'rv'
 
-    def __init__(self, session,  application_store, launcher):
+    def __init__(self, session, application_store, launcher):
         '''Initialise action with *applicationStore* and *launcher*.
 
         *applicationStore* should be an instance of
@@ -66,12 +63,10 @@ class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
             session=session,
             application_store=application_store,
             launcher=launcher,
-            priority=0
+            priority=0,
         )
 
-
     def _create_temp_data(self, data, expiry=None):
-
         if not expiry:
             expiry = datetime.datetime.now() + datetime.timedelta(hours=1)
 
@@ -79,8 +74,8 @@ class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
             'action': 'create',
             'type': 'tempdata',
             'data': data,
-            'expiry': expiry
-        }   
+            'expiry': expiry,
+        }
 
         return self.session.call(action)
 
@@ -92,19 +87,14 @@ class LaunchRvAction(ftrack_application_launcher.ApplicationLaunchAction):
             *applicationIdentifier* to identify which application to start.
 
         '''
-        applicationIdentifier = (
-            event['data']['applicationIdentifier']
-        )
+        applicationIdentifier = event['data']['applicationIdentifier']
 
         context = event['data'].copy()
 
-        return self.launcher.launch(
-            applicationIdentifier, context
-        )
+        return self.launcher.launch(applicationIdentifier, context)
 
 
 class ApplicationStore(ftrack_application_launcher.ApplicationStore):
-
     def _discover_applications(self):
         '''Return a list of applications that can be launched from this host.
 
@@ -125,36 +115,37 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
 
         if self.current_os == 'darwin':
             prefix = ['/', 'Applications']
-            applications.extend(self._search_filesystem(
-                expression=prefix + ['RV.*\.app'],
-                label='Review with RV',
-                variant='{version}',
-                applicationIdentifier='rv_{variant}_with_review',
-                icon='rv',
-                launchArguments=[
-                    '--args', '-flags', 'ModeManagerPreload=ftrack'
-                ],
-                integrations={'legacy':['ftrack-connect-rv']}
-            ))
+            applications.extend(
+                self._search_filesystem(
+                    expression=prefix + ['RV.*\.app'],
+                    label='Review with RV',
+                    variant='{version}',
+                    applicationIdentifier='rv_{variant}_with_review',
+                    icon='rv',
+                    launchArguments=[
+                        '--args',
+                        '-flags',
+                        'ModeManagerPreload=ftrack',
+                    ],
+                    integrations={'legacy': ['ftrack-connect-rv']},
+                )
+            )
 
         elif self.current_os == 'windows':
             prefix = ['C:\\', 'Program Files.*']
-            applications.extend(self._search_filesystem(
-                expression=prefix + [
-                    '[Tweak|Shotgun]', 'RV.\d.+', 'bin', 'rv.exe'
-                ],
-                label='Review with RV',
-                variant='{version}',
-                applicationIdentifier='rv_{variant}_with_review',
-                icon='rv',
-                launchArguments=[
-                    '-flags', 'ModeManagerPreload=ftrack'
-                ],
-                versionExpression=re.compile(
-                    r'(?P<version>\d+.\d+.\d+)'
-                ),
-                integrations={'legacy':['ftrack-connect-rv']}
-            ))
+            applications.extend(
+                self._search_filesystem(
+                    expression=prefix
+                    + ['[Tweak|Shotgun]', 'RV.\d.+', 'bin', 'rv.exe'],
+                    label='Review with RV',
+                    variant='{version}',
+                    applicationIdentifier='rv_{variant}_with_review',
+                    icon='rv',
+                    launchArguments=['-flags', 'ModeManagerPreload=ftrack'],
+                    versionExpression=re.compile(r'(?P<version>\d+.\d+.\d+)'),
+                    integrations={'legacy': ['ftrack-connect-rv']},
+                )
+            )
 
         elif self.current_os == 'linux':
             separator = os.path.sep
@@ -179,19 +170,21 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
                     # Add leading slash back
                     prefix.insert(0, separator)
 
-                applications.extend(self._search_filesystem(
-                    expression=prefix + [
-                        'rv-centos7-x86-64-\d.+', 'bin', 'rv$'
-                    ],
-                    label='Review with RV',
-                    variant='{version}',
-                    applicationIdentifier='rv_{variant}_with_review',
-                    icon='rv',
-                    launchArguments=[
-                        '-flags', 'ModeManagerPreload=ftrack'
-                    ],
-                    integrations={'legacy':['ftrack-connect-rv']}
-                ))
+                applications.extend(
+                    self._search_filesystem(
+                        expression=prefix
+                        + ['rv-centos7-x86-64-\d.+', 'bin', 'rv$'],
+                        label='Review with RV',
+                        variant='{version}',
+                        applicationIdentifier='rv_{variant}_with_review',
+                        icon='rv',
+                        launchArguments=[
+                            '-flags',
+                            'ModeManagerPreload=ftrack',
+                        ],
+                        integrations={'legacy': ['ftrack-connect-rv']},
+                    )
+                )
 
         self.logger.debug(
             'Discovered applications:\n{0}'.format(
@@ -205,9 +198,7 @@ class ApplicationStore(ftrack_application_launcher.ApplicationStore):
 def register(session, **kw):
     '''Register hooks.'''
 
-    logger = logging.getLogger(
-        'ftrack_plugin:ftrack_connect_rv_hook.register'
-    )
+    logger = logging.getLogger('ftrack_plugin:ftrack_connect_rv_hook.register')
 
     # Validate that registry is ftrack.EVENT_HANDLERS. If not, assume that
     # register is being called from a new or incompatible API and
@@ -219,9 +210,7 @@ def register(session, **kw):
     application_store = ApplicationStore(session)
 
     # Create a launcher with the store containing applications.
-    launcher = ApplicationLauncher(
-        application_store
-    )
+    launcher = ApplicationLauncher(application_store)
 
     # Create action and register to respond to discover and launch actions.
     action = LaunchRvAction(session, application_store, launcher)

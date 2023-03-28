@@ -8,6 +8,36 @@
 Release Notes
 *************
 
+.. release:: upcoming
+
+    .. change:: changed
+        :tags: launchers
+
+        Re-activate After Effects and Premiere launchers.
+
+    .. change:: changed
+        :tags: pipeline
+
+        Definitions repository removed from all pipeline configs.
+
+    .. change:: fixed
+        :tags: houdini
+
+        Houdini Core, FX and Apprentice Windows executable alignment.
+
+.. release:: 1.0.7
+    :date: 2022-11-21
+
+    .. change:: fixed
+        :tags: houdini
+
+        Houdini Indie executable fix.
+
+   .. change:: changed
+        :tags: houdini
+
+        Unreal engine renamed to unreal.
+
 .. release:: 1.0.6
     :date: 2022-09-05
 
