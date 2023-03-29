@@ -12,7 +12,7 @@
     },
     "label": "Toon Boom Harmony",
     "icon": "harmony",
-    "variant": "permium {version}",
+    "variant": "premium {version}",
     "search_path":{
         "windows": {
             "prefix":["C:\\", "Program Files.*"],
