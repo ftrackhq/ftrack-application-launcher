@@ -12,11 +12,11 @@
     },
     "label": "Toon Boom Harmony",
     "icon": "harmony",
-    "variant": "{version}",
+    "variant": "essentials {version}",
     "search_path":{
         "windows": {
             "prefix":["C:\\", "Program Files.*"],
-            "expression":["Toon Boom Harmony*", "harmony.exe"]
+            "expression":["Toon Boom Animation", "Toon Boom Harmony .*\\ Essentials", "win64", "bin", "HarmonyEssentials.exe"]
         },
         "darwin": {
             "prefix":["/", "Applications"],

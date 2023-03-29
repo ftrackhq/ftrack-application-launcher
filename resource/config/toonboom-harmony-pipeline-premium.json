@@ -1,0 +1,26 @@
+{
+    "priority":100,
+    "context": ["Task"],
+    "identifier": "ftrack-connect-launch-toonboom-harmony-pipeline",
+    "applicationIdentifier":"toonboom-harmony_{variant}",
+    "integrations": {
+        "pipeline":[
+            "ftrack-connect-pipeline",
+            "ftrack-connect-pipeline-qt",
+            "ftrack-connect-pipeline-harmony"
+        ]
+    },
+    "label": "Toon Boom Harmony",
+    "icon": "harmony",
+    "variant": "permium {version}",
+    "search_path":{
+        "windows": {
+            "prefix":["C:\\", "Program Files.*"],
+            "expression":["Toon Boom Animation", "Toon Boom Harmony .*\\ Premium", "win64", "bin", "HarmonyPremium.exe"]
+        },
+        "darwin": {
+            "prefix":["/", "Applications"],
+            "expression": ["Toon Boom Harmony*", "Harmony .*\\ Premium.app"]
+        }
+    }
+ }
