@@ -568,8 +568,6 @@ class ApplicationLauncher(object):
                 'Launching {0} with options {1}'.format(command, options)
             )
 
-            print('@@@ Launching {0} with options {1}'.format(command, options))
-
             process = subprocess.Popen(command, **options)
 
         except (OSError, TypeError):
