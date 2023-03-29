@@ -25,7 +25,6 @@ from ftrack_application_launcher.usage import send_event
 
 configure_logging(__name__)
 
-
 #: Default expression to match version component of executable path.
 #: Will match last set of numbers in string where numbers may contain a digit
 #: followed by zero or more digits, periods, or the letters 'a', 'b', 'c' or 'v'
@@ -355,6 +354,7 @@ class ApplicationLauncher(object):
         self._session = applicationStore.session
 
     def discover_integrations(self, application, context):
+
         context = context or {}
         results = self.session.event_hub.publish(
             ftrack_api.event.base.Event(
@@ -594,6 +594,7 @@ class ApplicationLauncher(object):
         return {'success': success, 'message': message}
 
     def _notify_integration_use(self, results, application):
+
         metadata = []
         for result in results:
             if result is None:
@@ -618,6 +619,7 @@ class ApplicationLauncher(object):
         )
 
     def _get_integrations_environments(self, results, context, environments):
+
         # parse integration returned from listeners.
         returned_integrations_names = set(
             [
@@ -639,6 +641,7 @@ class ApplicationLauncher(object):
         for integration_group, requested_integration_names in list(
             context.get('integrations', {}).items()
         ):
+
             difference = set(requested_integration_names).difference(
                 returned_integrations_names
             )
@@ -652,6 +655,7 @@ class ApplicationLauncher(object):
                 continue
 
             for requested_integration_name in requested_integration_names:
+
                 result = [
                     result
                     for result in results
@@ -779,6 +783,7 @@ class ApplicationLauncher(object):
         environment.pop('FTRACK_EVENT_PLUGIN_PATH', None)
 
         # Ensure SSL_CERT_FILE points to the default cert.
+
         if 'win32' not in sys.platform:
             environment[
                 'SSL_CERT_FILE'
@@ -913,6 +918,7 @@ class ApplicationLaunchAction(BaseAction):
             context['source'] = event['source']
 
             if self.launcher and application.get('integrations'):
+
                 (
                     _,
                     lost_integration_groups,
@@ -946,7 +952,7 @@ class ApplicationLaunchAction(BaseAction):
                     'applicationIdentifier': application_identifier,
                     'integrations': application.get('integrations', {}),
                     'host': platform.node(),
-                    'console': application.get('console', False),
+                    'console': application.get('console', False)
                 }
             )
 
