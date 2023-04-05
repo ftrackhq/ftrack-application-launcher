@@ -14,6 +14,10 @@
     "icon": "harmony",
     "variant": "advanced {version}",
     "search_path":{
+        "linux": {
+            "prefix":["/", "usr","local","ToonBoomAnimation"],
+            "expression":["harmonyAdvanced.*\\", "lnx86_64", "harmonyadvanced"]
+        },
         "windows": {
             "prefix":["C:\\", "Program Files.*"],
             "expression":["Toon Boom Animation", "Toon Boom Harmony .*\\ Advanced", "win64", "bin", "HarmonyAdvanced.exe"]

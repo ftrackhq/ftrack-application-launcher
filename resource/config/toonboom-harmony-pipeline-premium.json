@@ -14,6 +14,10 @@
     "icon": "harmony",
     "variant": "premium {version}",
     "search_path":{
+        "linux": {
+            "prefix":["/", "usr","local","ToonBoomAnimation"],
+            "expression":["harmonyPremium.*\\", "lnx86_64", "harmonypremium"]
+        },
         "windows": {
             "prefix":["C:\\", "Program Files.*"],
             "expression":["Toon Boom Animation", "Toon Boom Harmony .*\\ Premium", "win64", "bin", "HarmonyPremium.exe"]

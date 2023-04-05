@@ -14,6 +14,10 @@
     "icon": "harmony",
     "variant": "essentials {version}",
     "search_path":{
+        "linux": {
+            "prefix":["/", "usr","local","ToonBoomAnimation"],
+            "expression":["harmonyEssentials.*\\", "lnx86_64", "harmonyessentials"]
+        },
         "windows": {
             "prefix":["C:\\", "Program Files.*"],
             "expression":["Toon Boom Animation", "Toon Boom Harmony .*\\ Essentials", "win64", "bin", "HarmonyEssentials.exe"]
