@@ -8,6 +8,13 @@
 Release Notes
 *************
 
+.. release:: upcoming
+
+    .. change:: changed
+        :tags: launchers
+
+        Added Toon Boom Harmony launchers
+
 .. release:: 1.0.9
     .. change:: 2023-04-05
 
