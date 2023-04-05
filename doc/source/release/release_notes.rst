@@ -8,6 +8,25 @@
 Release Notes
 *************
 
+.. release:: 1.0.9
+    .. change:: 2023-04-05
+
+    .. change:: changed
+        :tags: launchers
+
+        Backlog/activate ae premier launchers
+
+    .. change:: changed
+        :tags: launchers
+
+        feat: Backlog/external contribution/add variant
+        Co-authored-by: Konstantin Maslyuk <kalemas@mail.ru>
+
+    .. change:: changed
+        :tags: launchers
+
+        Definitions repository removed from all pipeline configs
+
 .. release:: 1.0.8
     :date: 2022-12-14
 
