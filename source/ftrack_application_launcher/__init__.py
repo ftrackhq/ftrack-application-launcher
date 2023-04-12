@@ -51,6 +51,7 @@ AVAILABLE_ICONS = {
     'unreal-engine': '/application_icons/unreal_engine.png',
     'unity': '/application_icons/unity.png',
     'rv': '/application_icons/rv.png',
+    'harmony': '/application_icons/harmony.png',
 }
 
 
