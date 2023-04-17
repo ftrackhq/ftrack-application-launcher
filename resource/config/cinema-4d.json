@@ -14,12 +14,12 @@
         "windows": {
             "prefix":["C:\\", "Program Files.*"],
             "expression": ["(?i)(MAXON CINEMA) 4D .+", "(?i)CINEMA 4D.exe"],
-            "version_expression": "(?i)(CINEMA 4D) R(?P<version>[\\d.]+[\\d\\w\\s]*)"
+            "version_expression": "(?i)(CINEMA 4D) [R]?(?P<version>[\\d.]+[\\d\\w\\s]*)"
         },
         "darwin": {
             "prefix":["/", "Applications"],
             "expression": ["(?i)(MAXON CINEMA) 4D .+", "(?i)CINEMA 4D.app"],
-            "version_expression": "(?i)(CINEMA 4D) R(?P<version>[\\d.]+[\\d\\w\\s]*)"
+            "version_expression": "(?i)(CINEMA 4D) [R]?(?P<version>[\\d.]+[\\d\\w\\s]*)"
         }
     }
  }
