@@ -15,6 +15,14 @@ Release Notes
 
         Added Toon Boom Harmony launchers
 
+.. release:: 1.0.10
+    .. change:: 2023-04-18
+
+    .. change:: fixed
+        :tags: c4d
+
+        Enable Cinema 4D 2023 launch.
+
 .. release:: 1.0.9
     .. change:: 2023-04-05
 
