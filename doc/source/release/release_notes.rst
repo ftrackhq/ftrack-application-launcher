@@ -8,7 +8,8 @@
 Release Notes
 *************
 
-.. release:: upcoming
+.. release:: 1.0.10
+    .. change:: 2023-04-18
 
     .. change:: fixed
         :tags: c4d
