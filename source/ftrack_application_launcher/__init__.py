@@ -179,7 +179,7 @@ class ApplicationStore(object):
         variant='',
         description=None,
         integrations=None,
-        console=False
+        console=False,
     ):
         '''
         Return list of applications found in filesystem matching *expression*.
@@ -304,7 +304,7 @@ class ApplicationStore(object):
                             'variant': variant_str,
                             'description': description,
                             'integrations': integrations or {},
-                            'console': console
+                            'console': console,
                         }
 
                         applications.append(application)
@@ -354,6 +354,7 @@ class ApplicationLauncher(object):
         self._session = applicationStore.session
 
     def discover_integrations(self, application, context):
+
         context = context or {}
         results = self.session.event_hub.publish(
             ftrack_api.event.base.Event(
@@ -567,8 +568,6 @@ class ApplicationLauncher(object):
                 'Launching {0} with options {1}'.format(command, options)
             )
 
-            print('@@@ Launching {0} with options {1}'.format(command, options))
-
             process = subprocess.Popen(command, **options)
 
         except (OSError, TypeError):
@@ -593,6 +592,7 @@ class ApplicationLauncher(object):
         return {'success': success, 'message': message}
 
     def _notify_integration_use(self, results, application):
+
         metadata = []
         for result in results:
             if result is None:
@@ -617,6 +617,7 @@ class ApplicationLauncher(object):
         )
 
     def _get_integrations_environments(self, results, context, environments):
+
         # parse integration returned from listeners.
         returned_integrations_names = set(
             [
@@ -638,6 +639,7 @@ class ApplicationLauncher(object):
         for integration_group, requested_integration_names in list(
             context.get('integrations', {}).items()
         ):
+
             difference = set(requested_integration_names).difference(
                 returned_integrations_names
             )
@@ -651,6 +653,7 @@ class ApplicationLauncher(object):
                 continue
 
             for requested_integration_name in requested_integration_names:
+
                 result = [
                     result
                     for result in results
@@ -913,6 +916,7 @@ class ApplicationLaunchAction(BaseAction):
             context['source'] = event['source']
 
             if self.launcher and application.get('integrations'):
+
                 (
                     _,
                     lost_integration_groups,
