@@ -8,8 +8,40 @@
 Release Notes
 *************
 
+.. release:: 1.0.10
+    .. change:: 2023-04-18
+
+    .. change:: fixed
+        :tags: c4d
+
+        Enable Cinema 4D 2023 launch.
+
+.. release:: 1.0.9
+    .. change:: 2023-04-05
+
+    .. change:: changed
+        :tags: launchers
+
+        Backlog/activate ae premier launchers
+
+    .. change:: changed
+        :tags: launchers
+
+        feat: Backlog/external contribution/add variant
+        Co-authored-by: Konstantin Maslyuk <kalemas@mail.ru>
+
+    .. change:: changed
+        :tags: launchers
+
+        Definitions repository removed from all pipeline configs
+
 .. release:: 1.0.8
     :date: 2022-12-14
+
+    .. change:: changed
+        :tags: launchers
+
+        Re-activate After Effects and Premiere launchers.
 
     .. change:: changed
         :tags: pipeline
