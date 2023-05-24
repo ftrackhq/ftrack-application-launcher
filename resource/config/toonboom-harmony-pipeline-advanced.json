@@ -1,7 +1,7 @@
 {
     "priority":100,
     "context": ["Task"],
-    "identifier": "ftrack-connect-launch-toonboom-harmony-pipeline",
+    "identifier": "ftrack-connect-launch-toonboom-harmony-pipeline-prototype",
     "applicationIdentifier":"toonboom-harmony_{variant}",
     "integrations": {
         "pipeline":[
