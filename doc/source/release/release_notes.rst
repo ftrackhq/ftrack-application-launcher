@@ -16,7 +16,7 @@ Release Notes
         Added Toon Boom Harmony launchers
 
 .. release:: 1.0.10
-    .. change:: 2023-04-18
+    :date: 2023-04-18
 
     .. change:: fixed
         :tags: c4d
@@ -24,7 +24,7 @@ Release Notes
         Enable Cinema 4D 2023 launch.
 
 .. release:: 1.0.9
-    .. change:: 2023-04-05
+    :date: 2023-04-05
 
     .. change:: changed
         :tags: launchers
@@ -68,7 +68,7 @@ Release Notes
 
         Houdini Indie executable fix.
 
-   .. change:: changed
+    .. change:: fixed
         :tags: houdini
 
         Unreal engine renamed to unreal.
