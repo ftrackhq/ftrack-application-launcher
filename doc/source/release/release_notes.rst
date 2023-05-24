@@ -8,7 +8,8 @@
 Release Notes
 *************
 
-.. release:: upcoming
+.. release:: 1.0.11
+    :date: 2023-05-24
 
     .. change:: changed
         :tags: launchers
